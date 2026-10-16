@@ -1,6 +1,6 @@
 import { cpSync, existsSync, mkdirSync } from "fs";
 import { resolve } from "path";
-import { defineConfig, type Plugin } from "vite";
+import { defineConfig, type Plugin } from "vite-plus";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import pkg from "./package.json";
 
@@ -20,11 +20,7 @@ function copyBuildToResource(): Plugin {
   return {
     name: "copy-build-to-resource",
     closeBundle() {
-      cpSync(
-        resolve(__dirname, "dist"),
-        resolve(resourceMarkdownDir, "dist"),
-        { recursive: true },
-      );
+      cpSync(resolve(__dirname, "dist"), resolve(resourceMarkdownDir, "dist"), { recursive: true });
       copyLocalLuteOverride();
     },
   };
@@ -44,7 +40,7 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       outDir: "dist",
-      cssMinify: 'esbuild',
+      cssMinify: "esbuild",
       minify: mode === "production",
       target: "es2015",
       lib: {
