@@ -33,7 +33,7 @@ export default defineConfig(({ command, mode }) => ({
     env: {
       builtin: true,
     },
-    ignorePatterns: ["**/*.d.ts", "dist", "vditor"],
+    ignorePatterns: ["**/*.d.ts", "dist", "vditor", "resource/pdf"],
     overrides: [
       {
         files: ["src/**/*.{ts,tsx}"],
