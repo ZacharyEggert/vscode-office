@@ -22,14 +22,14 @@ test/obsidian/
 
 ## 覆盖的语法
 
-| 语法 | 示例 | 主要出现位置 |
-| --- | --- | --- |
-| WikiLink | `[[Home]]`、`[[Projects/Vditor|别名]]` | 所有文件互链 |
-| Embed | `![[Notes/Meeting-Notes]]` | Home、Vditor、Callouts |
-| 块 ID | 段落末 `^block-id` | API、Glossary、Meeting-Notes |
-| 块链接 | `[[page#^block-id]]`、`[[#^id]]` | Daily、Vditor、Glossary |
-| Tag | `#obsidian/test` | 各文件 frontmatter 与正文 |
-| Callout | `> [!NOTE]` 等 | Callouts.md、各 Notes |
+| 语法     | 示例                             | 主要出现位置                 |
+| -------- | -------------------------------- | ---------------------------- |
+| WikiLink | `[[Home]]`、`[[Projects/Vditor   | 别名]]`                      | 所有文件互链 |
+| Embed    | `![[Notes/Meeting-Notes]]`       | Home、Vditor、Callouts       |
+| 块 ID    | 段落末 `^block-id`               | API、Glossary、Meeting-Notes |
+| 块链接   | `[[page#^block-id]]`、`[[#^id]]` | Daily、Vditor、Glossary      |
+| Tag      | `#obsidian/test`                 | 各文件 frontmatter 与正文    |
+| Callout  | `> [!NOTE]` 等                   | Callouts.md、各 Notes        |
 
 ## 建议测试步骤
 
