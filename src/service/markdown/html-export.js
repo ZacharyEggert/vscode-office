@@ -1,7 +1,9 @@
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
-const { pathToFileURL } = require("url");
+const { fileURLToPath, pathToFileURL } = require("url");
+const { parse } = require("node-html-parser");
+const { fileTypeFromFile } = require("file-type");
 const { createOutline } = require("./outline");
 const isDev = process.argv.indexOf("--type=extensionHost") >= 0;
 
@@ -13,10 +15,25 @@ export async function exportHtml(exportFilePath, data) {
 export async function exportDocx(exportFilePath, data, config) {
   console.log("[pretty-md-pdf] Exported to file: " + exportFilePath);
   const html = await replaceDynamicContentWithImages(data, config, exportFilePath);
-  const htmlToDocx = require("vscode-html-to-docx");
-  const exportTask = await htmlToDocx(html, "", {}, "");
-  const buffer = Buffer.from(await exportTask.arrayBuffer());
-  fs.writeFileSync(exportFilePath, buffer);
+  const htmlToDocx = require("@turbodocx/html-to-docx");
+  fs.writeFileSync(exportFilePath, await htmlToDocx(await inlineLocalImages(html), "", {}, ""));
+}
+
+// html-to-docx only embeds http(s)/data images; local files become data URIs.
+async function inlineLocalImages(html) {
+  const root = parse(html);
+  for (const img of root.querySelectorAll("img")) {
+    const src = img.getAttribute("src");
+    if (!src?.startsWith("file:///")) continue;
+    const file = fileURLToPath(src);
+    if (!fs.existsSync(file)) continue;
+    const mime =
+      (await fileTypeFromFile(file))?.mime ??
+      (file.toLowerCase().endsWith(".svg") ? "image/svg+xml" : undefined);
+    if (!mime) continue;
+    img.setAttribute("src", `data:${mime};base64,${fs.readFileSync(file).toString("base64")}`);
+  }
+  return root.toString();
 }
 
 /*

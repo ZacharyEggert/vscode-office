@@ -252,7 +252,7 @@ function resolveCssUrls(css, basePath, type) {
       return match;
     }
     if (type === "html" && basePath.includes("katex")) {
-      return `url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/${href.replace(/^\.\//, "")}")`;
+      return `url("https://cdn.jsdelivr.net/npm/katex@${require("katex").version}/dist/${href.replace(/^\.\//, "")}")`;
     }
     return `url("${url.pathToFileURL(path.resolve(basePath, href)).href}")`;
   });

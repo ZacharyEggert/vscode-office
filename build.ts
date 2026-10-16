@@ -12,7 +12,13 @@ const devExtensionTarget = process.env.OFFICE_EXTENSION_TARGET;
 const buildDesktop = isProd || devExtensionTarget !== "web";
 const buildWeb = isProd || devExtensionTarget === "web";
 
-const dependencies = ["vscode-html-to-docx", "highlight.js", "pdf-lib", "katex", "puppeteer-core"];
+const dependencies = [
+  "@turbodocx/html-to-docx",
+  "highlight.js",
+  "pdf-lib",
+  "katex",
+  "puppeteer-core",
+];
 const nodeBuiltinStubs = [
   "fs",
   "child_process",
