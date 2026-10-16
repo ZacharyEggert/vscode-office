@@ -13,13 +13,13 @@ const SIDER_WIDTH = 200;
 export default function IcnsViewer() {
   const [icons, setIcons] = useState<IcnsIconItem[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const sponsorDark = useVscodeSponsorDark();
 
   const loadIcns = useCallback(
     async (payload: { path?: string; buffer?: number[]; error?: string }) => {
-      setLoading(true);
+      setIsLoading(true);
       setError(null);
       setIcons([]);
       setSelectedId(null);
@@ -32,7 +32,7 @@ export default function IcnsViewer() {
       } catch (e) {
         setError(e instanceof Error ? e.message : "Failed to load ICNS file");
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     },
     [],
@@ -74,17 +74,17 @@ export default function IcnsViewer() {
           </div>
         </Sider>
         <Content className="icns-main">
-          {loading && (
+          {isLoading && (
             <div className="icns-empty">
               <Spin tip="Loading ICNS…" />
             </div>
           )}
-          {!loading && error && (
+          {!isLoading && error && (
             <div className="icns-empty">
               <Alert type="error" showIcon message={error} />
             </div>
           )}
-          {!loading && !error && selected && (
+          {!isLoading && !error && selected && (
             <div className="icns-preview-wrap">
               <img
                 className="icns-preview-image"
@@ -94,7 +94,7 @@ export default function IcnsViewer() {
               />
             </div>
           )}
-          {!loading && !error && !selected && (
+          {!isLoading && !error && !selected && (
             <div className="icns-empty">No icon sizes available</div>
           )}
         </Content>

@@ -43,15 +43,15 @@ export class ReactApp {
   private static async readContent(): Promise<string> {
     if (this.IS_DEV) {
       const devServerUrl = "http://127.0.0.1:5739";
-      const data = await (await fetch(`${devServerUrl}/index.html`)).text();
-      return data.replace(/(["'])\/(?=(?:@|src\/|index\.html\?))/g, `$1${devServerUrl}/`);
+      const indexHtml = await (await fetch(`${devServerUrl}/index.html`)).text();
+      return indexHtml.replace(/(["'])\/(?=(?:@|src\/|index\.html\?))/g, `$1${devServerUrl}/`);
     }
     return readExtensionText(this.context, "out", "webview", "index.html");
   }
 
-  private static buildPath(data: string, webview: vscode.Webview): string {
+  private static buildPath(indexHtml: string, webview: vscode.Webview): string {
     const baseUrl = ReactApp.getBaseUrl(webview);
-    return data.replace('<base href="/">', `<base href="${baseUrl}/">`);
+    return indexHtml.replace('<base href="/">', `<base href="${baseUrl}/">`);
   }
 
   private static getBaseUrl(webview: vscode.Webview) {

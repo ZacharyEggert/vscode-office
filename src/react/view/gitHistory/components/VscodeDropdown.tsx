@@ -40,7 +40,7 @@ export default function VscodeDropdown({
   triggerLabel,
   onChange,
 }: VscodeDropdownProps) {
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [filter, setFilter] = useState("");
   const rootRef = useRef<HTMLDivElement>(null);
   const listId = useId();
@@ -60,26 +60,26 @@ export default function VscodeDropdown({
       }
       return `${selected.length} selected`;
     }
-    const v = typeof value === "string" ? value : "";
-    if (!v) return allLabel;
-    return options.find((o) => o.value === v)?.label ?? v;
+    const selectedValue = typeof value === "string" ? value : "";
+    if (!selectedValue) return allLabel;
+    return options.find((o) => o.value === selectedValue)?.label ?? selectedValue;
   }, [multiple, value, options, allLabel]);
 
   const filteredOptions = useMemo(() => {
-    const q = filter.trim().toLowerCase();
-    if (!q) return options;
+    const query = filter.trim().toLowerCase();
+    if (!query) return options;
     return options.filter(
-      (o) => o.label.toLowerCase().includes(q) || o.value.toLowerCase().includes(q),
+      (o) => o.label.toLowerCase().includes(query) || o.value.toLowerCase().includes(query),
     );
   }, [options, filter]);
 
   const close = useCallback(() => {
-    setOpen(false);
+    setIsOpen(false);
     setFilter("");
   }, []);
 
   useEffect(() => {
-    if (!open) return;
+    if (!isOpen) return;
     const onDocClick = (e: MouseEvent) => {
       if (!rootRef.current?.contains(e.target as Node)) close();
     };
@@ -92,7 +92,7 @@ export default function VscodeDropdown({
       document.removeEventListener("mousedown", onDocClick);
       document.removeEventListener("keydown", onKey);
     };
-  }, [open, close]);
+  }, [isOpen, close]);
 
   const toggleOption = (optionValue: string) => {
     if (!multiple) {
@@ -127,7 +127,7 @@ export default function VscodeDropdown({
   return (
     <div
       ref={rootRef}
-      className={`vscode-dropdown${open ? " open" : ""}${multiple ? " multiple" : ""}${isToolbarVariant ? " toolbar" : ""}${hasSelection ? " has-selection" : ""}`}
+      className={`vscode-dropdown${isOpen ? " open" : ""}${multiple ? " multiple" : ""}${isToolbarVariant ? " toolbar" : ""}${hasSelection ? " has-selection" : ""}`}
     >
       {!isToolbarVariant && <span className="vscode-dropdown-label">{label}</span>}
       <div className="vscode-dropdown-control">
@@ -135,15 +135,15 @@ export default function VscodeDropdown({
           type="button"
           className="vscode-dropdown-trigger"
           title={displayText}
-          aria-expanded={open}
+          aria-expanded={isOpen}
           aria-haspopup="listbox"
           aria-controls={listId}
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => setIsOpen((v) => !v)}
         >
           <span className="vscode-dropdown-value">{triggerText}</span>
-          <ChevronDown open={open} />
+          <ChevronDown open={isOpen} />
         </button>
-        {open && (
+        {isOpen && (
           <div className="vscode-dropdown-menu" id={listId} role="listbox">
             {filterPlaceholder && (
               <div className="vscode-dropdown-filter">

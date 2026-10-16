@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { App } from "antd";
 import { handler, loadDarkMode, applyDarkMode } from "../../util/vscode";
 import { $t } from "../../i18n/i18nConfig";
-import { useWindowSize } from "../../util/reactUtils";
+import { useWindowSize } from "../../util/useWindowSize";
 import FileItems from "./components/FileItems";
 import JarInfoPanel from "./components/JarInfoPanel";
 import PasswordModal from "./components/PasswordModal";
@@ -31,28 +31,28 @@ function ZipViewer() {
   const [currentDir, setCurrentDir] = useState("");
   const [size, setSize] = useState("");
   const [extension, setExtension] = useState("");
-  const [encrypted, setEncrypted] = useState(false);
+  const [isArchiveEncrypted, setIsArchiveEncrypted] = useState(false);
   const [archivePassword, setArchivePassword] = useState<string>();
   const [passwordAction, setPasswordAction] = useState<PasswordAction | null>(null);
   const [passwordError, setPasswordError] = useState("");
   const [tableItems, setTableItems] = useState([] as FileInfo[]);
   const [info, setInfo] = useState({ files: [] } as CompressInfo);
   const [jarInfo, setJarInfo] = useState<JarInfo | null>(null);
-  const [loaded, setLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [extractToast, setExtractToast] = useState<ExtractToastMessage | null>(null);
   const closeExtractToast = useCallback(() => setExtractToast(null), []);
   const [dark, setDark] = useState(loadDarkMode);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [width] = useWindowSize();
   const effectiveWidth = width || window.innerWidth;
   const isNarrowWidth = effectiveWidth <= NARROW_WIDTH_BREAKPOINT;
-  const showSidebar = !isNarrowWidth && !sidebarCollapsed;
+  const showSidebar = !isNarrowWidth && !isSidebarCollapsed;
 
   const toggleSidebar = useCallback(() => {
     if (isNarrowWidth) {
       return;
     }
-    setSidebarCollapsed((collapsed) => !collapsed);
+    setIsSidebarCollapsed((collapsed) => !collapsed);
   }, [isNarrowWidth]);
 
   const changeFiles = (dirPath: string) => {
@@ -73,9 +73,9 @@ function ZipViewer() {
 
   const needsPassword = useCallback(
     (entry?: FileInfo) => {
-      return encrypted || Boolean(entry?.encrypted);
+      return isArchiveEncrypted || Boolean(entry?.encrypted);
     },
-    [encrypted],
+    [isArchiveEncrypted],
   );
 
   const withPassword = useCallback(
@@ -91,10 +91,10 @@ function ZipViewer() {
   );
 
   const handleExtract = useCallback(() => {
-    withPassword("extract the archive", encrypted, (password) => {
+    withPassword("extract the archive", isArchiveEncrypted, (password) => {
       handler.emit("autoExtract", password);
     });
-  }, [encrypted, withPassword]);
+  }, [isArchiveEncrypted, withPassword]);
 
   const handleOpenPath = useCallback(
     (entry: FileInfo) => {
@@ -127,14 +127,14 @@ function ZipViewer() {
     })
     .on("extension", (extension: string) => {
       setExtension(extension);
-      setEncrypted(false);
+      setIsArchiveEncrypted(false);
       setArchivePassword(undefined);
       if (extension !== "jar") {
         setJarInfo(null);
       }
     })
     .on("encrypted", (value: boolean) => {
-      setEncrypted(value);
+      setIsArchiveEncrypted(value);
     })
     .on("passwordError", () => {
       setArchivePassword(undefined);
@@ -143,7 +143,7 @@ function ZipViewer() {
     .on("data", (info: CompressInfo) => {
       setInfo(info);
       setJarInfo(info.jarInfo ?? null);
-      setLoaded(true);
+      setIsLoaded(true);
       setTableItems(info.files);
     })
     .on("openDir", changeFiles);
@@ -189,7 +189,7 @@ function ZipViewer() {
           <Sponsor dark={dark} variant="sidebar" />
         </aside>
         <main className="zip-content">
-          <FileItems items={tableItems} loaded={loaded} onOpenPath={handleOpenPath} />
+          <FileItems items={tableItems} loaded={isLoaded} onOpenPath={handleOpenPath} />
         </main>
       </div>
 

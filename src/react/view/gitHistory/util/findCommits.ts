@@ -39,30 +39,30 @@ export function findCommitMatches(
       indices.push(i);
       continue;
     }
-    let matched = false;
+    let isMatched = false;
     for (const head of commit.heads) {
       if (pattern.test(head)) {
-        matched = true;
+        isMatched = true;
         break;
       }
     }
-    if (!matched) {
+    if (!isMatched) {
       for (const tag of commit.tags) {
         if (pattern.test(tag.name)) {
-          matched = true;
+          isMatched = true;
           break;
         }
       }
     }
-    if (!matched) {
+    if (!isMatched) {
       for (const remote of commit.remotes) {
         if (pattern.test(remote.name)) {
-          matched = true;
+          isMatched = true;
           break;
         }
       }
     }
-    if (matched) {
+    if (isMatched) {
       indices.push(i);
     }
   }

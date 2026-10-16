@@ -501,7 +501,7 @@ export class HttpElementFactory {
     // add request variables
     const requestVariables = await RequestVariableProvider.Instance.getAll(document);
     for (const { name, value } of requestVariables) {
-      const v = new MarkdownString(
+      const description = new MarkdownString(
         `Value: Request Variable ${name}${value ? "" : " *(Inactive)*"}`,
       );
       originalElements.push(
@@ -509,7 +509,7 @@ export class HttpElementFactory {
           name,
           ElementType.RequestCustomVariable,
           null,
-          v,
+          description,
           new SnippetString(
             `{{${name}.\${1|request,response|}.\${2|headers,body|}.\${3:Header Name, *(Full Body), JSONPath or XPath}}}`,
           ),

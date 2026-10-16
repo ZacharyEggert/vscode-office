@@ -4,7 +4,8 @@ import { HttpRequest } from "../models/httpRequest";
 import { HttpResponse } from "../models/httpResponse";
 import { RequestHeaders, ResponseHeaders } from "../models/types";
 import { MimeUtility } from "./mimeUtility";
-import { encodeUrl, getHeader, removeHeader } from "./misc";
+import { getHeader, removeHeader } from "./httpHeaders";
+import { encodeUrl } from "./encoding";
 import { convertBufferToStream, convertStreamToBuffer } from "./streamUtility";
 
 export interface RequestProgress {

@@ -1,7 +1,7 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import type Spreadsheet from "./x-spreadsheet/index";
 import type { FindMatch, FindOptions } from "./x-spreadsheet/index";
-import { t } from "./excel_i18n";
+import { t } from "./excelI18n";
 
 interface FindReplacePanelProps {
   spreadSheet: Spreadsheet | null;

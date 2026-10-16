@@ -1,4 +1,4 @@
-import { getContentType } from "../utils/misc";
+import { getContentType } from "../utils/httpHeaders";
 import { ResponseHeaders } from "./types";
 import { HttpRequest } from "./httpRequest";
 

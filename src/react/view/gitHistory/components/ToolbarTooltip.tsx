@@ -25,8 +25,8 @@ export default function ToolbarTooltip({
   wrap = false,
   pinOnClick = false,
 }: ToolbarTooltipProps) {
-  const [visible, setVisible] = useState(false);
-  const [pinned, setPinned] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isPinned, setIsPinned] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const anchorRef = useRef<HTMLSpanElement | null>(null);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
@@ -41,16 +41,16 @@ export default function ToolbarTooltip({
 
   const hide = useCallback(
     (force = false) => {
-      if (pinned && !force) {
+      if (isPinned && !force) {
         return;
       }
       clearShowTimer();
-      setVisible(false);
+      setIsVisible(false);
       if (force) {
-        setPinned(false);
+        setIsPinned(false);
       }
     },
-    [clearShowTimer, pinned],
+    [clearShowTimer, isPinned],
   );
 
   const updatePosition = useCallback(() => {
@@ -78,19 +78,19 @@ export default function ToolbarTooltip({
     }
     clearShowTimer();
     showTimerRef.current = setTimeout(() => {
-      setVisible(true);
+      setIsVisible(true);
     }, SHOW_DELAY_MS);
   }, [clearShowTimer, content]);
 
   useLayoutEffect(() => {
-    if (!visible) {
+    if (!isVisible) {
       return;
     }
     updatePosition();
-  }, [visible, content, updatePosition]);
+  }, [isVisible, content, updatePosition]);
 
   useEffect(() => {
-    if (!visible) {
+    if (!isVisible) {
       return;
     }
     const onScroll = () => hide();
@@ -101,10 +101,10 @@ export default function ToolbarTooltip({
       window.removeEventListener("scroll", onScroll, true);
       window.removeEventListener("resize", onResize);
     };
-  }, [visible, hide, updatePosition]);
+  }, [isVisible, hide, updatePosition]);
 
   useEffect(() => {
-    if (!pinned) {
+    if (!isPinned) {
       return;
     }
     const onPointerDown = (event: PointerEvent) => {
@@ -116,7 +116,7 @@ export default function ToolbarTooltip({
     };
     document.addEventListener("pointerdown", onPointerDown, true);
     return () => document.removeEventListener("pointerdown", onPointerDown, true);
-  }, [pinned, hide]);
+  }, [isPinned, hide]);
 
   useEffect(() => () => clearShowTimer(), [clearShowTimer]);
 
@@ -141,14 +141,14 @@ export default function ToolbarTooltip({
             return;
           }
           event.stopPropagation();
-          setPinned((prev) => {
+          setIsPinned((prev) => {
             if (prev) {
               clearShowTimer();
-              setVisible(false);
+              setIsVisible(false);
               return false;
             }
             clearShowTimer();
-            setVisible(true);
+            setIsVisible(true);
             return true;
           });
         }}
@@ -158,7 +158,7 @@ export default function ToolbarTooltip({
           title: undefined,
         })}
       </span>
-      {visible &&
+      {isVisible &&
         content &&
         (() => {
           const portalRoot = document.querySelector(".git-graph") ?? document.body;

@@ -85,14 +85,14 @@ function ParquetViewer() {
   const [fileInfo, setFileInfo] = useState<ParquetFileInfo | null>(null);
   const [allRows, setAllRows] = useState<Record<string, unknown>[]>([]);
   const [page, setPage] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [editingRow, setEditingRow] = useState<number | null>(null);
   const [editingColumn, setEditingColumn] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
-  const [dirty, setDirty] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [readOnly, setReadOnly] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isReadOnly, setIsReadOnly] = useState(false);
   const [vscodeTheme, setVscodeTheme] = useState(loadParquetVscodeTheme);
   const readOnlyRef = useRef(false);
   const fileInfoRef = useRef<ParquetFileInfo | null>(null);
@@ -131,21 +131,21 @@ function ParquetViewer() {
   const markDirty = useCallback(() => {
     if (dirtyRef.current) return;
     dirtyRef.current = true;
-    setDirty(true);
+    setIsDirty(true);
     handler.emit("change");
   }, []);
 
   const handleSave = useCallback(() => {
-    const info = fileInfoRef.current;
-    if (!info || !dirtyRef.current || savingRef.current || readOnlyRef.current) return;
+    const currentFileInfo = fileInfoRef.current;
+    if (!currentFileInfo || !dirtyRef.current || savingRef.current || readOnlyRef.current) return;
     savingRef.current = true;
-    setSaving(true);
+    setIsSaving(true);
     try {
-      const buffer = writeParquetBuffer(info.columns, allRowsRef.current);
+      const buffer = writeParquetBuffer(currentFileInfo.columns, allRowsRef.current);
       handler.emit("save", [...new Uint8Array(buffer)]);
     } catch (e) {
       savingRef.current = false;
-      setSaving(false);
+      setIsSaving(false);
       const errMessage = e instanceof Error ? e.message : "Failed to serialize parquet file";
       setError(errMessage);
       message.error(errMessage);
@@ -190,7 +190,7 @@ function ParquetViewer() {
 
   const loadParquet = useCallback(
     async (payload: { path?: string; buffer?: number[]; readOnly?: boolean }) => {
-      setLoading(true);
+      setIsLoading(true);
       setError(null);
       setFileInfo(null);
       fileInfoRef.current = null;
@@ -199,17 +199,17 @@ function ParquetViewer() {
       setPage(0);
       cancelEdit();
       dirtyRef.current = false;
-      setDirty(false);
+      setIsDirty(false);
       savingRef.current = false;
-      setSaving(false);
+      setIsSaving(false);
       const fileReadOnly = payload.readOnly === true;
       readOnlyRef.current = fileReadOnly;
-      setReadOnly(fileReadOnly);
+      setIsReadOnly(fileReadOnly);
       try {
         const buffer = await loadOfficeBuffer(payload);
-        const info = await openParquetFile(buffer);
-        const rows = await readAllParquetRows(info.file, info.metadata);
-        const nextInfo = { ...info, rowCount: rows.length };
+        const parquetFile = await openParquetFile(buffer);
+        const rows = await readAllParquetRows(parquetFile.file, parquetFile.metadata);
+        const nextInfo = { ...parquetFile, rowCount: rows.length };
         fileInfoRef.current = nextInfo;
         setFileInfo(nextInfo);
         allRowsRef.current = rows;
@@ -217,7 +217,7 @@ function ParquetViewer() {
       } catch (e) {
         setError(e instanceof Error ? e.message : "Failed to load parquet file");
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     },
     [cancelEdit],
@@ -263,7 +263,7 @@ function ParquetViewer() {
           }
           return (
             <span
-              className={`parquet-viewer__cell${!readOnly && isColumnEditable(column.type) ? " parquet-viewer__cell--editable" : ""}`}
+              className={`parquet-viewer__cell${!isReadOnly && isColumnEditable(column.type) ? " parquet-viewer__cell--editable" : ""}`}
               title={formatCellValue(value)}
               onDoubleClick={() => startEdit(rowIndex, column, value)}
             >
@@ -282,7 +282,7 @@ function ParquetViewer() {
     editingRow,
     fileInfo,
     page,
-    readOnly,
+    isReadOnly,
     startEdit,
   ]);
 
@@ -303,9 +303,9 @@ function ParquetViewer() {
       })
       .on("saveDone", () => {
         savingRef.current = false;
-        setSaving(false);
+        setIsSaving(false);
         dirtyRef.current = false;
-        setDirty(false);
+        setIsDirty(false);
         message.success($t("parquet.saveSuccess"));
       })
       .emit("init");
@@ -315,7 +315,7 @@ function ParquetViewer() {
 
   return (
     <div className={`parquet-viewer${vscodeTheme ? "" : " parquet-viewer--light"}`}>
-      {loading && (
+      {isLoading && (
         <div className="parquet-viewer__overlay">
           <span className="codicon codicon-loading codicon-modifier-spin" />
           <span>{$t("parquet.loading")}</span>
@@ -383,7 +383,7 @@ function ParquetViewer() {
           </div>
         </aside>
         <main className="parquet-viewer__main">
-          {readOnly && !loading && !error && fileInfo && (
+          {isReadOnly && !isLoading && !error && fileInfo && (
             <div className="parquet-viewer__readonly-banner">{$t("viewer.readOnly")}</div>
           )}
           {error ? (
@@ -397,17 +397,17 @@ function ParquetViewer() {
             <>
               <div className="parquet-viewer__toolbar">
                 <div className="parquet-viewer__toolbar-left">
-                  {dirty && (
+                  {isDirty && (
                     <span className="parquet-viewer__dirty-dot" title={$t("parquet.unsaved")} />
                   )}
                   <button
                     type="button"
                     className="parquet-viewer__save-btn"
-                    disabled={!dirty || saving || readOnly}
+                    disabled={!isDirty || isSaving || isReadOnly}
                     onClick={handleSave}
                   >
                     <span
-                      className={`codicon ${saving ? "codicon-loading codicon-modifier-spin" : "codicon-save"}`}
+                      className={`codicon ${isSaving ? "codicon-loading codicon-modifier-spin" : "codicon-save"}`}
                     />
                     {$t("parquet.save")}
                   </button>
@@ -471,7 +471,7 @@ function ParquetViewer() {
         </main>
       </div>
       <div className="parquet-viewer__corner-actions">
-        {!loading && <SponsorBar placement="left" />}
+        {!isLoading && <SponsorBar placement="left" />}
       </div>
     </div>
   );

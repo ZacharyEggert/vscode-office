@@ -1,6 +1,4 @@
 {
-  "ext.common.yes": "ДА",
-  "ext.common.no": "НЕТ",
   "ext.compress.startExtract": "Начало распаковки...",
   "ext.compress.extractSuccess": "Распаковка выполнена успешно!",
   "ext.compress.wrongPassword": "Неверный пароль",

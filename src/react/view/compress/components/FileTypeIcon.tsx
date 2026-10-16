@@ -11,13 +11,13 @@ export function FileTypeIcon({
   isDirectory?: boolean;
   expanded?: boolean;
 }) {
-  const [failed, setFailed] = useState(false);
+  const [hasIconFailed, setHasIconFailed] = useState(false);
   const iconUrl = useMemo(() => {
     if (!name) return null;
     return isDirectory ? getFolderIconUrl(name, expanded) : getFileIconUrl(name);
   }, [name, isDirectory, expanded]);
 
-  if (!iconUrl || failed) {
+  if (!iconUrl || hasIconFailed) {
     return isDirectory ? (
       expanded ? (
         <IconFolderOpen size={15} />
@@ -34,7 +34,7 @@ export function FileTypeIcon({
       src={iconUrl}
       alt=""
       draggable={false}
-      onError={() => setFailed(true)}
+      onError={() => setHasIconFailed(true)}
     />
   );
 }

@@ -33,8 +33,8 @@ function luminance(r: number, g: number, b: number): number {
 }
 
 export function getVscodeThemeColor(name: string, fallback: string): string {
-  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-  return value || fallback;
+  const themeColor = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return themeColor || fallback;
 }
 
 export function isVscodeEditorDark(): boolean {

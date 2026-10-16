@@ -81,13 +81,13 @@ function parseYamlProperties(content) {
     }
 
     if (trimmed.startsWith("- ") && listKey) {
-      const item = trimYamlScalar(trimmed.slice(2).trim());
-      if (!item) {
+      const listValue = trimYamlScalar(trimmed.slice(2).trim());
+      if (!listValue) {
         continue;
       }
       for (let i = props.length - 1; i >= 0; i--) {
         if (props[i].key === listKey) {
-          props[i].values.push(item);
+          props[i].values.push(listValue);
           break;
         }
       }
@@ -100,7 +100,7 @@ function parseYamlProperties(content) {
     }
 
     const key = trimmed.slice(0, colon).trim();
-    const val = trimmed.slice(colon + 1).trim();
+    const rawValue = trimmed.slice(colon + 1).trim();
     if (!key) {
       continue;
     }
@@ -108,7 +108,7 @@ function parseYamlProperties(content) {
     listKey = "";
     let propType = inferYamlPropertyType(key);
 
-    if (!val) {
+    if (!rawValue) {
       listKey = key;
       if (propType === "text") {
         propType = "list";
@@ -117,24 +117,24 @@ function parseYamlProperties(content) {
       continue;
     }
 
-    if (val.startsWith("[") && val.endsWith("]")) {
-      const inner = val.slice(1, -1).trim();
+    if (rawValue.startsWith("[") && rawValue.endsWith("]")) {
+      const inner = rawValue.slice(1, -1).trim();
       if (!inner) {
         props.push({ key, type: propType, values: [] });
         continue;
       }
       const values = [];
       for (const part of inner.split(",")) {
-        const item = trimYamlScalar(part.trim());
-        if (item) {
-          values.push(item);
+        const listValue = trimYamlScalar(part.trim());
+        if (listValue) {
+          values.push(listValue);
         }
       }
       props.push({ key, type: propType, values });
       continue;
     }
 
-    const scalar = trimYamlScalar(val);
+    const scalar = trimYamlScalar(rawValue);
     if (scalar.toLowerCase() === "true" || scalar.toLowerCase() === "false") {
       propType = "boolean";
     }

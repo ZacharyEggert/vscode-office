@@ -1,9 +1,9 @@
 import { stringAt } from "../core/alphabet";
 import { getFontSizePxByPt } from "../core/font";
-import { displayCellText } from "../../excel_cell_display";
+import { displayCellText } from "../../excelCellDisplay";
 
 import { Draw, DrawBox, thinLineWidth, npx } from "../canvas/draw";
-import { getExcelThemeColor, resolveExcelCellBg, resolveExcelCellColor } from "../../theme";
+import { getExcelThemeColor, resolveExcelCellBg, resolveExcelCellColor } from "../../excelTheme";
 
 // gobal var
 const cellPaddingWidth = 10;

@@ -20,18 +20,18 @@ function inflateDict(array, dict, HTMLElement) {
   const dictArray = [];
   for (let index = 0; index < array.length; index++) {
     const li = array[index];
-    const a = findDirectChildByTag(li, "a", HTMLElement);
-    if (!a) continue;
-    const key = getKey(a);
+    const anchor = findDirectChildByTag(li, "a", HTMLElement);
+    if (!anchor) continue;
+    const key = getKey(anchor);
     if (!dict[key]) {
       continue;
     }
-    dict[key].title = a.text.trim();
+    dict[key].title = anchor.text.trim();
     dict[key].isLast = array.length == 1 || index == array.length - 1;
     const nestedList = findDirectChildByTag(li, "ol", HTMLElement);
-    const childs = nestedList ? getDirectChildElementsByTag(nestedList, "li", HTMLElement) : [];
-    if (childs != null && childs.length > 0) {
-      dict[key].child = inflateDict(childs, dict, HTMLElement);
+    const childItems = nestedList ? getDirectChildElementsByTag(nestedList, "li", HTMLElement) : [];
+    if (childItems != null && childItems.length > 0) {
+      dict[key].child = inflateDict(childItems, dict, HTMLElement);
     }
     dictArray.push(dict[key]);
   }
@@ -56,8 +56,8 @@ function extractDict(pdfDoc) {
   return dict;
 }
 
-function getKey(a) {
-  const href = a.getAttribute("href") || "";
+function getKey(anchorElement) {
+  const href = anchorElement.getAttribute("href") || "";
   const anchor = decodeURIComponent(href.replace(/^#/, ""));
   return anchorToPdfDestKey(anchor);
 }

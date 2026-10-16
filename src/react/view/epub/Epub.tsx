@@ -112,9 +112,9 @@ export default function Epub() {
   const settingsRef = useRef<EpubSettings>(loadEpubSettings());
   const wheelNavLockRef = useRef(0);
 
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [sidebarTab, setSidebarTab] = useState<SidebarTab>("toc");
   const [settings, setSettings] = useState<EpubSettings>(loadEpubSettings);
   const [meta, setMeta] = useState<BookMeta | null>(null);
@@ -124,13 +124,13 @@ export default function Epub() {
   const [locationCurrent, setLocationCurrent] = useState(0);
   const [locationTotal, setLocationTotal] = useState(0);
   const [locationDraft, setLocationDraft] = useState("");
-  const [atStart, setAtStart] = useState(true);
-  const [atEnd, setAtEnd] = useState(false);
+  const [isAtStart, setIsAtStart] = useState(true);
+  const [isAtEnd, setIsAtEnd] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searching, setSearching] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchHit[]>([]);
   const [searchResultProgress, setSearchResultProgress] = useState<Record<string, string>>({});
-  const [bookReady, setBookReady] = useState(false);
+  const [isBookReady, setIsBookReady] = useState(false);
 
   const destroyBook = useCallback(() => {
     renditionRef.current?.destroy();
@@ -140,7 +140,7 @@ export default function Epub() {
     if (readerRef.current) {
       readerRef.current.innerHTML = "";
     }
-    setBookReady(false);
+    setIsBookReady(false);
     setMeta(null);
     setToc([]);
     setTocPageByHref({});
@@ -155,7 +155,7 @@ export default function Epub() {
 
   const openSidebar = useCallback(() => {
     setSidebarTab("toc");
-    setSidebarOpen(true);
+    setIsSidebarOpen(true);
   }, []);
 
   const handleReaderWheel = useCallback((rendition: Rendition, e: WheelEvent) => {
@@ -207,8 +207,8 @@ export default function Epub() {
       setLocationTotal(total);
       setLocationDraft(String(current));
 
-      setAtStart(!!location.atStart);
-      setAtEnd(!!location.atEnd);
+      setIsAtStart(!!location.atStart);
+      setIsAtEnd(!!location.atEnd);
       localStorage.setItem(`${book.key()}:pos`, location.start.cfi);
     },
     [],
@@ -274,8 +274,8 @@ export default function Epub() {
           if (!container) {
             return;
           }
-          const x = event.pageX - container.scrollLeft;
-          if (x > container.clientWidth - 20) {
+          const clickOffsetX = event.pageX - container.scrollLeft;
+          if (clickOffsetX > container.clientWidth - 20) {
             event.preventDefault();
             openSidebar();
           }
@@ -297,7 +297,7 @@ export default function Epub() {
         return;
       }
 
-      setLoading(true);
+      setIsLoading(true);
       setError(null);
       destroyBook();
 
@@ -338,11 +338,11 @@ export default function Epub() {
         await ensureLocations(book);
         const pageMap = await buildTocPageMap(book, navigation.toc ?? []);
         setTocPageByHref(pageMap);
-        setBookReady(true);
+        setIsBookReady(true);
       } catch (e) {
         setError(e instanceof Error ? e.message : "Failed to load EPUB");
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     },
     [bindRendition, destroyBook],
@@ -404,7 +404,7 @@ export default function Epub() {
       setSearchResultProgress({});
       return;
     }
-    setSearching(true);
+    setIsSearching(true);
     try {
       const results = await searchEpubBook(book, query);
       setSearchResults(results);
@@ -419,7 +419,7 @@ export default function Epub() {
     } catch (e) {
       setError(e instanceof Error ? e.message : "Search failed");
     } finally {
-      setSearching(false);
+      setIsSearching(false);
     }
   }, [searchQuery]);
 
@@ -442,7 +442,7 @@ export default function Epub() {
 
   useEffect(() => {
     const book = bookRef.current;
-    if (!bookReady || !book || sidebarTab !== "toc" || !toc.length) {
+    if (!isBookReady || !book || sidebarTab !== "toc" || !toc.length) {
       return;
     }
     if (Object.keys(tocPageByHref).length > 0) {
@@ -457,7 +457,7 @@ export default function Epub() {
     return () => {
       cancelled = true;
     };
-  }, [bookReady, sidebarTab, toc, tocPageByHref]);
+  }, [isBookReady, sidebarTab, toc, tocPageByHref]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -513,8 +513,8 @@ export default function Epub() {
       )}
 
       <div
-        className={`sidebar-wrapper${sidebarOpen ? "" : " out"}`}
-        onClick={() => setSidebarOpen(false)}
+        className={`sidebar-wrapper${isSidebarOpen ? "" : " out"}`}
+        onClick={() => setIsSidebarOpen(false)}
       >
         <div className="sidebar" onClick={(e) => e.stopPropagation()}>
           <div className="tab-list">
@@ -564,7 +564,7 @@ export default function Epub() {
                     type="button"
                     className="search-button"
                     onClick={runSearch}
-                    disabled={searching}
+                    disabled={isSearching}
                   >
                     <span className="icon">
                       <SearchOutlined />
@@ -714,7 +714,7 @@ export default function Epub() {
         <div className="left">
           <button
             type="button"
-            className={`sidebar-button${bookReady ? "" : " hidden"}`}
+            className={`sidebar-button${isBookReady ? "" : " hidden"}`}
             onClick={openSidebar}
           >
             <span className="icon">
@@ -739,15 +739,15 @@ export default function Epub() {
       </div>
 
       <div className="epub-reader">
-        {loading && (
+        {isLoading && (
           <div className="epub-loading">
             <Spin />
           </div>
         )}
         <button
           type="button"
-          className={`epub-nav prev${bookReady ? "" : " hidden"}`}
-          disabled={atStart}
+          className={`epub-nav prev${isBookReady ? "" : " hidden"}`}
+          disabled={isAtStart}
           onClick={goPrev}
           aria-label="Previous page"
         >
@@ -756,8 +756,8 @@ export default function Epub() {
         <div className="epub-reader-host" ref={readerRef} />
         <button
           type="button"
-          className={`epub-nav next${bookReady ? "" : " hidden"}`}
-          disabled={atEnd}
+          className={`epub-nav next${isBookReady ? "" : " hidden"}`}
+          disabled={isAtEnd}
           onClick={goNext}
           aria-label="Next page"
         >
@@ -767,7 +767,7 @@ export default function Epub() {
 
       <div className="epub-bar epub-bar-bottom">
         <div className="loc">
-          {bookReady && locationTotal > 0 ? (
+          {isBookReady && locationTotal > 0 ? (
             <span className="loc-jump">
               <input
                 type="text"

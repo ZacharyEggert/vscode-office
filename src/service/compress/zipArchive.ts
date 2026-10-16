@@ -62,7 +62,7 @@ function buildTree(entries: Entry[]): ZipParseResult {
   const folderMap: Record<string, ZipDisplayEntry> = {};
   const pathMap: Record<string, 1> = {};
   let files: ZipDisplayEntry[] = [];
-  let encrypted = false;
+  let hasEncryptedEntry = false;
 
   const pushEntry = (entry: ZipDisplayEntry) => {
     if (!entry.entryName || pathMap[entry.entryName]) return;
@@ -92,7 +92,7 @@ function buildTree(entries: Entry[]): ZipParseResult {
     const entryName = normalizePath(raw.filename);
     if (!entryName && !raw.directory) continue;
     const displayName = raw.directory ? entryName : entryName;
-    if (raw.encrypted) encrypted = true;
+    if (raw.encrypted) hasEncryptedEntry = true;
 
     if (!raw.directory) {
       fileMap[displayName] = raw as FileEntry;
@@ -119,7 +119,7 @@ function buildTree(entries: Entry[]): ZipParseResult {
   }
   files = files.sort(sortEntries);
 
-  return { files, fileMap, folderMap, encrypted };
+  return { files, fileMap, folderMap, encrypted: hasEncryptedEntry };
 }
 
 function sortEntries(a: ZipDisplayEntry, b: ZipDisplayEntry) {
@@ -244,8 +244,8 @@ export class ZipArchive {
   }
 
   async readEntry(entry: FileEntry, password?: string): Promise<Buffer> {
-    const data = await entry.arrayBuffer({ password });
-    return Buffer.from(data);
+    const entryBytes = await entry.arrayBuffer({ password });
+    return Buffer.from(entryBytes);
   }
 
   async extractAllTo(targetPath: string, password?: string, fileMap?: Record<string, FileEntry>) {

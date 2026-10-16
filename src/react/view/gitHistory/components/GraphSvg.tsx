@@ -9,7 +9,7 @@ interface GraphSvgProps {
 }
 
 export default function GraphSvg({ layout, selectedIndices, focusIndex, onSelect }: GraphSvgProps) {
-  const multiSelect = selectedIndices.size > 1;
+  const isMultiSelect = selectedIndices.size > 1;
 
   if (layout.vertices.length === 0 && layout.paths.length === 0) {
     return null;
@@ -39,9 +39,9 @@ export default function GraphSvg({ layout, selectedIndices, focusIndex, onSelect
           "git-graph-vertex-dot",
           v.isCurrent ? "current" : "",
           v.onCurrentBranch ? "" : "dimmed",
-          isSelected && !multiSelect ? "active" : "",
-          isSelected && multiSelect ? "multi-active" : "",
-          isSelected && multiSelect && focusIndex === v.id ? "selection-focus" : "",
+          isSelected && !isMultiSelect ? "active" : "",
+          isSelected && isMultiSelect ? "multi-active" : "",
+          isSelected && isMultiSelect && focusIndex === v.id ? "selection-focus" : "",
         ]
           .filter(Boolean)
           .join(" ");

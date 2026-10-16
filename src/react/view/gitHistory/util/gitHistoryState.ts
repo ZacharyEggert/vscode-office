@@ -66,8 +66,8 @@ export function saveFileHistorySplitLayout(layout: FileHistorySplitLayout): void
 
 export function getColorMode(): GitHistoryColorMode {
   try {
-    const value = localStorage.getItem(COLOR_MODE_KEY);
-    return value === "light" ? "light" : DEFAULT_COLOR_MODE;
+    const storedMode = localStorage.getItem(COLOR_MODE_KEY);
+    return storedMode === "light" ? "light" : DEFAULT_COLOR_MODE;
   } catch {
     return DEFAULT_COLOR_MODE;
   }

@@ -41,12 +41,15 @@ export class RequestVariableProvider implements HttpVariableProvider {
     if (!variables.includes(variableName)) {
       return { name: variableName, error: ResolveErrorMessage.RequestVariableNotExist };
     }
-    const value = RequestVariableCache.get(document, variableName);
-    if (value === undefined) {
+    const cachedResponse = RequestVariableCache.get(document, variableName);
+    if (cachedResponse === undefined) {
       return { name: variableName, warning: ResolveWarningMessage.RequestVariableNotSent };
     }
 
-    const resolveResult = RequestVariableCacheValueProcessor.resolveRequestVariable(value, name);
+    const resolveResult = RequestVariableCacheValueProcessor.resolveRequestVariable(
+      cachedResponse,
+      name,
+    );
     return this.convertToHttpVariable(variableName, resolveResult);
   }
 

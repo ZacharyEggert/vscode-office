@@ -46,8 +46,8 @@ export function AnchoredDialog({
 interface AnchoredDialogActionsProps {
   primaryLabel: string;
   onPrimary: () => void;
-  primaryDisabled?: boolean;
-  primaryDanger?: boolean;
+  isPrimaryDisabled?: boolean;
+  isPrimaryDanger?: boolean;
   isLoading?: boolean;
   onCancel: () => void;
   cancelLabel?: string;
@@ -56,8 +56,8 @@ interface AnchoredDialogActionsProps {
 export function AnchoredDialogActions({
   primaryLabel,
   onPrimary,
-  primaryDisabled = false,
-  primaryDanger = false,
+  isPrimaryDisabled = false,
+  isPrimaryDanger = false,
   isLoading = false,
   onCancel,
   cancelLabel = "Cancel",
@@ -66,8 +66,8 @@ export function AnchoredDialogActions({
     <div className="git-graph-anchored-dialog-actions">
       <button
         type="button"
-        className={`git-graph-anchored-dialog-btn primary${primaryDanger ? " danger" : ""}`}
-        disabled={primaryDisabled || isLoading}
+        className={`git-graph-anchored-dialog-btn primary${isPrimaryDanger ? " danger" : ""}`}
+        disabled={isPrimaryDisabled || isLoading}
         onClick={onPrimary}
         style={isLoading ? { display: "inline-flex", alignItems: "center", gap: 6 } : undefined}
       >

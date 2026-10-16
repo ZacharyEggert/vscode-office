@@ -283,17 +283,17 @@ export function writeWorksheetValidations(
   items: SpreadsheetValidationItem[] | undefined,
 ) {
   if (!items?.length) return;
-  const dv = (
+  const dataValidations = (
     worksheet as { dataValidations?: { add: (ref: string, v: ExcelJS.DataValidation) => void } }
   ).dataValidations;
-  if (!dv?.add) return;
+  if (!dataValidations?.add) return;
   for (let i = 0; i < items.length; i += 1) {
-    const item = items[i];
-    for (let j = 0; j < item.refs.length; j += 1) {
-      const sheetRef = item.refs[j];
-      const excelDv = spreadsheetValidationToExcel(item, sheetRef);
+    const validation = items[i];
+    for (let j = 0; j < validation.refs.length; j += 1) {
+      const sheetRef = validation.refs[j];
+      const excelDv = spreadsheetValidationToExcel(validation, sheetRef);
       if (!excelDv) continue;
-      dv.add(sheetRef, excelDv);
+      dataValidations.add(sheetRef, excelDv);
     }
   }
 }

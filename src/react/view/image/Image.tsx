@@ -62,7 +62,7 @@ export default function Image() {
   const [info, setInfo] = useState({ images: [], current: 0 } as any);
   const [resolvedImages, setResolvedImages] = useState<Record<number, string>>({});
   const [activeIndex, setActiveIndex] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [wheelMode, setWheelMode] = useState<WheelMode>(loadWheelMode);
   const [zoom, setZoom] = useState(1);
   const conversionQueue = useRef(Promise.resolve());
@@ -123,7 +123,7 @@ export default function Image() {
       }
     }
     setResolvedImages(Object.fromEntries(cache));
-    setLoading(info.images.length > 0 && !cache.has(activeIndex));
+    setIsLoading(info.images.length > 0 && !cache.has(activeIndex));
 
     // Serialize conversions, including work left over from a rapid slide change.
     conversionQueue.current = conversionQueue.current.then(async () => {
@@ -150,7 +150,7 @@ export default function Image() {
             setResolvedImages((previous) => ({ ...previous, [index]: src }));
           }
         } finally {
-          if (!cancelled && index === activeIndex) setLoading(false);
+          if (!cancelled && index === activeIndex) setIsLoading(false);
         }
       }
     });
@@ -206,7 +206,7 @@ export default function Image() {
 
   return (
     <div className="image-viewer">
-      {loading && <div className="image-viewer__loading">Loading image…</div>}
+      {isLoading && <div className="image-viewer__loading">Loading image…</div>}
       <div className="image-wheel-toolbar" role="toolbar" aria-label="Wheel mode">
         <button
           type="button"

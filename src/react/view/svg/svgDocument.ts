@@ -128,13 +128,13 @@ export async function exportSvgAsPng(content: string, fileName: string): Promise
   const width = Number(svgEl.getAttribute("width")) || 512;
   const height = Number(svgEl.getAttribute("height")) || 512;
   const viewBox = svgEl.getAttribute("viewBox");
-  let w = width;
-  let h = height;
+  let exportWidth = width;
+  let exportHeight = height;
   if (viewBox) {
     const parts = viewBox.split(/\s+/).map(Number);
     if (parts.length === 4) {
-      w = parts[2];
-      h = parts[3];
+      exportWidth = parts[2];
+      exportHeight = parts[3];
     }
   }
 
@@ -150,13 +150,13 @@ export async function exportSvgAsPng(content: string, fileName: string): Promise
     });
 
     const canvas = document.createElement("canvas");
-    canvas.width = w;
-    canvas.height = h;
+    canvas.width = exportWidth;
+    canvas.height = exportHeight;
     const ctx = canvas.getContext("2d");
     if (!ctx) {
       throw new Error("Failed to create canvas");
     }
-    ctx.drawImage(image, 0, 0, w, h);
+    ctx.drawImage(image, 0, 0, exportWidth, exportHeight);
 
     const pngBlob = await new Promise<Blob | null>((resolve) => {
       canvas.toBlob(resolve, "image/png");

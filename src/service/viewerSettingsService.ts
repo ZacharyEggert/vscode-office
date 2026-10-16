@@ -18,31 +18,31 @@ type VditorViewerSettings = {
 const serializeGlobalSettingsForFile = (
   globalSettings: Record<string, unknown>,
 ): Record<string, unknown> => {
-  const result: Record<string, unknown> = { ...globalSettings };
+  const serializedSettings: Record<string, unknown> = { ...globalSettings };
   for (const key of JSON_ARRAY_GLOBAL_KEYS) {
-    const value = result[key];
-    if (typeof value === "string" && value) {
+    const rawSetting = serializedSettings[key];
+    if (typeof rawSetting === "string" && rawSetting) {
       try {
-        result[key] = JSON.parse(value);
+        serializedSettings[key] = JSON.parse(rawSetting);
       } catch {
         // keep original string
       }
     }
   }
-  return result;
+  return serializedSettings;
 };
 
 const deserializeGlobalSettingsForVditor = (
   globalSettings: Record<string, unknown> | undefined,
 ): Record<string, unknown> => {
-  const result: Record<string, unknown> = { ...globalSettings };
+  const deserializedSettings: Record<string, unknown> = { ...globalSettings };
   for (const key of JSON_ARRAY_GLOBAL_KEYS) {
-    const value = result[key];
-    if (value !== undefined && typeof value !== "string") {
-      result[key] = JSON.stringify(value);
+    const rawSetting = deserializedSettings[key];
+    if (rawSetting !== undefined && typeof rawSetting !== "string") {
+      deserializedSettings[key] = JSON.stringify(rawSetting);
     }
   }
-  return result;
+  return deserializedSettings;
 };
 
 const serializeViewerSettingsForFile = (settings: VditorViewerSettings): ViewerSettingsPayload => ({

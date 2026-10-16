@@ -3,7 +3,7 @@ import type { GitCommit } from "../types";
 import { findCommitMatches } from "../util/findCommits";
 
 interface FindWidgetProps {
-  open: boolean;
+  isOpen: boolean;
   commits: readonly GitCommit[];
   currentIndex: number | null;
   onClose: () => void;
@@ -11,15 +11,15 @@ interface FindWidgetProps {
 }
 
 export default function FindWidget({
-  open,
+  isOpen,
   commits,
   currentIndex,
   onClose,
   onNavigate,
 }: FindWidgetProps) {
   const [text, setText] = useState("");
-  const [caseSensitive, setCaseSensitive] = useState(false);
-  const [useRegex, setUseRegex] = useState(false);
+  const [isCaseSensitive, setIsCaseSensitive] = useState(false);
+  const [isRegexEnabled, setIsRegexEnabled] = useState(false);
   const onNavigateRef = useRef(onNavigate);
 
   useEffect(() => {
@@ -27,27 +27,27 @@ export default function FindWidget({
   }, [onNavigate]);
 
   const matches = useMemo(() => {
-    const result = findCommitMatches(commits, text, caseSensitive, useRegex);
-    if (result.error) {
-      return { indices: [] as number[], error: result.error };
+    const matchResult = findCommitMatches(commits, text, isCaseSensitive, isRegexEnabled);
+    if (matchResult.error) {
+      return { indices: [] as number[], error: matchResult.error };
     }
-    return { indices: result.indices, error: null };
-  }, [commits, text, caseSensitive, useRegex]);
+    return { indices: matchResult.indices, error: null };
+  }, [commits, text, isCaseSensitive, isRegexEnabled]);
 
   const regexError = matches.error;
 
-  if (!open) return null;
+  if (!isOpen) return null;
 
   const updateSearch = (nextText: string, nextCaseSensitive: boolean, nextUseRegex: boolean) => {
-    const result = findCommitMatches(commits, nextText, nextCaseSensitive, nextUseRegex);
-    if (!nextText.trim() || result.error || result.indices.length === 0) {
+    const nextMatches = findCommitMatches(commits, nextText, nextCaseSensitive, nextUseRegex);
+    if (!nextText.trim() || nextMatches.error || nextMatches.indices.length === 0) {
       onNavigateRef.current(null);
       return;
     }
-    onNavigateRef.current(result.indices[0]);
+    onNavigateRef.current(nextMatches.indices[0]);
   };
 
-  const go = (direction: 1 | -1) => {
+  const navigateMatch = (direction: 1 | -1) => {
     if (matches.indices.length === 0) return;
     const currentPos =
       currentIndex !== null && matches.indices.includes(currentIndex)
@@ -66,7 +66,7 @@ export default function FindWidget({
         ? 0
         : -1;
 
-  const noResults = !regexError && text.trim() !== "" && matches.indices.length === 0;
+  const hasNoResults = !regexError && text.trim() !== "" && matches.indices.length === 0;
   const positionLabel = regexError
     ? "Invalid regex"
     : matches.indices.length > 0 && activePosition >= 0
@@ -85,12 +85,12 @@ export default function FindWidget({
           onChange={(e) => {
             const nextText = e.target.value;
             setText(nextText);
-            updateSearch(nextText, caseSensitive, useRegex);
+            updateSearch(nextText, isCaseSensitive, isRegexEnabled);
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
-              go(e.shiftKey ? -1 : 1);
+              navigateMatch(e.shiftKey ? -1 : 1);
             } else if (e.key === "Escape") {
               e.preventDefault();
               onClose();
@@ -100,24 +100,24 @@ export default function FindWidget({
         <div className="git-graph-find-modifiers">
           <button
             type="button"
-            className={`git-graph-find-modifier${caseSensitive ? " active" : ""}`}
+            className={`git-graph-find-modifier${isCaseSensitive ? " active" : ""}`}
             title="Match Case"
             onClick={() => {
-              const next = !caseSensitive;
-              setCaseSensitive(next);
-              updateSearch(text, next, useRegex);
+              const next = !isCaseSensitive;
+              setIsCaseSensitive(next);
+              updateSearch(text, next, isRegexEnabled);
             }}
           >
             Aa
           </button>
           <button
             type="button"
-            className={`git-graph-find-modifier${useRegex ? " active" : ""}`}
+            className={`git-graph-find-modifier${isRegexEnabled ? " active" : ""}`}
             title="Use Regular Expression"
             onClick={() => {
-              const next = !useRegex;
-              setUseRegex(next);
-              updateSearch(text, caseSensitive, next);
+              const next = !isRegexEnabled;
+              setIsRegexEnabled(next);
+              updateSearch(text, isCaseSensitive, next);
             }}
           >
             .*
@@ -125,7 +125,7 @@ export default function FindWidget({
         </div>
       </div>
       <span
-        className={`git-graph-find-position${noResults ? " no-results" : ""}`}
+        className={`git-graph-find-position${hasNoResults ? " no-results" : ""}`}
         title={regexError ?? undefined}
       >
         {positionLabel}
@@ -135,7 +135,7 @@ export default function FindWidget({
         className="git-graph-icon-btn"
         title="Previous match (Shift+Enter)"
         disabled={matches.indices.length === 0}
-        onClick={() => go(-1)}
+        onClick={() => navigateMatch(-1)}
       >
         <span className="codicon codicon-arrow-up" aria-hidden />
       </button>
@@ -144,7 +144,7 @@ export default function FindWidget({
         className="git-graph-icon-btn"
         title="Next match (Enter)"
         disabled={matches.indices.length === 0}
-        onClick={() => go(1)}
+        onClick={() => navigateMatch(1)}
       >
         <span className="codicon codicon-arrow-down" aria-hidden />
       </button>

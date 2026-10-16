@@ -5,10 +5,10 @@ import { getConfigs } from "../../../util/vscodeConfig";
 import { handler } from "../../../util/vscode";
 
 interface SettingsWidgetProps {
-  open: boolean;
+  isOpen: boolean;
   repo: string;
   remotes: GitRemoteDetail[];
-  loading: boolean;
+  isLoading: boolean;
   pullDefaults: GitPullDefaults;
   fileHistorySplitLayout: FileHistorySplitLayout;
   onClose: () => void;
@@ -17,9 +17,9 @@ interface SettingsWidgetProps {
   onAddRemote: () => void;
   onEditRemote: (name: string) => void;
   onDeleteRemote: (name: string) => void;
-  fetching: boolean;
-  pulling: boolean;
-  pushing: boolean;
+  isFetching: boolean;
+  isPulling: boolean;
+  isPushing: boolean;
 }
 
 async function copyText(text: string): Promise<void> {
@@ -44,10 +44,10 @@ async function copyText(text: string): Promise<void> {
 }
 
 export default function SettingsWidget({
-  open,
+  isOpen,
   repo,
   remotes,
-  loading,
+  isLoading,
   pullDefaults,
   fileHistorySplitLayout,
   onClose,
@@ -58,20 +58,20 @@ export default function SettingsWidget({
   onDeleteRemote,
 }: SettingsWidgetProps) {
   const [copiedRemoteName, setCopiedRemoteName] = useState<string | null>(null);
-  const [showQuickSyncButton, setShowQuickSyncButton] = useState<boolean>(() => {
+  const [shouldShowQuickSyncButton, setShouldShowQuickSyncButton] = useState<boolean>(() => {
     const initial = Boolean(getConfigs()?.gitHistorySettings?.quickSyncButton);
     return initial;
   });
   const copyResetTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!open) return;
+    if (!isOpen) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+  }, [isOpen, onClose]);
 
   useEffect(
     () => () => {
@@ -82,7 +82,7 @@ export default function SettingsWidget({
     [],
   );
 
-  if (!open) return null;
+  if (!isOpen) return null;
 
   const repoLabel = repo.split(/[/\\]/).pop() ?? repo;
   const handleCopyRemote = async (remote: GitRemoteDetail) => {
@@ -115,7 +115,7 @@ export default function SettingsWidget({
           <div className="git-graph-settings-group-content">
             <div className="git-graph-settings-section">
               <h3>Remote Configuration</h3>
-              {loading ? (
+              {isLoading ? (
                 <p className="git-graph-muted">Loading remotes...</p>
               ) : remotes.length === 0 ? (
                 <p className="git-graph-muted">No remotes configured for this repository.</p>
@@ -247,10 +247,10 @@ export default function SettingsWidget({
               <label className="git-graph-settings-checkbox">
                 <input
                   type="checkbox"
-                  checked={showQuickSyncButton}
+                  checked={shouldShowQuickSyncButton}
                   onChange={(e) => {
                     const next = e.target.checked;
-                    setShowQuickSyncButton(next);
+                    setShouldShowQuickSyncButton(next);
                     handler.emit("updateConfig", {
                       key: "gitHistory.quickSyncButton",
                       value: next,

@@ -38,10 +38,10 @@ interface CommitDetailPopupProps {
   commitHash: string;
   hasParents: boolean;
   details: GitCommitDetails | null;
-  loading: boolean;
+  isLoading: boolean;
   error: string | null;
   relPath?: string | null;
-  filterCurrentFile: boolean;
+  shouldFilterCurrentFile: boolean;
   onClose: () => void;
   onToggleFilterCurrentFile: () => void;
   onFileAction: (action: GitActionRequest) => void;
@@ -136,9 +136,9 @@ function LinkifiedCommitBody({ text }: { text: string }) {
 function filterFileChanges(
   details: GitCommitDetails,
   relPath: string | null | undefined,
-  filterCurrentFile: boolean,
+  shouldFilterCurrentFile: boolean,
 ): readonly GitFileChange[] {
-  if (!filterCurrentFile || !relPath) {
+  if (!shouldFilterCurrentFile || !relPath) {
     return details.fileChanges;
   }
   const filtered: GitFileChange[] = [];
@@ -207,10 +207,10 @@ export default function CommitDetailPopup({
   commitHash,
   hasParents,
   details,
-  loading,
+  isLoading,
   error,
   relPath,
-  filterCurrentFile,
+  shouldFilterCurrentFile,
   onClose,
   onToggleFilterCurrentFile,
   onFileAction,
@@ -226,7 +226,7 @@ export default function CommitDetailPopup({
     return computeCommitDetailPopupPosition(anchor, 280, popupWidth, bounds);
   });
 
-  const fileChanges = details ? filterFileChanges(details, relPath, filterCurrentFile) : [];
+  const fileChanges = details ? filterFileChanges(details, relPath, shouldFilterCurrentFile) : [];
 
   useLayoutEffect(() => {
     const popup = popupRef.current;
@@ -274,10 +274,10 @@ export default function CommitDetailPopup({
   }, [
     anchor,
     containerRef,
-    loading,
+    isLoading,
     error,
     details,
-    filterCurrentFile,
+    shouldFilterCurrentFile,
     relPath,
     fileViewMode,
     detailViewMode,
@@ -285,7 +285,7 @@ export default function CommitDetailPopup({
   ]);
 
   let body;
-  if (loading) {
+  if (isLoading) {
     body = (
       <div className="git-graph-cdv-loading">
         <Spin size="small" />
@@ -313,7 +313,7 @@ export default function CommitDetailPopup({
           </div>
         </div>
         <div className="git-graph-cdv-files">
-          {relPath && filterCurrentFile && fileChanges.length === 0 ? (
+          {relPath && shouldFilterCurrentFile && fileChanges.length === 0 ? (
             <Empty
               description="This file was not changed in the selected commit"
               image={Empty.PRESENTED_IMAGE_SIMPLE}
@@ -394,7 +394,7 @@ export default function CommitDetailPopup({
         {relPath && (
           <button
             type="button"
-            className={`git-graph-icon-btn${filterCurrentFile ? " active" : ""}`}
+            className={`git-graph-icon-btn${shouldFilterCurrentFile ? " active" : ""}`}
             title="Show only changes to the current file"
             onClick={onToggleFilterCurrentFile}
           >

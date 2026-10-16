@@ -17,28 +17,28 @@ export class VariableProcessor {
 
   public static async processRawRequest(request: string) {
     const variableReferenceRegex = /\{{2}(.+?)\}{2}/g;
-    let result = "";
+    let resolvedRequest = "";
     let match: RegExpExecArray | null;
     let lastIndex = 0;
     const resolvedVariables = new Map<string, string>();
     variable: while ((match = variableReferenceRegex.exec(request))) {
-      result += request.substring(lastIndex, match.index);
+      resolvedRequest += request.substring(lastIndex, match.index);
       lastIndex = variableReferenceRegex.lastIndex;
       const name = match[1].trim();
       const document = getCurrentTextDocument();
-      const context = { rawRequest: request, parsedRequest: result };
-      for (const [provider, cacheable] of this.providers) {
+      const context = { rawRequest: request, parsedRequest: resolvedRequest };
+      for (const [provider, isCacheable] of this.providers) {
         if (resolvedVariables.has(name)) {
-          result += resolvedVariables.get(name);
+          resolvedRequest += resolvedVariables.get(name);
           continue variable;
         }
         if (await provider.has(name, document, context)) {
           const { value, error, warning } = await provider.get(name, document, context);
           if (!error && !warning) {
-            if (cacheable) {
+            if (isCacheable) {
               resolvedVariables.set(name, value as string);
             }
-            result += value;
+            resolvedRequest += value;
             continue variable;
           } else {
             break;
@@ -46,10 +46,10 @@ export class VariableProcessor {
         }
       }
 
-      result += `{{${name}}}`;
+      resolvedRequest += `{{${name}}}`;
     }
-    result += request.substring(lastIndex);
-    return result;
+    resolvedRequest += request.substring(lastIndex);
+    return resolvedRequest;
   }
 
   public static async getAllVariablesDefinitions(

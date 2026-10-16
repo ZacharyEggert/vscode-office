@@ -1,6 +1,6 @@
 import { App } from "antd";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useWindowSize } from "../../util/reactUtils";
+import { useWindowSize } from "../../util/useWindowSize";
 import { handler } from "../../util/vscode";
 import { $t } from "../../i18n/i18nConfig";
 import SponsorBar from "../components/SponsorBar";
@@ -15,7 +15,7 @@ import {
   parseSvgColors,
   updateSvgBackground,
   updateSvgFill,
-} from "./svgUtils";
+} from "./svgDocument";
 import {
   loadSvgLineWrap,
   loadSvgPreviewBackground,
@@ -141,10 +141,10 @@ function SvgViewerInner() {
   const { message } = App.useApp();
   const [content, setContent] = useState("");
   const [fileName, setFileName] = useState("image.svg");
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-  const [exportingPng, setExportingPng] = useState(false);
-  const [dirty, setDirty] = useState(false);
+  const [isExportingPng, setIsExportingPng] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
   const [lineWrap, setLineWrap] = useState(loadSvgLineWrap);
   const [previewBackground, setPreviewBackground] = useState(loadSvgPreviewBackground);
   const [isGitScheme, setIsGitScheme] = useState(false);
@@ -163,7 +163,7 @@ function SvgViewerInner() {
   } | null>(null);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [dragging, setDragging] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const onToggleLineWrap = useCallback(() => {
     setLineWrap((enabled) => {
@@ -226,7 +226,7 @@ function SvgViewerInner() {
     };
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
-  }, [previewUrl, loading]);
+  }, [previewUrl, isLoading]);
 
   const onPreviewMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (e.button !== 0) {
@@ -239,7 +239,7 @@ function SvgViewerInner() {
       offsetX: offsetRef.current.x,
       offsetY: offsetRef.current.y,
     };
-    setDragging(true);
+    setIsDragging(true);
 
     const onMouseMove = (ev: MouseEvent) => {
       const drag = dragRef.current;
@@ -254,7 +254,7 @@ function SvgViewerInner() {
 
     const onMouseUp = () => {
       dragRef.current = null;
-      setDragging(false);
+      setIsDragging(false);
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseup", onMouseUp);
     };
@@ -268,7 +268,7 @@ function SvgViewerInner() {
     contentRef.current = text;
     lastSavedRef.current = text;
     dirtyRef.current = false;
-    setDirty(false);
+    setIsDirty(false);
   }, []);
 
   useEffect(() => {
@@ -277,7 +277,7 @@ function SvgViewerInner() {
         filePathRef.current = path;
         setFileName(getFileNameFromPath(path));
         setIsGitScheme(scheme === "git");
-        setLoading(false);
+        setIsLoading(false);
         if (openError) {
           setError(openError);
           return;
@@ -292,27 +292,27 @@ function SvgViewerInner() {
     handler.on("saveDone", () => {
       lastSavedRef.current = contentRef.current;
       dirtyRef.current = false;
-      setDirty(false);
+      setIsDirty(false);
     });
   }, []);
 
-  const updateContent = useCallback((value: string) => {
-    setContent(value);
-    contentRef.current = value;
-    const isDirty = value !== lastSavedRef.current;
-    if (isDirty && !dirtyRef.current) {
+  const updateContent = useCallback((nextContent: string) => {
+    setContent(nextContent);
+    contentRef.current = nextContent;
+    const hasUnsavedChanges = nextContent !== lastSavedRef.current;
+    if (hasUnsavedChanges && !dirtyRef.current) {
       handler.emit("change");
     }
-    dirtyRef.current = isDirty;
-    setDirty(isDirty);
+    dirtyRef.current = hasUnsavedChanges;
+    setIsDirty(hasUnsavedChanges);
   }, []);
 
   const onSave = useCallback(() => {
-    const value = contentRef.current;
-    if (value === lastSavedRef.current) {
+    const currentContent = contentRef.current;
+    if (currentContent === lastSavedRef.current) {
       return;
     }
-    handler.emit("save", value);
+    handler.emit("save", currentContent);
   }, []);
 
   useEffect(() => {
@@ -351,21 +351,21 @@ function SvgViewerInner() {
   };
 
   const onExportPng = async () => {
-    setExportingPng(true);
+    setIsExportingPng(true);
     try {
       await exportSvgAsPng(content, fileName);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to export PNG");
     } finally {
-      setExportingPng(false);
+      setIsExportingPng(false);
     }
   };
 
   return (
     <div className="svg-viewer">
-      {loading && <div className="svg-viewer__loading">Loading SVG…</div>}
+      {isLoading && <div className="svg-viewer__loading">Loading SVG…</div>}
       {error && <div className="svg-viewer__error">{error}</div>}
-      {!loading && (
+      {!isLoading && (
         <div className={`svg-viewer__main${previewOnly ? " svg-viewer__main--preview-only" : ""}`}>
           {!previewOnly && (
             <div className="svg-viewer__panel svg-viewer__panel--code">
@@ -384,10 +384,10 @@ function SvgViewerInner() {
                   </button>
                   <button
                     type="button"
-                    className={`svg-viewer__btn${dirty ? " svg-viewer__btn--primary" : ""}`}
+                    className={`svg-viewer__btn${isDirty ? " svg-viewer__btn--primary" : ""}`}
                     onClick={onSave}
-                    disabled={!dirty}
-                    title={dirty ? "Ctrl+S" : undefined}
+                    disabled={!isDirty}
+                    title={isDirty ? "Ctrl+S" : undefined}
                   >
                     <SaveIcon />
                     {saveText}
@@ -476,7 +476,7 @@ function SvgViewerInner() {
             )}
             <div
               ref={canvasWrapRef}
-              className={`svg-viewer__canvas-wrap svg-viewer__canvas-wrap--bg-${previewBackground}${dragging ? " svg-viewer__canvas-wrap--dragging" : ""}`}
+              className={`svg-viewer__canvas-wrap svg-viewer__canvas-wrap--bg-${previewBackground}${isDragging ? " svg-viewer__canvas-wrap--dragging" : ""}`}
               onMouseDown={onPreviewMouseDown}
             >
               {previewUrl ? (
@@ -506,7 +506,7 @@ function SvgViewerInner() {
                 type="button"
                 className="svg-viewer__btn"
                 onClick={onExportPng}
-                disabled={exportingPng}
+                disabled={isExportingPng}
               >
                 <PngIcon />
                 Export PNG

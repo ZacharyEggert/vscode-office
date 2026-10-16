@@ -16,8 +16,8 @@ export class GitRepoCommands {
 
   private async run(args: string[], repo: string): Promise<GitCommandResult> {
     try {
-      const result = await this.executor.spawnWithWarning(args, repo, () => null);
-      return { error: null, warning: result.warning };
+      const commandOutput = await this.executor.spawnWithWarning(args, repo, () => null);
+      return { error: null, warning: commandOutput.warning };
     } catch (e) {
       return { error: e instanceof Error ? e.message : String(e), warning: null };
     }
@@ -212,9 +212,11 @@ export class GitRepoCommands {
   }
 
   async openFile(repo: string, filePath: string): Promise<GitCommandResult> {
-    const abs = path.join(repo, filePath);
+    const absolutePath = path.join(repo, filePath);
     try {
-      await vscode.commands.executeCommand("vscode.open", vscode.Uri.file(abs), { preview: true });
+      await vscode.commands.executeCommand("vscode.open", vscode.Uri.file(absolutePath), {
+        preview: true,
+      });
       return { error: null, warning: null };
     } catch (e) {
       return { error: e instanceof Error ? e.message : String(e), warning: null };
@@ -293,8 +295,8 @@ export class GitRepoCommands {
   }
 
   async copyFilePath(repo: string, filePath: string, absolute: boolean): Promise<GitCommandResult> {
-    const value = absolute ? path.join(repo, filePath) : filePath;
-    this.copyToClipboard(value);
+    const copiedPath = absolute ? path.join(repo, filePath) : filePath;
+    this.copyToClipboard(copiedPath);
     return { error: null, warning: null };
   }
 }

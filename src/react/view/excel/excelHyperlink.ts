@@ -12,13 +12,13 @@ export function hyperlinkKey(ri: number, ci: number): string {
 }
 
 export function readCellHyperlink(cell: ExcelJS.Cell, ri: number, ci: number): HyperlinkMap {
-  const value = cell.value;
+  const cellValue = cell.value;
   let link = "";
   let tooltip: string | undefined;
-  if (value && typeof value === "object" && "hyperlink" in value) {
-    const hv = value as ExcelJS.CellHyperlinkValue;
-    link = hv.hyperlink ?? "";
-    tooltip = hv.tooltip;
+  if (cellValue && typeof cellValue === "object" && "hyperlink" in cellValue) {
+    const hyperlinkValue = cellValue as ExcelJS.CellHyperlinkValue;
+    link = hyperlinkValue.hyperlink ?? "";
+    tooltip = hyperlinkValue.tooltip;
   } else if (cell.isHyperlink && cell.hyperlink) {
     link = cell.hyperlink;
   }

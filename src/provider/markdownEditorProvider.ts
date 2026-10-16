@@ -8,7 +8,7 @@ import {
 } from "@/common/extensionResource";
 import { ensureParentDirectory } from "@/common/workspaceFs";
 import { Handler } from "../common/handler";
-import { Util } from "../common/util";
+import { rewriteWebviewResourcePaths } from "../common/webviewDocument";
 import { Holder } from "../service/markdown/holder";
 import { MarkdownService } from "../service/markdownService";
 import { Global, i18n } from "@/common/global";
@@ -46,7 +46,7 @@ type MarkdownSyncConfigKey = (typeof MARKDOWN_SYNC_CONFIG_KEYS)[number];
  * support view and edit office files.
  */
 export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
-  private static legacyGlobalStatePurged = false;
+  private static isLegacyGlobalStatePurged = false;
 
   private countStatus: vscode.StatusBarItem;
   private aiAbortController: AbortController | null = null;
@@ -71,35 +71,35 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
   }
 
   static registerConfigSync(context: vscode.ExtensionContext): void {
-    if (MarkdownEditorProvider.configSyncRegistered) {
+    if (MarkdownEditorProvider.isConfigSyncRegistered) {
       return;
     }
-    MarkdownEditorProvider.configSyncRegistered = true;
+    MarkdownEditorProvider.isConfigSyncRegistered = true;
     context.subscriptions.push(
       vscode.workspace.onDidChangeConfiguration((event) => {
         const config = vscode.workspace.getConfiguration("vscode-office");
         const patch: Partial<Record<MarkdownSyncConfigKey, unknown>> = {};
-        let changed = false;
+        let hasChanges = false;
         for (const key of MARKDOWN_SYNC_CONFIG_KEYS) {
           if (event.affectsConfiguration(`vscode-office.${key}`)) {
             patch[key] = config.get(key);
-            changed = true;
+            hasChanges = true;
           }
         }
-        if (changed) {
+        if (hasChanges) {
           broadcastToMarkdownWebviews("markdownConfig", patch);
         }
       }),
     );
   }
 
-  private static configSyncRegistered = false;
+  private static isConfigSyncRegistered = false;
 
   private purgeLegacyGlobalState() {
-    if (MarkdownEditorProvider.legacyGlobalStatePurged) {
+    if (MarkdownEditorProvider.isLegacyGlobalStatePurged) {
       return;
     }
-    MarkdownEditorProvider.legacyGlobalStatePurged = true;
+    MarkdownEditorProvider.isLegacyGlobalStatePurged = true;
     const state = this.context.globalState;
     for (const key of state.keys()) {
       if (key.startsWith("scrollTop_")) {
@@ -112,11 +112,11 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
     if (vscode.env.uiKind === vscode.UIKind.Web) {
       return [];
     }
-    const data = [];
+    const driveRootUris = [];
     for (let i = 65; i <= 90; i++) {
-      data.push(vscode.Uri.file(`${String.fromCharCode(i)}:/`));
+      driveRootUris.push(vscode.Uri.file(`${String.fromCharCode(i)}:/`));
     }
-    return data;
+    return driveRootUris;
   }
 
   private getWorkspaceUriByFileUtil(uri: vscode.Uri): vscode.Uri | undefined {
@@ -436,7 +436,11 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
       .replace(/\?.+$/, "")
       .replace("https://git", "https://file");
     const indexHtml = await readExtensionText(this.context, "resource", "markdown", "index.html");
-    webview.html = Util.buildPath(indexHtml.replace("{{baseUrl}}", baseUrl), webview, contextUri);
+    webview.html = rewriteWebviewResourcePaths(
+      indexHtml.replace("{{baseUrl}}", baseUrl),
+      webview,
+      contextUri,
+    );
   }
 
   private cancelAIPolish() {

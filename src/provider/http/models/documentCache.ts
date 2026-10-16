@@ -8,19 +8,19 @@ type Container<T> = {
 export class DocumentCache<T> {
   private readonly _cache: Map<string, Container<T>>;
 
-  public constructor(private readonly ignoreVersion: boolean = false) {
+  public constructor(private readonly shouldIgnoreVersion: boolean = false) {
     this._cache = new Map<string, Container<T>>();
   }
 
   public get(document: TextDocument): T | undefined {
-    const result = this._cache.get(this.getKey(document));
-    if (result === undefined) {
+    const cacheEntry = this._cache.get(this.getKey(document));
+    if (cacheEntry === undefined) {
       return undefined;
     }
 
-    const { value, version } = result;
+    const { value, version } = cacheEntry;
 
-    return this.ignoreVersion ? value : version === document.version ? value : undefined;
+    return this.shouldIgnoreVersion ? value : version === document.version ? value : undefined;
   }
 
   public set(document: TextDocument, value: T): this {
@@ -41,7 +41,7 @@ export class DocumentCache<T> {
       return false;
     }
 
-    if (this.ignoreVersion) {
+    if (this.shouldIgnoreVersion) {
       return true;
     }
 

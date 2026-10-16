@@ -6,17 +6,17 @@ import * as XLSX from "xlsx";
 import Spreadsheet from "./x-spreadsheet/index";
 import type { RowData, SheetData } from "./x-spreadsheet/index";
 import { CsvEncoding, encodeCsvText } from "./csvEncoding";
-import { DEFAULT_ROW_HEIGHT_PX, freezeExprToExcelView, pxToExcelRowHeight } from "./excel_meta";
-import { patchWorksheetSortStateXml } from "./excel_sort_state";
-import { applySpreadsheetStyle } from "./excel_styles";
-import { hyperlinkKey, writeCellHyperlink, type SpreadsheetHyperlink } from "./excel_hyperlink";
-import { writeWorksheetValidations } from "./excel_validation";
-import { writeWorksheetProtection } from "./excel_protection";
-import { writeWorksheetImages } from "./excel_images";
+import { DEFAULT_ROW_HEIGHT_PX, freezeExprToExcelView, pxToExcelRowHeight } from "./excelMeta";
+import { patchWorksheetSortStateXml } from "./excelSortState";
+import { applySpreadsheetStyle } from "./excelStyles";
+import { hyperlinkKey, writeCellHyperlink, type SpreadsheetHyperlink } from "./excelHyperlink";
+import { writeWorksheetValidations } from "./excelValidation";
+import { writeWorksheetProtection } from "./excelProtection";
+import { writeWorksheetImages } from "./excelImages";
 
 const DEFAULT_COL_WIDTH = 100;
 
-export { buildFormattingSnapshot, hasFormattingChanged } from "./excel_meta";
+export { buildFormattingSnapshot, hasFormattingChanged } from "./excelMeta";
 
 interface ExportOptions {
   /** 通过另存为对话框保存，而非覆盖当前文件 */
@@ -247,7 +247,7 @@ export async function exportSaveAs(
   }
 }
 
-export async function export_xlsx(
+export async function exportXlsx(
   spreadSheet: Spreadsheet,
   extName: string,
   csvEncoding: CsvEncoding = "utf8",

@@ -144,7 +144,7 @@ export class CommitService {
         commits: [],
         head: null,
         tags: [],
-        moreCommitsAvailable: false,
+        hasMoreCommits: false,
         error: errorMessage,
       }));
   }
@@ -234,7 +234,7 @@ export class CommitService {
           commits: [],
           head: null,
           tags: [],
-          moreCommitsAvailable: false,
+          hasMoreCommits: false,
           error: errorMessage,
         },
       }));
@@ -261,8 +261,8 @@ export class CommitService {
       markOffCurrentBranch = false,
     } = params;
     let commits = rawCommits;
-    const moreCommitsAvailable = commits.length === maxCommits + 1;
-    if (moreCommitsAvailable) {
+    const hasMoreCommits = commits.length === maxCommits + 1;
+    if (hasMoreCommits) {
       commits = commits.slice(0, maxCommits);
     }
 
@@ -350,7 +350,7 @@ export class CommitService {
         if (typeof idx === "number") {
           commitNodes[idx].tags.push({
             name: refData.tags[i].name,
-            annotated: refData.tags[i].annotated,
+            isAnnotated: refData.tags[i].isAnnotated,
           });
         }
       }
@@ -393,7 +393,7 @@ export class CommitService {
         commits: commitNodes,
         head: refData.head,
         tags: [...new Set(refData.tags.map((t) => t.name))],
-        moreCommitsAvailable,
+        hasMoreCommits,
         error: null,
       }));
     };
@@ -556,11 +556,11 @@ export class CommitService {
         if (ref.startsWith("refs/heads/")) {
           refData.heads.push({ hash, name: ref.substring(11) });
         } else if (ref.startsWith("refs/tags/")) {
-          const annotated = ref.endsWith("^{}");
+          const isAnnotated = ref.endsWith("^{}");
           refData.tags.push({
             hash,
-            name: annotated ? ref.substring(10, ref.length - 3) : ref.substring(10),
-            annotated,
+            name: isAnnotated ? ref.substring(10, ref.length - 3) : ref.substring(10),
+            isAnnotated,
           });
         } else if (ref.startsWith("refs/remotes/")) {
           if (
@@ -818,17 +818,17 @@ export class CommitService {
       ],
       repo,
       (stdout) => {
-        const info = stdout.split(GIT_LOG_SEPARATOR);
+        const detailFields = stdout.split(GIT_LOG_SEPARATOR);
         return {
-          hash: info[0],
-          parents: info[1] !== "" ? info[1].split(" ") : [],
-          author: info[2],
-          authorEmail: info[3],
-          authorDate: parseInt(info[4]),
-          committer: info[5],
-          committerEmail: info[6],
-          committerDate: parseInt(info[7]),
-          body: info.slice(11).join(GIT_LOG_SEPARATOR).trim(),
+          hash: detailFields[0],
+          parents: detailFields[1] !== "" ? detailFields[1].split(" ") : [],
+          author: detailFields[2],
+          authorEmail: detailFields[3],
+          authorDate: parseInt(detailFields[4]),
+          committer: detailFields[5],
+          committerEmail: detailFields[6],
+          committerDate: parseInt(detailFields[7]),
+          body: detailFields.slice(11).join(GIT_LOG_SEPARATOR).trim(),
           fileChanges: [],
         };
       },

@@ -4,7 +4,7 @@ import { Clipboard, env, window, TextDocument, Range } from "vscode";
 import { HARCookie, HARHeader, HARHttpRequest, HARPostData } from "../models/harHttpRequest";
 import { HttpRequest } from "../models/httpRequest";
 import { createRequestParser } from "../utils/createRequestParser";
-import { base64, encodeUrl } from "../utils/misc";
+import { base64, encodeUrl } from "../utils/encoding";
 import { Selector } from "../utils/selector";
 import { getCurrentTextDocument } from "../utils/workspaceUtility";
 
@@ -44,7 +44,7 @@ export class CodeSnippetController {
     if (bodyStr && harHttpRequest?.postData?.text.includes('"')) {
       bodyStr = `-d '${harHttpRequest.postData.text}'`;
     }
-    const result = [
+    const curlCommand = [
       `curl -X ${harHttpRequest.method}`,
       ...harHttpRequest.headers.map((header) => `-H "${header.name}: ${header.value}"`),
       bodyStr,
@@ -52,7 +52,7 @@ export class CodeSnippetController {
     ]
       .filter(Boolean)
       .join(process.platform === "win32" ? " " : ` \\${EOL}  `);
-    await this.clipboard.writeText(result);
+    await this.clipboard.writeText(curlCommand);
     window.showInformationMessage("Copied to clipboard");
   }
 

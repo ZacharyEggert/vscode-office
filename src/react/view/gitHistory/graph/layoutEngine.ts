@@ -100,17 +100,17 @@ class Branch {
 
   toPaths(config: GraphConfig, onCurrentBranch?: ReadonlyArray<boolean>): GraphPath[] {
     const colour = config.colours[this.colour % config.colours.length];
-    const d = config.grid.y * (config.style === "angular" ? 0.38 : 0.8);
+    const curveOffset = config.grid.y * (config.style === "angular" ? 0.38 : 0.8);
     const paths: GraphPath[] = [];
     const lines: PlacedLine[] = [];
 
-    const lineDimmed = (v1: number, v2: number): boolean => {
+    const isLineDimmed = (v1: number, v2: number): boolean => {
       if (!onCurrentBranch) {
         return false;
       }
-      const offBranch = (index: number) =>
+      const isOffBranch = (index: number) =>
         index >= 0 && index < onCurrentBranch.length && onCurrentBranch[index] === false;
-      return offBranch(v1) || offBranch(v2);
+      return isOffBranch(v1) || isOffBranch(v2);
     };
 
     for (let li = 0; li < this.lines.length; li++) {
@@ -126,7 +126,7 @@ class Branch {
         },
         isCommitted: li >= this.numUncommitted,
         lockedFirst: line.lockedFirst,
-        dimmed: lineDimmed(line.p1.y, line.p2.y),
+        dimmed: isLineDimmed(line.p1.y, line.p2.y),
       });
     }
 
@@ -186,9 +186,9 @@ class Branch {
       if (x1 === x2) {
         curPath += `L${x2.toFixed(0)},${y2.toFixed(1)}`;
       } else if (config.style === "angular") {
-        curPath += `L${line.lockedFirst ? `${x2.toFixed(0)},${(y2 - d).toFixed(1)}` : `${x1.toFixed(0)},${(y1 + d).toFixed(1)}`}L${x2.toFixed(0)},${y2.toFixed(1)}`;
+        curPath += `L${line.lockedFirst ? `${x2.toFixed(0)},${(y2 - curveOffset).toFixed(1)}` : `${x1.toFixed(0)},${(y1 + curveOffset).toFixed(1)}`}L${x2.toFixed(0)},${y2.toFixed(1)}`;
       } else {
-        curPath += `C${x1.toFixed(0)},${(y1 + d).toFixed(1)} ${x2.toFixed(0)},${(y2 - d).toFixed(1)} ${x2.toFixed(0)},${y2.toFixed(1)}`;
+        curPath += `C${x1.toFixed(0)},${(y1 + curveOffset).toFixed(1)} ${x2.toFixed(0)},${(y2 - curveOffset).toFixed(1)} ${x2.toFixed(0)},${y2.toFixed(1)}`;
       }
       curCommitted = line.isCommitted;
     }
@@ -288,7 +288,7 @@ class Vertex {
     const colour = this.isCommitted
       ? config.colours[this.onBranch.getColour() % config.colours.length]
       : config.uncommittedColour;
-    const onBranch = onCurrentBranch === undefined || onCurrentBranch[this.id] !== false;
+    const isOnCurrentBranch = onCurrentBranch === undefined || onCurrentBranch[this.id] !== false;
     return {
       id: this.id,
       cx: this.x * config.grid.x + config.grid.offsetX,
@@ -297,7 +297,7 @@ class Vertex {
       isCurrent: this.isCurrent,
       isStash: this.isStash,
       isCommitted: this.isCommitted,
-      onCurrentBranch: onBranch,
+      onCurrentBranch: isOnCurrentBranch,
     };
   }
 }
@@ -385,8 +385,8 @@ class GraphEngine {
     const vertexColors: number[] = [];
 
     for (let vi = 0; vi < this.vertices.length; vi++) {
-      const v = this.vertices[vi].toRenderData(config, this.onCurrentBranch);
-      if (v) vertices.push(v);
+      const vertexRenderData = this.vertices[vi].toRenderData(config, this.onCurrentBranch);
+      if (vertexRenderData) vertices.push(vertexRenderData);
       vertexColors[vi] = this.vertices[vi].getColour() % config.colours.length;
       rowWidths[vi] = config.grid.offsetX + this.vertices[vi].getNextPoint().x * config.grid.x - 2;
     }
@@ -454,11 +454,11 @@ class GraphEngine {
 
         if (parentVertex === curVertex) {
           vertex.registerParentProcessed();
-          const parentOnBranch = !parentVertex.isNotOnBranch();
+          const isParentOnBranch = !parentVertex.isNotOnBranch();
           parentVertex.addToBranch(branch, curPoint.x);
           vertex = parentVertex;
           parentVertex = vertex.getNextParent();
-          if (parentVertex === null || parentOnBranch) break;
+          if (parentVertex === null || isParentOnBranch) break;
         }
       }
       if (

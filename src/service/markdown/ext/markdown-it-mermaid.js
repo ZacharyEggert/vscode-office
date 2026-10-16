@@ -2,7 +2,7 @@
 const mermaidChart = (code) => `<div class="mermaid">${code}</div>`;
 
 const MermaidPlugin = (md) => {
-  const temp = md.renderer.rules.fence.bind(md.renderer.rules);
+  const renderDefaultFence = md.renderer.rules.fence.bind(md.renderer.rules);
   md.renderer.rules.fence = (tokens, idx, options, env, slf) => {
     const token = tokens[idx];
     const code = token.content.trim();
@@ -17,7 +17,7 @@ const MermaidPlugin = (md) => {
     ) {
       return mermaidChart(code);
     }
-    return temp(tokens, idx, options, env, slf);
+    return renderDefaultFence(tokens, idx, options, env, slf);
   };
 };
 

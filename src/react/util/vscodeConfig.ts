@@ -2,9 +2,9 @@ let configs = null;
 
 export function getConfigs() {
   if (configs) return configs;
-  const elem = document.getElementById("office-configs");
-  const value = elem.getAttribute("data-config");
-  if (value == "{{configs}}") return null;
-  configs = JSON.parse(value);
+  const configElement = document.getElementById("office-configs");
+  const configJson = configElement.getAttribute("data-config");
+  if (configJson == "{{configs}}") return null;
+  configs = JSON.parse(configJson);
   return configs;
 }

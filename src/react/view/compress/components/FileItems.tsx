@@ -39,17 +39,17 @@ const columns: Column[] = [
 ];
 
 function compareItems(a: FileInfo, b: FileInfo, field: SortField, direction: SortDirection) {
-  let result = 0;
+  let comparison = 0;
   if (field === "name") {
-    result = (a.name ?? "").localeCompare(b.name ?? "");
+    comparison = (a.name ?? "").localeCompare(b.name ?? "");
   } else if (field === "modifyDateTime") {
-    result = String(a.modifyDateTime ?? "").localeCompare(String(b.modifyDateTime ?? ""));
+    comparison = String(a.modifyDateTime ?? "").localeCompare(String(b.modifyDateTime ?? ""));
   } else if (field === "compressedSize") {
-    result = (a.compressedSizeOrigin ?? 0) - (b.compressedSizeOrigin ?? 0);
+    comparison = (a.compressedSizeOrigin ?? 0) - (b.compressedSizeOrigin ?? 0);
   } else if (field === "fileSize") {
-    result = (a.fileSizeOrigin ?? 0) - (b.fileSizeOrigin ?? 0);
+    comparison = (a.fileSizeOrigin ?? 0) - (b.fileSizeOrigin ?? 0);
   }
-  return direction === "asc" ? result : -result;
+  return direction === "asc" ? comparison : -comparison;
 }
 
 function DeleteButton({ entryName }: { entryName: string }) {
@@ -88,7 +88,7 @@ export default function FileItems({ items, loaded, onOpenPath }: FileItemsProps)
   const pointerMoved = useRef(false);
   const [sortField, setSortField] = useState<SortField>("name");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
-  const loading = !loaded;
+  const isLoading = !loaded;
 
   const sortedItems = useMemo(() => {
     let parentEntry: FileInfo | undefined;
@@ -139,7 +139,7 @@ export default function FileItems({ items, loaded, onOpenPath }: FileItemsProps)
 
   return (
     <div className="zip-file-list">
-      {loading ? (
+      {isLoading ? (
         <div className="zip-loading">
           <div className="zip-spinner" />
           <span>Loading archive...</span>
@@ -215,7 +215,7 @@ export default function FileItems({ items, loaded, onOpenPath }: FileItemsProps)
         </tbody>
       </table>
 
-      {!loading && sortedItems.length === 0 ? (
+      {!isLoading && sortedItems.length === 0 ? (
         <div className="zip-empty">This folder is empty.</div>
       ) : null}
     </div>

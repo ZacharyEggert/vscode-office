@@ -24,13 +24,13 @@ export function computeRangeSelection(
 ): Set<number> {
   const start = Math.min(fromIndex, toIndex);
   const end = Math.max(fromIndex, toIndex);
-  const result = new Set<number>();
+  const selectableIndices = new Set<number>();
   for (let index = start; index <= end; index++) {
     if (isSelectableCommit(commits[index])) {
-      result.add(index);
+      selectableIndices.add(index);
     }
   }
-  return result;
+  return selectableIndices;
 }
 
 export function sortCommitsByListOrder(
@@ -42,14 +42,14 @@ export function sortCommitsByListOrder(
     indices.push(index);
   }
   indices.sort((a, b) => a - b);
-  const result: GitCommit[] = [];
+  const selectedCommits: GitCommit[] = [];
   for (const index of indices) {
     const commit = commits[index];
     if (isSelectableCommit(commit)) {
-      result.push(commit);
+      selectedCommits.push(commit);
     }
   }
-  return result;
+  return selectedCommits;
 }
 
 export function sortCommitsForCherryPick(
@@ -61,14 +61,14 @@ export function sortCommitsForCherryPick(
     indices.push(index);
   }
   indices.sort((a, b) => b - a);
-  const result: GitCommit[] = [];
+  const selectedCommits: GitCommit[] = [];
   for (const index of indices) {
     const commit = commits[index];
     if (isSelectableCommit(commit)) {
-      result.push(commit);
+      selectedCommits.push(commit);
     }
   }
-  return result;
+  return selectedCommits;
 }
 
 export function sortCommitsForRevert(
@@ -80,14 +80,14 @@ export function sortCommitsForRevert(
     indices.push(index);
   }
   indices.sort((a, b) => a - b);
-  const result: GitCommit[] = [];
+  const selectedCommits: GitCommit[] = [];
   for (const index of indices) {
     const commit = commits[index];
     if (isSelectableCommit(commit)) {
-      result.push(commit);
+      selectedCommits.push(commit);
     }
   }
-  return result;
+  return selectedCommits;
 }
 
 export function formatCommitMessages(commits: ReadonlyArray<GitCommit>): string {

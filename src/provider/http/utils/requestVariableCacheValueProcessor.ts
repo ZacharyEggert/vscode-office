@@ -7,7 +7,8 @@ import {
   ResolveWarningMessage,
 } from "../models/httpVariableResolveResult";
 import { MimeUtility } from "./mimeUtility";
-import { getContentType, getHeader, isJSONString } from "./misc";
+import { getContentType, getHeader } from "./httpHeaders";
+import { isJSONString } from "./encoding";
 
 const requestVariablePathRegex = /^(\w+)(?:\.(request|response)(?:\.(body|headers)(?:\.(.*))?)?)?$/;
 
@@ -130,19 +131,22 @@ export class RequestVariableCacheValueProcessor {
         };
       }
 
-      const value = getHeader(headers, nameOrPath);
-      if (!value) {
+      const headerValue = getHeader(headers, nameOrPath);
+      if (!headerValue) {
         return { state: ResolveState.Warning, message: ResolveWarningMessage.IncorrectHeaderName };
       } else {
-        return { state: ResolveState.Success, value };
+        return { state: ResolveState.Success, value: headerValue };
       }
     }
   }
 
   private static resolveJsonHttpBody(body: any, path: string): ResolveResult {
     try {
-      const result = resolveJsonPath(body, path);
-      const value = typeof result[0] === "string" ? result[0] : JSON.stringify(result[0]);
+      const jsonPathMatches = resolveJsonPath(body, path);
+      const value =
+        typeof jsonPathMatches[0] === "string"
+          ? jsonPathMatches[0]
+          : JSON.stringify(jsonPathMatches[0]);
       if (!value) {
         return { state: ResolveState.Warning, message: ResolveWarningMessage.IncorrectJSONPath };
       } else {

@@ -69,15 +69,15 @@ const GRAPH_COLOUR_FALLBACKS = [
 
 function uniqueColours(colours: string[]): string[] {
   const seen = new Set<string>();
-  const result: string[] = [];
+  const uniqueList: string[] = [];
   for (const colour of colours) {
     const key = colour.toLowerCase();
     if (!seen.has(key)) {
       seen.add(key);
-      result.push(colour);
+      uniqueList.push(colour);
     }
   }
-  return result;
+  return uniqueList;
 }
 
 function resolveGraphBranchColours(background: string, forceLight = false): string[] {

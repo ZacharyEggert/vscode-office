@@ -96,8 +96,8 @@ async function buildImageResourceMap(buffer: ArrayBuffer): Promise<{
     }
 
     const mime = getMimeType(normalizedPath);
-    const data = await entry.async("uint8array");
-    const blob = new Blob([data as Uint8Array<ArrayBuffer>], { type: mime });
+    const resourceBytes = await entry.async("uint8array");
+    const blob = new Blob([resourceBytes as Uint8Array<ArrayBuffer>], { type: mime });
     const blobUrl = URL.createObjectURL(blob);
     blobUrls.push(blobUrl);
 
@@ -273,20 +273,22 @@ function mindDataToXmindSheet(
   sheet: XmindSheet,
   restoreImageUrl: (url: string) => string,
 ): Sheet {
-  const data = {
+  const mindData = {
     ...sheet.data,
     nodeData: cloneNodeWithoutParent(sheet.data.nodeData),
   };
-  const rootTopic = mindNodeToXmindTopic(data.nodeData, restoreImageUrl);
-  collectSummaryTopics(rootTopic, data.summaries);
+  const rootTopic = mindNodeToXmindTopic(mindData.nodeData, restoreImageUrl);
+  collectSummaryTopics(rootTopic, mindData.summaries);
   return {
     ...original,
     id: sheet.id,
-    title: sheet.title || data.nodeData.topic || original.title || "Sheet",
+    title: sheet.title || mindData.nodeData.topic || original.title || "Sheet",
     rootTopic,
-    relationships: mindArrowsToXmindRelationships(data.arrows),
+    relationships: mindArrowsToXmindRelationships(mindData.arrows),
     topicPositioning:
-      data.direction === 2 ? original.topicPositioning || "balanced" : original.topicPositioning,
+      mindData.direction === 2
+        ? original.topicPositioning || "balanced"
+        : original.topicPositioning,
   };
 }
 
@@ -297,21 +299,21 @@ function createXmindDocument(
   reverseMap: Map<string, string>,
   blobUrls: string[],
 ): XmindDocument {
-  const result: XmindSheet[] = [];
+  const xmindSheets: XmindSheet[] = [];
   const resolveImageUrl = (url: string) => resolveXapResourceUrl(url, map);
   const restoreImageUrl = (url: string) => reverseMap.get(url) ?? url;
   for (const sheet of sourceSheets) {
-    const data = convertXmindToMindElixir(sheet);
-    patchNodeImages(data.nodeData, resolveImageUrl);
-    result.push({
+    const mindData = convertXmindToMindElixir(sheet);
+    patchNodeImages(mindData.nodeData, resolveImageUrl);
+    xmindSheets.push({
       id: sheet.id,
       title: sheet.title || "Untitled",
-      data,
+      data: mindData,
     });
   }
 
   return {
-    sheets: result,
+    sheets: xmindSheets,
     resolveImageUrl,
     export: async (nextSheets: XmindSheet[]) => {
       const sourceById = new Map(sourceSheets.map((sheet) => [sheet.id, sheet]));

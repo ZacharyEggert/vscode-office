@@ -36,12 +36,12 @@ const CLASS_SCAN_BATCH_SIZE = 32;
 const CLASS_SCAN_LIMIT = 300;
 
 function parseManifest(content: string): Record<string, string> {
-  const result: Record<string, string> = {};
+  const manifestAttributes: Record<string, string> = {};
   let currentKey: string | null = null;
 
   for (const line of content.split(/\r?\n/)) {
     if (line.startsWith(" ") && currentKey) {
-      result[currentKey] += line.slice(1);
+      manifestAttributes[currentKey] += line.slice(1);
       continue;
     }
     const colon = line.indexOf(":");
@@ -50,9 +50,9 @@ function parseManifest(content: string): Record<string, string> {
       continue;
     }
     currentKey = line.slice(0, colon).trim();
-    result[currentKey] = line.slice(colon + 1).trim();
+    manifestAttributes[currentKey] = line.slice(colon + 1).trim();
   }
-  return result;
+  return manifestAttributes;
 }
 
 function formatJavaVersion(version: string): string {
@@ -147,8 +147,8 @@ async function maxClassFileJavaVersion(
     const majors = await Promise.all(
       batch.map(async (entryName) => {
         try {
-          const buf = await archive.readEntry(fileMap[entryName]);
-          return readClassMajorVersion(buf);
+          const classBytes = await archive.readEntry(fileMap[entryName]);
+          return readClassMajorVersion(classBytes);
         } catch {
           return undefined;
         }
@@ -176,8 +176,8 @@ export async function parseJarInfo(
   const manifestKey = findEntryKey(entries, (key) => key.toUpperCase() === "META-INF/MANIFEST.MF");
   if (manifestKey) {
     try {
-      const buf = await archive.readEntry(fileMap[manifestKey]);
-      manifest = parseManifest(buf.toString("utf-8"));
+      const manifestBytes = await archive.readEntry(fileMap[manifestKey]);
+      manifest = parseManifest(manifestBytes.toString("utf-8"));
     } catch {
       // encrypted or malformed manifest
     }

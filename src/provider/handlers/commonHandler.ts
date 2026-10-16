@@ -17,22 +17,26 @@ export function shouldSkipFileChange(uri: Uri): boolean {
   return !!(lastSaveTime && Date.now() - lastSaveTime < INTERNAL_SAVE_CHANGE_WINDOW_MS);
 }
 
-function setDirty(handler: Handler, uri: Uri, dirty: boolean) {
+function setDirty(handler: Handler, uri: Uri, isDirty: boolean) {
   const panel = handler.panel;
   const fileName = basename(uri.fsPath);
-  panel.title = dirty ? `${fileName}*` : fileName;
-  if (dirty) {
+  panel.title = isDirty ? `${fileName}*` : fileName;
+  if (isDirty) {
     void vscode.commands.executeCommand("workbench.action.keepEditor");
   }
 }
 
-export function handleCommonEvent(uri: Uri, handler: Handler, options?: { skipOpen?: boolean }) {
-  let readOnly = false;
+export function bindCommonEditorEvents(
+  uri: Uri,
+  handler: Handler,
+  options?: { skipOpen?: boolean },
+) {
+  let isReadOnly = false;
   const send = async () => {
     if (shouldSkipFileChange(uri)) {
       return;
     }
-    readOnly = await isUriReadOnly(uri);
+    isReadOnly = await isUriReadOnly(uri);
     if (isVirtualUri(uri)) {
       void emitVirtualOfficeOpen(handler, uri);
       return;
@@ -57,21 +61,21 @@ export function handleCommonEvent(uri: Uri, handler: Handler, options?: { skipOp
       setDirty(handler, uri, true);
     })
     .on("save", async (content) => {
-      const res = Array.isArray(content)
+      const fileBytes = Array.isArray(content)
         ? new Uint8Array(content)
         : new TextEncoder().encode(content);
-      if (readOnly) {
-        handler.emit("saveAs", { content: [...res] });
+      if (isReadOnly) {
+        handler.emit("saveAs", { content: [...fileBytes] });
         return;
       }
       fileSaveTimes[uri.toString()] = Date.now();
-      await workspace.fs.writeFile(uri, res);
+      await workspace.fs.writeFile(uri, fileBytes);
       fileSaveTimes[uri.toString()] = Date.now();
       setDirty(handler, uri, false);
       handler.emit("saveDone");
     })
     .on("saveAs", async (payload: { content: number[]; ext?: string }) => {
-      const res = new Uint8Array(payload.content);
+      const fileBytes = new Uint8Array(payload.content);
       const ext = (payload.ext ?? "xlsx").toLowerCase();
       const { dir, name } = parse(uri.fsPath);
       const defaultFileName = `${name}.${ext}`;
@@ -89,14 +93,14 @@ export function handleCommonEvent(uri: Uri, handler: Handler, options?: { skipOp
         docx: { label: "Word Document", exts: ["docx"] },
         dotx: { label: "Word Template", exts: ["dotx"] },
       };
-      const info = filterMap[ext] ?? { label: ext.toUpperCase(), exts: [ext] };
+      const saveFilter = filterMap[ext] ?? { label: ext.toUpperCase(), exts: [ext] };
       const target = await vscode.window.showSaveDialog({
         defaultUri,
-        filters: { [info.label]: info.exts },
+        filters: { [saveFilter.label]: saveFilter.exts },
       });
       if (!target) return;
       fileSaveTimes[target.toString()] = Date.now();
-      await workspace.fs.writeFile(target, res);
+      await workspace.fs.writeFile(target, fileBytes);
       fileSaveTimes[target.toString()] = Date.now();
       setDirty(handler, uri, false);
       handler.emit("saveDone");

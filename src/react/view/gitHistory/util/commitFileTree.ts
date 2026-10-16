@@ -51,7 +51,7 @@ function sortTreeNodes(nodes: FileTreeNode[]): void {
 }
 
 function compactFolders(nodes: FileTreeNode[]): FileTreeNode[] {
-  const result: FileTreeNode[] = [];
+  const compactedNodes: FileTreeNode[] = [];
   for (const node of nodes) {
     if (node.kind === "folder") {
       let merged = node;
@@ -60,17 +60,17 @@ function compactFolders(nodes: FileTreeNode[]): FileTreeNode[] {
         merged = merged.children[0];
         nameParts.push(merged.name);
       }
-      result.push({
+      compactedNodes.push({
         kind: "folder",
         name: nameParts.join("/"),
         path: merged.path,
         children: compactFolders(merged.children),
       });
     } else {
-      result.push(node);
+      compactedNodes.push(node);
     }
   }
-  return result;
+  return compactedNodes;
 }
 
 export function buildFileTree(changes: readonly GitFileChange[]): FileTreeNode[] {

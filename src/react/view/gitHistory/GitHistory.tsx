@@ -164,30 +164,30 @@ function GitHistoryView({
   const [selectedIndices, setSelectedIndices] = useState<Set<number>>(() => new Set());
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
   const [detailAnchor, setDetailAnchor] = useState<PopupAnchor | null>(null);
-  const [filterCurrentFile, setFilterCurrentFile] = useState(false);
+  const [shouldFilterCurrentFile, setShouldFilterCurrentFile] = useState(false);
   const [commitDetails, setCommitDetails] = useState<GitCommitDetails | null>(null);
-  const [detailsLoading, setDetailsLoading] = useState(false);
+  const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [detailsError, setDetailsError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [fetching, setFetching] = useState(false);
-  const [pulling, setPulling] = useState(false);
-  const [pushing, setPushing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
+  const [isPulling, setIsPulling] = useState(false);
+  const [isPushing, setIsPushing] = useState(false);
   const [hasRemoteUrl, setHasRemoteUrl] = useState(false);
   const [remoteWebUrls, setRemoteWebUrls] = useState<{ name: string; url: string }[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [warning, setWarning] = useState<string | null>(null);
   const [isExecutingAction, setIsExecutingAction] = useState(false);
-  const [moreAvailable, setMoreAvailable] = useState(false);
+  const [hasMoreCommits, setHasMoreCommits] = useState(false);
   const [maxCommits, setMaxCommits] = useState(INITIAL_MAX_COMMITS);
   const [filePath, setFilePath] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [relPath, setRelPath] = useState<string | null>(null);
-  const [findOpen, setFindOpen] = useState(false);
+  const [isFindOpen, setIsFindOpen] = useState(false);
   const [findMatchIndex, setFindMatchIndex] = useState<number | null>(null);
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [configRemotes, setConfigRemotes] = useState<GitRemoteDetail[]>([]);
-  const [configLoading, setConfigLoading] = useState(false);
+  const [isLoadingConfig, setIsLoadingConfig] = useState(false);
   const [pullDefaults, setPullDefaults] = useState<GitPullDefaults>(() => getPullDefaults(""));
   const [fileHistorySplitLayout, setFileHistorySplitLayout] = useState<FileHistorySplitLayout>(() =>
     getFileHistorySplitLayout(),
@@ -209,7 +209,7 @@ function GitHistoryView({
   const contentRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
-  const settingsOpenRef = useRef(settingsOpen);
+  const isSettingsOpenRef = useRef(isSettingsOpen);
   const { menu, showMenu, closeMenu } = useContextMenu();
   const menuContextRef = useRef<MenuContext | null>(null);
   const menuMetaRef = useRef<Record<string, MenuPayloadMeta>>({});
@@ -221,8 +221,8 @@ function GitHistoryView({
   const pendingGitActionRef = useRef<GitActionRequest | null>(null);
 
   useEffect(() => {
-    settingsOpenRef.current = settingsOpen;
-  }, [settingsOpen]);
+    isSettingsOpenRef.current = isSettingsOpen;
+  }, [isSettingsOpen]);
 
   useEffect(() => {
     selectedIndicesRef.current = selectedIndices;
@@ -303,7 +303,7 @@ function GitHistoryView({
         setDetailAnchor(null);
         setCommitDetails(null);
         setDetailsError(null);
-        setDetailsLoading(false);
+        setIsLoadingDetails(false);
       }
       openContextMenu(event, buildCommitContextMenu(commit, menuContext));
     },
@@ -539,7 +539,7 @@ function GitHistoryView({
     setDetailAnchor(null);
     setCommitDetails(null);
     setDetailsError(null);
-    setMoreAvailable(false);
+    setHasMoreCommits(false);
     loadingMoreRef.current = false;
     resetMaxCommits();
   }, [clearSelection, resetMaxCommits]);
@@ -549,7 +549,7 @@ function GitHistoryView({
     setDetailAnchor(null);
     setCommitDetails(null);
     setDetailsError(null);
-    setDetailsLoading(false);
+    setIsLoadingDetails(false);
   }, [clearSelection]);
 
   const updateDetailAnchorFromRow = useCallback((index: number) => {
@@ -572,7 +572,7 @@ function GitHistoryView({
       fileRelPath = relPathRef.current ?? undefined,
     ) => {
       if (!targetRepo) return;
-      setLoading(true);
+      setIsLoading(true);
       setError(null);
       handler.emit("loadRepository", {
         repo: targetRepo,
@@ -610,7 +610,7 @@ function GitHistoryView({
       if (append) {
         loadingMoreRef.current = true;
       } else {
-        setLoading(true);
+        setIsLoading(true);
       }
       setError(null);
       handler.emit("loadCommits", {
@@ -639,7 +639,7 @@ function GitHistoryView({
       setDetailsError(null);
       return;
     }
-    setDetailsLoading(true);
+    setIsLoadingDetails(true);
     setDetailsError(null);
     handler.emit("commitDetails", {
       repo: targetRepo,
@@ -663,25 +663,25 @@ function GitHistoryView({
   /* oxlint-enable react-hooks/immutability */
 
   const applyCommitsData = useCallback(
-    (data: GitCommitData) => {
-      setLoading(false);
-      setRefreshing(false);
+    (commitData: GitCommitData) => {
+      setIsLoading(false);
+      setIsRefreshing(false);
       loadingMoreRef.current = false;
-      if (data.error) {
-        setError(data.error);
+      if (commitData.error) {
+        setError(commitData.error);
         return;
       }
-      setCommits(data.commits);
-      commitsRef.current = data.commits;
-      setCommitHead(data.head);
-      setMoreAvailable(data.moreCommitsAvailable);
+      setCommits(commitData.commits);
+      commitsRef.current = commitData.commits;
+      setCommitHead(commitData.head);
+      setHasMoreCommits(commitData.hasMoreCommits);
 
       const pendingHash = pendingCommitHashRef.current;
       if (pendingHash) {
         pendingCommitHashRef.current = null;
         let index = -1;
-        for (let i = 0; i < data.commits.length; i++) {
-          if (data.commits[i].hash === pendingHash) {
+        for (let i = 0; i < commitData.commits.length; i++) {
+          if (commitData.commits[i].hash === pendingHash) {
             index = i;
             break;
           }
@@ -692,7 +692,7 @@ function GitHistoryView({
           setFocusIndex(index);
           updateDetailAnchorFromRow(index);
           requestAnimationFrame(() => {
-            requestCommitDetailsRef.current(repoRef.current, data.commits[index]);
+            requestCommitDetailsRef.current(repoRef.current, commitData.commits[index]);
           });
         }
       }
@@ -759,7 +759,7 @@ function GitHistoryView({
           relPathRef.current = payload.relPath;
         }
       } else {
-        setLoading(false);
+        setIsLoading(false);
       }
       initialized.current = true;
       setHasInitialized(true);
@@ -771,21 +771,21 @@ function GitHistoryView({
 
     handler
       .on("repositoryLoaded", (payload: { repoInfo: GitRepoInfo; commitData: GitCommitData }) => {
-        const info = payload.repoInfo;
-        if (info.error) {
-          setError(info.error);
-          setLoading(false);
-          setRefreshing(false);
+        const repoInfo = payload.repoInfo;
+        if (repoInfo.error) {
+          setError(repoInfo.error);
+          setIsLoading(false);
+          setIsRefreshing(false);
           return;
         }
-        setBranches(info.branches);
-        setBranchHead(info.head);
-        setRemotes(info.remotes);
-        setStashes(info.stashes);
-        stashesRef.current = info.stashes;
-        remotesRef.current = info.remotes;
-        branchesRef.current = info.branches;
-        const filterWasCleared = clearBranchFilterIfMissing(info.branches);
+        setBranches(repoInfo.branches);
+        setBranchHead(repoInfo.head);
+        setRemotes(repoInfo.remotes);
+        setStashes(repoInfo.stashes);
+        stashesRef.current = repoInfo.stashes;
+        remotesRef.current = repoInfo.remotes;
+        branchesRef.current = repoInfo.branches;
+        const filterWasCleared = clearBranchFilterIfMissing(repoInfo.branches);
         if (filterWasCleared && repoRef.current) {
           loadCommitsRef.current(
             repoRef.current,
@@ -802,15 +802,15 @@ function GitHistoryView({
         setHasRemoteUrl(extras.hasRemoteUrl);
         setRemoteWebUrls(extras.remoteWebUrls);
       })
-      .on("commits", (data: GitCommitData) => {
-        applyCommitsData(data);
+      .on("commits", (commitData: GitCommitData) => {
+        applyCommitsData(commitData);
       })
       .on(
         "commitDetails",
-        (data: { commitDetails: GitCommitDetails | null; error: string | null }) => {
-          setDetailsLoading(false);
-          setCommitDetails(data.commitDetails);
-          setDetailsError(data.error);
+        (detailsPayload: { commitDetails: GitCommitDetails | null; error: string | null }) => {
+          setIsLoadingDetails(false);
+          setCommitDetails(detailsPayload.commitDetails);
+          setDetailsError(detailsPayload.error);
         },
       )
       .on("refresh", (payload: { repos: string[] }) => {
@@ -831,7 +831,7 @@ function GitHistoryView({
         }
       })
       .on("fetch", (payload: { error: string | null }) => {
-        setFetching(false);
+        setIsFetching(false);
         if (payload.error) {
           setError(payload.error);
           return;
@@ -841,7 +841,7 @@ function GitHistoryView({
         }
       })
       .on("pull", (payload: { error: string | null }) => {
-        setPulling(false);
+        setIsPulling(false);
         if (payload.error) {
           setError(payload.error);
           return;
@@ -851,7 +851,7 @@ function GitHistoryView({
         }
       })
       .on("push", (payload: { error: string | null; cancelled?: boolean }) => {
-        setPushing(false);
+        setIsPushing(false);
         if (payload.cancelled) {
           return;
         }
@@ -865,7 +865,7 @@ function GitHistoryView({
       })
       .on("repoConfig", (payload: { remotes: GitRemoteDetail[] }) => {
         setConfigRemotes(payload.remotes);
-        setConfigLoading(false);
+        setIsLoadingConfig(false);
       })
       .on(
         "remoteActionResult",
@@ -877,8 +877,8 @@ function GitHistoryView({
           }
           if (payload.refresh && repoRef.current) {
             loadRepositoryRef.current(repoRef.current);
-            if (settingsOpenRef.current) {
-              setConfigLoading(true);
+            if (isSettingsOpenRef.current) {
+              setIsLoadingConfig(true);
               handler.emit("loadRepoConfig", { repo: repoRef.current });
             }
           }
@@ -899,14 +899,14 @@ function GitHistoryView({
       })
       .on(
         "gitActionResult",
-        (result: { error: string | null; warning: string | null; refresh: boolean }) => {
+        (actionResult: { error: string | null; warning: string | null; refresh: boolean }) => {
           if (batchModeRef.current) {
             pendingGitActionRef.current = null;
-            if (result.error) {
+            if (actionResult.error) {
               batchQueueRef.current = [];
               batchModeRef.current = null;
               setIsExecutingAction(false);
-              setError(result.error);
+              setError(actionResult.error);
               return;
             }
             runNextBatchAction();
@@ -916,13 +916,13 @@ function GitHistoryView({
           setIsExecutingAction(false);
           const pendingAction = pendingGitActionRef.current;
           pendingGitActionRef.current = null;
-          if (result.error) {
-            setError(result.error);
+          if (actionResult.error) {
+            setError(actionResult.error);
             return;
           }
           setWarning(
-            result.warning && pendingAction && WARNING_ACTIONS.has(pendingAction.action)
-              ? result.warning
+            actionResult.warning && pendingAction && WARNING_ACTIONS.has(pendingAction.action)
+              ? actionResult.warning
               : null,
           );
           const checkoutUpdate = pendingAction
@@ -950,7 +950,7 @@ function GitHistoryView({
             setSelectedBranch(null);
             selectedBranchRef.current = null;
           }
-          if (result.refresh && repoRef.current) {
+          if (actionResult.refresh && repoRef.current) {
             clearCommitList();
             loadRepositoryRef.current(repoRef.current);
           }
@@ -1030,7 +1030,7 @@ function GitHistoryView({
       setDetailAnchor(null);
       setCommitDetails(null);
       setDetailsError(null);
-      setDetailsLoading(false);
+      setIsLoadingDetails(false);
       return;
     }
 
@@ -1049,7 +1049,7 @@ function GitHistoryView({
       setDetailAnchor(null);
       setCommitDetails(null);
       setDetailsError(null);
-      setDetailsLoading(false);
+      setIsLoadingDetails(false);
       return;
     }
 
@@ -1069,19 +1069,19 @@ function GitHistoryView({
   };
 
   const handleRefresh = () => {
-    if (!repo || refreshing) {
+    if (!repo || isRefreshing) {
       return;
     }
     setWarning(null);
-    setRefreshing(true);
+    setIsRefreshing(true);
     handler.emit("refresh");
     clearCommitList();
-    setLoading(true);
+    setIsLoading(true);
   };
 
   const handleFetch = () => {
     if (!repo) return;
-    setFetching(true);
+    setIsFetching(true);
     setError(null);
     handler.emit("fetch", { repo });
   };
@@ -1090,7 +1090,7 @@ function GitHistoryView({
     if (!repo || !branchHead) {
       return;
     }
-    setPulling(true);
+    setIsPulling(true);
     setError(null);
     handler.emit("pull", {
       repo,
@@ -1251,7 +1251,7 @@ function GitHistoryView({
       if (selectedRemotes.length === 0) {
         return;
       }
-      setPushing(true);
+      setIsPushing(true);
       setError(null);
       handler.emit("push", {
         repo,
@@ -1324,14 +1324,14 @@ function GitHistoryView({
   }, []);
 
   const handleToggleFind = useCallback(() => {
-    setFindOpen((open) => {
+    setIsFindOpen((open) => {
       if (!open) {
       } else {
         setFindMatchIndex(null);
       }
       return !open;
     });
-    setSettingsOpen(false);
+    setIsSettingsOpen(false);
   }, []);
 
   const handleToggleFindRef = useRef(handleToggleFind);
@@ -1355,8 +1355,8 @@ function GitHistoryView({
         !remoteForm &&
         !remoteDeleteName &&
         !batchConfirm &&
-        !findOpen &&
-        !settingsOpen &&
+        !isFindOpen &&
+        !isSettingsOpen &&
         (e.key === "ArrowUp" || e.key === "ArrowDown")
       ) {
         if (navigateCommitDetails(e.key === "ArrowUp" ? -1 : 1)) {
@@ -1375,14 +1375,14 @@ function GitHistoryView({
       if (toolbarPrompt || remoteForm || remoteDeleteName || batchConfirm) {
         return;
       }
-      if (findOpen) {
-        setFindOpen(false);
+      if (isFindOpen) {
+        setIsFindOpen(false);
         setFindMatchIndex(null);
         e.preventDefault();
         return;
       }
-      if (settingsOpen) {
-        setSettingsOpen(false);
+      if (isSettingsOpen) {
+        setIsSettingsOpen(false);
         e.preventDefault();
         return;
       }
@@ -1391,7 +1391,7 @@ function GitHistoryView({
         setDetailAnchor(null);
         setCommitDetails(null);
         setDetailsError(null);
-        setDetailsLoading(false);
+        setIsLoadingDetails(false);
         e.preventDefault();
         return;
       }
@@ -1408,8 +1408,8 @@ function GitHistoryView({
     remoteForm,
     remoteDeleteName,
     batchConfirm,
-    findOpen,
-    settingsOpen,
+    isFindOpen,
+    isSettingsOpen,
     focusIndex,
     selectedIndices.size,
     detailAnchor,
@@ -1433,12 +1433,12 @@ function GitHistoryView({
   }, []);
 
   const handleToggleSettings = () => {
-    const next = !settingsOpen;
-    setSettingsOpen(next);
-    setFindOpen(false);
+    const shouldOpenSettings = !isSettingsOpen;
+    setIsSettingsOpen(shouldOpenSettings);
+    setIsFindOpen(false);
     setFindMatchIndex(null);
-    if (next && repo) {
-      setConfigLoading(true);
+    if (shouldOpenSettings && repo) {
+      setIsLoadingConfig(true);
       setPullDefaults(getPullDefaults(repo));
       handler.emit("loadRepoConfig", { repo });
     }
@@ -1475,35 +1475,35 @@ function GitHistoryView({
     }
   };
 
-  const handleRemoteFormSubmit = (data: { name: string; url: string; pushUrl: string }) => {
+  const handleRemoteFormSubmit = (remoteFields: { name: string; url: string; pushUrl: string }) => {
     if (!repo || !remoteForm) return;
     if (remoteForm.mode === "add") {
       handler.emit("remoteAction", {
         action: "add",
         repo,
-        name: data.name,
-        url: data.url,
-        pushUrl: data.pushUrl || undefined,
+        name: remoteFields.name,
+        url: remoteFields.url,
+        pushUrl: remoteFields.pushUrl || undefined,
       });
     } else if (remoteForm.remote) {
       handler.emit("remoteAction", {
         action: "edit",
         repo,
         name: remoteForm.remote.name,
-        newName: data.name,
-        url: data.url,
-        pushUrl: data.pushUrl || undefined,
+        newName: remoteFields.name,
+        url: remoteFields.url,
+        pushUrl: remoteFields.pushUrl || undefined,
       });
     }
     setRemoteForm(null);
-    setConfigLoading(true);
+    setIsLoadingConfig(true);
   };
 
   const handleRemoteDeleteConfirm = () => {
     if (!repo || !remoteDeleteName) return;
     handler.emit("remoteAction", { action: "delete", repo, name: remoteDeleteName });
     setRemoteDeleteName(null);
-    setConfigLoading(true);
+    setIsLoadingConfig(true);
   };
 
   const handleSearch = () => {
@@ -1517,7 +1517,7 @@ function GitHistoryView({
   };
 
   const loadMoreCommits = useCallback(() => {
-    if (!repo || loadingMoreRef.current || !moreAvailable || loading || refreshing) {
+    if (!repo || loadingMoreRef.current || !hasMoreCommits || isLoading || isRefreshing) {
       return;
     }
     loadingMoreRef.current = true;
@@ -1536,7 +1536,7 @@ function GitHistoryView({
       nextMax,
       true,
     );
-  }, [repo, moreAvailable, loading, refreshing, loadCommits, showRemoteBranches]);
+  }, [repo, hasMoreCommits, isLoading, isRefreshing, loadCommits, showRemoteBranches]);
 
   useEffect(() => {
     const content = contentRef.current;
@@ -1544,7 +1544,7 @@ function GitHistoryView({
       return;
     }
     const onScroll = () => {
-      if (!moreAvailable || loading || loadingMoreRef.current || refreshing) {
+      if (!hasMoreCommits || isLoading || loadingMoreRef.current || isRefreshing) {
         return;
       }
       const { scrollTop, clientHeight, scrollHeight } = content;
@@ -1559,9 +1559,9 @@ function GitHistoryView({
     };
     content.addEventListener("scroll", onScroll);
     return () => content.removeEventListener("scroll", onScroll);
-  }, [moreAvailable, loading, refreshing, loadMoreCommits]);
+  }, [hasMoreCommits, isLoading, isRefreshing, loadMoreCommits]);
 
-  if (!hasInitialized && loading && repos.length === 0) {
+  if (!hasInitialized && isLoading && repos.length === 0) {
     return (
       <ConfigProvider theme={antTheme}>
         <div className="git-graph git-graph-loading" style={themeStyle(cssVars)}>
@@ -1609,10 +1609,10 @@ function GitHistoryView({
           authors={authors}
           selectedAuthor={selectedAuthor}
           searchValue={searchValue}
-          refreshing={refreshing}
-          fetching={fetching}
-          pulling={pulling}
-          pushing={pushing}
+          isRefreshing={isRefreshing}
+          isFetching={isFetching}
+          isPulling={isPulling}
+          isPushing={isPushing}
           canPull={Boolean(
             repo && branchHead && !branchHead.startsWith("(HEAD detached") && remotes.length > 0,
           )}
@@ -1620,9 +1620,9 @@ function GitHistoryView({
             repo && branchHead && !branchHead.startsWith("(HEAD detached") && remotes.length > 0,
           )}
           hasRemoteUrl={hasRemoteUrl || repos.length > 1}
-          findActive={findOpen}
-          settingsActive={settingsOpen}
-          splitView={splitView}
+          isFindActive={isFindOpen}
+          isSettingsActive={isSettingsOpen}
+          isSplitView={splitView}
           onRepoChange={handleRepoChange}
           onBranchChange={(b) => {
             setSelectedBranch(b);
@@ -1650,11 +1650,11 @@ function GitHistoryView({
         <div className="git-graph-body" ref={bodyRef}>
           <div className="git-graph-body-main">
             <FindWidget
-              open={findOpen}
+              isOpen={isFindOpen}
               commits={commits}
               currentIndex={findMatchIndex}
               onClose={() => {
-                setFindOpen(false);
+                setIsFindOpen(false);
                 setFindMatchIndex(null);
               }}
               onNavigate={handleFindNavigate}
@@ -1666,7 +1666,7 @@ function GitHistoryView({
               <Alert type="warning" message={warning} closable style={{ margin: "8px 12px" }} />
             )}
             <div className="git-graph-content" ref={contentRef}>
-              {loading && commits.length === 0 ? (
+              {isLoading && commits.length === 0 ? (
                 <div className="git-graph-content-loading">
                   <Spin size="large" tip={$t("common.loading")} />
                 </div>
@@ -1701,27 +1701,27 @@ function GitHistoryView({
                 setDetailAnchor(null);
                 setCommitDetails(null);
                 setDetailsError(null);
-                setDetailsLoading(false);
+                setIsLoadingDetails(false);
               }}
             />
             <GitHistoryBottomBar commitCount={countRealCommits(commits)} />
           </div>
           <SettingsWidget
-            open={settingsOpen}
+            isOpen={isSettingsOpen}
             repo={repo}
             remotes={configRemotes}
-            loading={configLoading}
+            isLoading={isLoadingConfig}
             pullDefaults={pullDefaults}
             fileHistorySplitLayout={fileHistorySplitLayout}
-            onClose={() => setSettingsOpen(false)}
+            onClose={() => setIsSettingsOpen(false)}
             onPullDefaultsChange={handlePullDefaultsChange}
             onFileHistorySplitLayoutChange={handleFileHistorySplitLayoutChange}
             onAddRemote={() => handleRemoteAction("add")}
             onEditRemote={(name) => handleRemoteAction("edit", name)}
             onDeleteRemote={(name) => handleRemoteAction("delete", name)}
-            fetching={fetching}
-            pulling={pulling}
-            pushing={pushing}
+            isFetching={isFetching}
+            isPulling={isPulling}
+            isPushing={isPushing}
           />
         </div>
         {actionPromptStep && (
@@ -1807,12 +1807,12 @@ function GitHistoryView({
               commitHash={commits[focusIndex].hash}
               hasParents={commits[focusIndex].parents.length > 0}
               details={commitDetails}
-              loading={detailsLoading}
+              isLoading={isLoadingDetails}
               error={detailsError}
               relPath={relPath}
-              filterCurrentFile={filterCurrentFile}
+              shouldFilterCurrentFile={shouldFilterCurrentFile}
               onClose={closeCommitDetails}
-              onToggleFilterCurrentFile={() => setFilterCurrentFile((v) => !v)}
+              onToggleFilterCurrentFile={() => setShouldFilterCurrentFile((v) => !v)}
               onFileAction={executeGitAction}
               onFileContextMenu={handleFileContextMenu}
             />

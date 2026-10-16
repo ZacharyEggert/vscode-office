@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { Uri } from "vscode";
 import { RequestHeaders } from "../models/types";
-import { removeHeader } from "./misc";
+import { removeHeader } from "./httpHeaders";
 import { getCurrentTextDocument, getWorkspaceRootPath } from "./workspaceUtility";
 
 export function parseRequestHeaders(

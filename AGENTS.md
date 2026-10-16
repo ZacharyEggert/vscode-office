@@ -61,7 +61,7 @@ Every host feature registers in **both** `src/extension.ts` (desktop, Node) and 
 - Host: `Handler.bind(panel, uri)` (`src/common/handler.ts`); `.on(event, cb)` / `.emit(event, content)`. `.on` replaces the previous listener for that event, except `init`. Errors in callbacks become VS Code error toasts.
 - Webview: `handler` from `src/react/util/vscode.ts`, same `{type, content}` shape.
 - Handshake: webview `emit("init")` → host replies `open` with `{ path?, buffer?, error? }`; read it with `loadOfficeBuffer` (`src/react/util/loadOfficeContent.ts`).
-- Shared events (`save`, `saveAs`, `change` → dirty title, `editInVSCode`, `openExternal`, file-change reload) come free from `handleCommonEvent` (`src/provider/handlers/commonHandler.ts`). Save sends a string or byte array.
+- Shared events (`save`, `saveAs`, `change` → dirty title, `editInVSCode`, `openExternal`, file-change reload) come free from `bindCommonEditorEvents` (`src/provider/handlers/commonHandler.ts`). Save sends a string or byte array.
 - Initial data rides `ReactApp.view(webview, { route, ... })` (`src/service/reactApp.ts`) into a `data-config` attribute; webview reads it with `getConfigs()`. It includes `config` = the whole `vscode-office` settings section.
 
 ## Recipe: add a file viewer

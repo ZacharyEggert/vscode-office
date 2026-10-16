@@ -75,9 +75,9 @@ class ResponseContentProvider implements TextDocumentContentProvider {
   private formatHeaders(headers: OutgoingHttpHeaders | IncomingHttpHeaders): string {
     let headerString = "";
     for (const header in headers) {
-      const value = headers[header];
-      if (value) {
-        headerString += `${header}: ${Array.isArray(value) ? value.join(", ") : value}${EOL}`;
+      const headerValue = headers[header];
+      if (headerValue) {
+        headerString += `${header}: ${Array.isArray(headerValue) ? headerValue.join(", ") : headerValue}${EOL}`;
       }
     }
     return headerString;

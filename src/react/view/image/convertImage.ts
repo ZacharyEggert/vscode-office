@@ -74,8 +74,8 @@ async function loadImageBlob(image: ImageSource, format: "heic" | "tiff"): Promi
 }
 
 async function convertHeic(blob: Blob): Promise<string> {
-  const result = await heic2any({ blob, toType: "image/jpeg", quality: 0.92 });
-  const converted = Array.isArray(result) ? result[0] : result;
+  const heicOutput = await heic2any({ blob, toType: "image/jpeg", quality: 0.92 });
+  const converted = Array.isArray(heicOutput) ? heicOutput[0] : heicOutput;
   return URL.createObjectURL(converted);
 }
 

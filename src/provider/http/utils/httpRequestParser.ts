@@ -6,7 +6,8 @@ import { FormParamEncodingStrategy } from "../models/types";
 import { HttpRequest } from "../models/httpRequest";
 import { RequestParser } from "../models/requestParser";
 import { MimeUtility } from "./mimeUtility";
-import { getContentType, getHeader, removeHeader, encodeUrl } from "./misc";
+import { getContentType, getHeader, removeHeader } from "./httpHeaders";
+import { encodeUrl } from "./encoding";
 import { CombinedStream } from "./combinedStream";
 import { parseRequestHeaders, resolveRequestBodyPath } from "./requestParserUtil";
 import { convertStreamToString } from "./streamUtility";
@@ -209,17 +210,17 @@ export class HttpRequestParser implements RequestParser {
     // Check if needed to upload file
     if (lines.every((line) => !this.inputFileSyntax.test(line))) {
       if (MimeUtility.isFormUrlEncoded(contentTypeHeader)) {
-        return lines.reduce((p, c, i) => {
-          p += `${i === 0 || c.startsWith("&") ? "" : EOL}${c}`;
-          return p;
+        return lines.reduce((joinedBody, line, i) => {
+          joinedBody += `${i === 0 || line.startsWith("&") ? "" : EOL}${line}`;
+          return joinedBody;
         }, "");
       } else {
         const lineEnding = this.getLineEnding(contentTypeHeader);
-        let result = lines.join(lineEnding);
+        let joinedBody = lines.join(lineEnding);
         if (MimeUtility.isNewlineDelimitedJSON(contentTypeHeader)) {
-          result += lineEnding;
+          joinedBody += lineEnding;
         }
-        return result;
+        return joinedBody;
       }
     } else {
       const combinedStream = CombinedStream.create();

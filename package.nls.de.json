@@ -1,6 +1,4 @@
 {
-  "ext.common.yes": "JA",
-  "ext.common.no": "NEIN",
   "ext.compress.startExtract": "Entpacken wird gestartet...",
   "ext.compress.extractSuccess": "Entpacken erfolgreich!",
   "ext.compress.wrongPassword": "Falsches Passwort",

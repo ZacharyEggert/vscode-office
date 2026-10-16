@@ -42,16 +42,18 @@ export async function loadFont(source: string | OfficeOpenPayload): Promise<Font
   const cellMarginTop = 20,
     cellMarginBottom = 20,
     cellMarginLeftRight = 1;
-  const w = cellWidth - cellMarginLeftRight * 2,
-    h = cellHeight - cellMarginTop - cellMarginBottom,
+  const drawableWidth = cellWidth - cellMarginLeftRight * 2,
+    drawableHeight = cellHeight - cellMarginTop - cellMarginBottom,
     head = font.tables.head,
     maxHeight = head.yMax - head.yMin;
 
   return {
     font,
-    fontBaseline: cellMarginTop + (h * head.yMax) / maxHeight,
-    fontSize: Math.min(w / (head.xMax - head.xMin), h / maxHeight) * font.unitsPerEm,
-    fontScale: Math.min(w / (head.xMax - head.xMin), h / maxHeight),
+    fontBaseline: cellMarginTop + (drawableHeight * head.yMax) / maxHeight,
+    fontSize:
+      Math.min(drawableWidth / (head.xMax - head.xMin), drawableHeight / maxHeight) *
+      font.unitsPerEm,
+    fontScale: Math.min(drawableWidth / (head.xMax - head.xMin), drawableHeight / maxHeight),
   };
 }
 

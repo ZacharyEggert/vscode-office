@@ -5,7 +5,7 @@ import { platform, tmpdir } from "os";
 import { resolve } from "path";
 import { Uri, commands } from "vscode";
 
-export function handlerCommonDecompress(uri: Uri, handler: Handler) {
+export function prepareDecompressTarget(uri: Uri, handler: Handler) {
   const decompressPath = `${tmpdir()}/officeViewer-decompress-${new Date().getTime()}`;
   handler
     .on("showInExplorer", () => {

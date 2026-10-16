@@ -16,13 +16,13 @@ import { mkdirSync } from "fs";
 import { basename } from "path";
 import { i18n } from "@/common/global";
 import { Uri, commands, window, workspace } from "vscode";
-import { handlerCommonDecompress } from "./decompressHandler";
+import { prepareDecompressTarget } from "./decompressHandler";
 
-export async function handleTarGz(uri: Uri, handler: Handler, gzip = true) {
-  const decompressPath = handlerCommonDecompress(uri, handler);
+export async function bindTarViewer(uri: Uri, handler: Handler, gzip = true) {
+  const decompressPath = prepareDecompressTarget(uri, handler);
   handler.on("init", async () => {
-    const data = (await workspace.fs.readFile(uri)) as Buffer;
-    const tarEntries = await listTarEntries(data, gzip);
+    const archiveBytes = (await workspace.fs.readFile(uri)) as Buffer;
+    const tarEntries = await listTarEntries(archiveBytes, gzip);
     const items = tarEntries.map((entry) => ({
       path: entry.path,
       fileSize: entry.size,
@@ -32,7 +32,7 @@ export async function handleTarGz(uri: Uri, handler: Handler, gzip = true) {
     }));
     const { files, folderMap, filePaths } = buildFileTree(items);
 
-    handler.emit("size", prettyBytes(data.length));
+    handler.emit("size", prettyBytes(archiveBytes.length));
     handler.emit("extension", gzip ? "tar.gz" : "tar");
     handler.emit("data", {
       files,
@@ -53,7 +53,7 @@ export async function handleTarGz(uri: Uri, handler: Handler, gzip = true) {
         await commands.executeCommand("workbench.action.keepEditor");
         const tempPath = resolveContainedPath(decompressPath, entryName);
         try {
-          await extractTarEntries(data, decompressPath, gzip, [entryName]);
+          await extractTarEntries(archiveBytes, decompressPath, gzip, [entryName]);
           commands.executeCommand("vscode.open", Uri.file(tempPath));
         } catch (err) {
           Output.debug(err);
@@ -67,7 +67,7 @@ export async function handleTarGz(uri: Uri, handler: Handler, gzip = true) {
           mkdirSync(plan.targetDir, { recursive: true });
         }
         try {
-          await extractTarEntries(data, plan.targetDir, gzip);
+          await extractTarEntries(archiveBytes, plan.targetDir, gzip);
           window.showInformationMessage(i18n("ext.compress.extractSuccess"));
           await revealExtractResult(plan, filePaths);
         } catch (err) {

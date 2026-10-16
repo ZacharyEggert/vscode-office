@@ -44,11 +44,11 @@ export default function XmindViewer() {
   const [sheets, setSheets] = useState<XmindSheet[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [scalePercent, setScalePercent] = useState(100);
-  const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [dirty, setDirty] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [dark, setDark] = useState(false);
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
 
   useEffect(() => {
     sheetsRef.current = sheets;
@@ -89,7 +89,7 @@ export default function XmindViewer() {
   }, []);
 
   const markDirty = useCallback(() => {
-    setDirty(true);
+    setIsDirty(true);
     handler.emit("change");
   }, []);
 
@@ -147,14 +147,14 @@ export default function XmindViewer() {
   }, []);
 
   const toggleDark = useCallback(() => {
-    setDark((prev) => !prev);
+    setIsDarkTheme((prev) => !prev);
   }, []);
 
   const loadXmind = useCallback(
     async (payload: { path?: string; buffer?: number[]; error?: string; fileName?: string }) => {
-      setLoading(true);
-      setSaving(false);
-      setDirty(false);
+      setIsLoading(true);
+      setIsSaving(false);
+      setIsDirty(false);
       setError(null);
       setSheets([]);
       setSelectedId(null);
@@ -177,7 +177,7 @@ export default function XmindViewer() {
       } catch (e) {
         setError(e instanceof Error ? e.message : "Failed to load XMind file");
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     },
     [destroyMind],
@@ -185,18 +185,18 @@ export default function XmindViewer() {
 
   const handleSave = useCallback(async () => {
     const doc = documentRef.current;
-    if (!doc || saving) {
+    if (!doc || isSaving) {
       return;
     }
     try {
-      setSaving(true);
+      setIsSaving(true);
       const content = await doc.export(syncCurrentSheet());
       handler.emit("save", [...content]);
     } catch (e) {
-      setSaving(false);
+      setIsSaving(false);
       message.error(e instanceof Error ? e.message : "Failed to save XMind file");
     }
-  }, [saving, syncCurrentSheet]);
+  }, [isSaving, syncCurrentSheet]);
 
   useEffect(() => {
     handler
@@ -204,8 +204,8 @@ export default function XmindViewer() {
         loadXmind(payload);
       })
       .on("saveDone", () => {
-        setSaving(false);
-        setDirty(false);
+        setIsSaving(false);
+        setIsDirty(false);
         message.success({ duration: 1.5, content: "保存成功" });
       })
       .emit("init");
@@ -231,29 +231,29 @@ export default function XmindViewer() {
   const selected = sheets.find((sheet) => sheet.id === selectedId) ?? null;
 
   useEffect(() => {
-    if (!selected || loading || !documentRef.current) {
+    if (!selected || isLoading || !documentRef.current) {
       return;
     }
-    renderSheet(selected.data, documentRef.current.resolveImageUrl, dark);
-  }, [selected, loading, renderSheet, dark]);
+    renderSheet(selected.data, documentRef.current.resolveImageUrl, isDarkTheme);
+  }, [selected, isLoading, renderSheet, isDarkTheme]);
 
   useEffect(() => {
-    mindRef.current?.changeTheme(buildMindElixirTheme(dark));
-  }, [dark]);
+    mindRef.current?.changeTheme(buildMindElixirTheme(isDarkTheme));
+  }, [isDarkTheme]);
 
   useEffect(() => {
-    if (!dark) {
+    if (!isDarkTheme) {
       return;
     }
     return observeVscodeThemeChange(() => {
       mindRef.current?.changeTheme(buildMindElixirTheme(true));
     });
-  }, [dark]);
+  }, [isDarkTheme]);
 
   const showSidebar = sheets.length > 1;
 
   return (
-    <Layout className={`xmind-viewer${dark ? " xmind-dark" : ""}`}>
+    <Layout className={`xmind-viewer${isDarkTheme ? " xmind-dark" : ""}`}>
       <Layout className="xmind-body">
         {showSidebar && (
           <Sider width={SIDER_WIDTH} className="xmind-sider">
@@ -278,12 +278,12 @@ export default function XmindViewer() {
           </Sider>
         )}
         <Content className="xmind-main">
-          {!loading && error && (
+          {!isLoading && error && (
             <div className="xmind-empty">
               <Alert type="error" showIcon message={error} />
             </div>
           )}
-          {!loading && !error && selected && (
+          {!isLoading && !error && selected && (
             <div className="xmind-map-wrap">
               {!showSidebar && (
                 <div className="xmind-map-toolbar">
@@ -300,8 +300,8 @@ export default function XmindViewer() {
                   icon={<SaveOutlined />}
                   aria-label="Save"
                   title="保存"
-                  loading={saving}
-                  disabled={!dirty || saving}
+                  loading={isSaving}
+                  disabled={!isDirty || isSaving}
                   onClick={() => void handleSave()}
                 />
                 <div className="xmind-zoom-controls">
@@ -326,21 +326,21 @@ export default function XmindViewer() {
                 <button
                   type="button"
                   className="xmind-theme-toggle"
-                  title={dark ? "切换亮色" : "切换暗色（跟随 VS Code 主题）"}
-                  aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+                  title={isDarkTheme ? "切换亮色" : "切换暗色（跟随 VS Code 主题）"}
+                  aria-label={isDarkTheme ? "Switch to light mode" : "Switch to dark mode"}
                   onClick={toggleDark}
                 >
-                  {dark ? <SunOutlined /> : <MoonOutlined />}
+                  {isDarkTheme ? <SunOutlined /> : <MoonOutlined />}
                 </button>
               </div>
             </div>
           )}
-          {!loading && !error && !selected && (
+          {!isLoading && !error && !selected && (
             <div className="xmind-empty">No content available</div>
           )}
         </Content>
       </Layout>
-      <Spin spinning={loading} fullscreen tip="Loading XMind…" />
+      <Spin spinning={isLoading} fullscreen tip="Loading XMind…" />
     </Layout>
   );
 }

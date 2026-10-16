@@ -2,7 +2,7 @@ export const UNCOMMITTED = "*";
 
 export interface GitCommitTag {
   readonly name: string;
-  readonly annotated: boolean;
+  readonly isAnnotated: boolean;
 }
 
 export interface GitCommitRemote {
@@ -84,7 +84,7 @@ export interface GitCommitData {
   readonly commits: ReadonlyArray<GitCommit>;
   readonly head: string | null;
   readonly tags: ReadonlyArray<string>;
-  readonly moreCommitsAvailable: boolean;
+  readonly hasMoreCommits: boolean;
   readonly relPath?: string | null;
   readonly error: string | null;
 }
@@ -166,7 +166,7 @@ interface GitRefHead {
 interface GitRefTag {
   readonly hash: string;
   readonly name: string;
-  readonly annotated: boolean;
+  readonly isAnnotated: boolean;
 }
 
 interface GitRefRemote {

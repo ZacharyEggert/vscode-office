@@ -34,7 +34,7 @@ async function loadVirtualImage(uri: vscode.Uri): Promise<{
   images: { title: string; ext: string; mime: string; buffer: number[] }[];
   current: number;
 }> {
-  const data = await readUriBytes(uri);
+  const imageBytes = await readUriBytes(uri);
   const ext = extname(uri.fsPath).toLowerCase();
   const mime = getImageMime(uri.fsPath);
   return {
@@ -43,7 +43,7 @@ async function loadVirtualImage(uri: vscode.Uri): Promise<{
         title: basename(uri.fsPath),
         ext,
         mime,
-        buffer: bytesToPayloadBuffer(data),
+        buffer: bytesToPayloadBuffer(imageBytes),
       },
     ],
     current: 0,
@@ -76,7 +76,7 @@ export function isImage(fileName: string) {
   return /\.(jpg|png|gif|apng|bmp|ico|cur|jpeg|pjpeg|pjp|tif|tiff|heic|heif|webp)$/i.test(fileName);
 }
 
-export function handleImage(handler: Handler, uri: vscode.Uri, webview: vscode.Webview) {
+export function bindImageViewer(handler: Handler, uri: vscode.Uri, webview: vscode.Webview) {
   const sendImageList = async () => {
     try {
       const images = isVirtualUri(uri)

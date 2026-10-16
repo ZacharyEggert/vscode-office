@@ -1,6 +1,4 @@
 {
-  "ext.common.yes": "是",
-  "ext.common.no": "否",
   "ext.compress.startExtract": "開始解壓...",
   "ext.compress.extractSuccess": "解壓成功！",
   "ext.compress.wrongPassword": "密碼錯誤",

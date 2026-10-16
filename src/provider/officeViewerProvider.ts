@@ -2,11 +2,11 @@ import { ReactApp } from "@/service/reactApp";
 import { getFileSuffix } from "@/common/fileSuffix";
 import * as vscode from "vscode";
 import { Handler } from "../common/handler";
-import { Util } from "../common/util";
-import { handleImage, isImage } from "./handlers/imageHanlder";
-import { handleSvg } from "./handlers/svgHandler";
+import { onDocumentTextChange, rewriteWebviewResourcePaths } from "../common/webviewDocument";
+import { bindImageViewer, isImage } from "./handlers/imageHandler";
+import { bindSvgViewer } from "./handlers/svgHandler";
 import { isVirtualUri, readUriText } from "./handlers/officeContent";
-import { handleCommonEvent } from "./handlers/commonHandler";
+import { bindCommonEditorEvents } from "./handlers/commonHandler";
 import { TelemetryService } from "@/service/telemetryService";
 import {
   extensionResource,
@@ -54,12 +54,12 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
     let route: string | undefined;
     const suffix = getFileSuffix(uri.fsPath);
     const isSvg = /\.svg$/i.test(suffix);
-    handleCommonEvent(uri, handler, isSvg ? { skipOpen: true } : undefined);
+    bindCommonEditorEvents(uri, handler, isSvg ? { skipOpen: true } : undefined);
     if (isSvg) {
       route = "svg";
-      handleSvg(handler, uri);
+      bindSvgViewer(handler, uri);
     } else if (isImage(suffix)) {
-      handleImage(handler, uri, webview);
+      bindImageViewer(handler, uri, webview);
       route = "image";
     }
     switch (suffix) {
@@ -134,10 +134,10 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
     const webview = webviewPanel.webview;
     const render = async () => {
       const content = await readUriText(uri);
-      webview.html = Util.buildPath(content, webview, folderPath);
+      webview.html = rewriteWebviewResourcePaths(content, webview, folderPath);
     };
     await render();
-    Util.listen(webviewPanel, uri, () => {
+    onDocumentTextChange(webviewPanel, uri, () => {
       void render();
     });
   }
@@ -149,7 +149,11 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
   ) {
     try {
       const content = await readUriText(uri);
-      webviewPanel.webview.html = Util.buildPath(content, webviewPanel.webview, folderPath);
+      webviewPanel.webview.html = rewriteWebviewResourcePaths(
+        content,
+        webviewPanel.webview,
+        folderPath,
+      );
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to read HTML";
       webviewPanel.webview.html = `<pre>${message}</pre>`;

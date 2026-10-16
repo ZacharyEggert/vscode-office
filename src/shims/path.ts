@@ -29,7 +29,7 @@ export function join(...segments: string[]) {
 
 export function resolve(...segments: string[]) {
   const resolved = segments.flatMap((segment) => segment.split(/[/\\]/));
-  const absolute = segments[0]?.startsWith("/");
+  const isAbsolutePath = segments[0]?.startsWith("/");
   const stack: string[] = [];
   for (const part of resolved) {
     if (!part || part === ".") {
@@ -41,8 +41,8 @@ export function resolve(...segments: string[]) {
     }
     stack.push(part);
   }
-  const result = stack.join("/");
-  return absolute ? `/${result}` : result || ".";
+  const normalizedPath = stack.join("/");
+  return isAbsolutePath ? `/${normalizedPath}` : normalizedPath || ".";
 }
 
 export function isAbsolute(path: string) {

@@ -1,7 +1,7 @@
 export function getExcelThemeColor(name: string, fallback: string): string {
   const root = document.querySelector(".excel-viewer") ?? document.documentElement;
-  const value = getComputedStyle(root).getPropertyValue(name).trim();
-  return value || fallback;
+  const themeColor = getComputedStyle(root).getPropertyValue(name).trim();
+  return themeColor || fallback;
 }
 
 export function resolveExcelCellBg(bgcolor?: string): string {

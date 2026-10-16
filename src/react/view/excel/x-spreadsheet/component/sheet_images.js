@@ -1,6 +1,6 @@
 import { h } from "./element";
 import { cssPrefix } from "../config";
-import { sheetImageDataUrl } from "../../excel_images";
+import { sheetImageDataUrl } from "../../excelImages";
 import { mouseMoveUp } from "./event";
 
 const RESIZE_HANDLES = ["nw", "n", "ne", "e", "se", "s", "sw", "w"];

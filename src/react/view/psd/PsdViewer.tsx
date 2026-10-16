@@ -58,13 +58,13 @@ function LayerRow({
 export default function PsdViewer() {
   const [document, setDocument] = useState<PsdDocument | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const sponsorDark = useVscodeSponsorDark();
 
   const loadPsd = useCallback(
     async (payload: { path?: string; buffer?: number[]; error?: string }) => {
-      setLoading(true);
+      setIsLoading(true);
       setError(null);
       setDocument(null);
       setSelectedId(null);
@@ -77,7 +77,7 @@ export default function PsdViewer() {
       } catch (e) {
         setError(e instanceof Error ? e.message : "Failed to load PSD file");
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     },
     [],
@@ -128,17 +128,17 @@ export default function PsdViewer() {
           </div>
         </Sider>
         <Content className="psd-main">
-          {loading && (
+          {isLoading && (
             <div className="psd-empty">
               <Spin tip="Loading PSD…" />
             </div>
           )}
-          {!loading && error && (
+          {!isLoading && error && (
             <div className="psd-empty">
               <Alert type="error" showIcon message={error} />
             </div>
           )}
-          {!loading && !error && previewDataUrl && (
+          {!isLoading && !error && previewDataUrl && (
             <div className="psd-preview-wrap">
               <img
                 className="psd-preview-image"
@@ -148,7 +148,7 @@ export default function PsdViewer() {
               />
             </div>
           )}
-          {!loading && !error && document && !previewDataUrl && (
+          {!isLoading && !error && document && !previewDataUrl && (
             <div className="psd-empty">No preview available for this layer</div>
           )}
         </Content>

@@ -56,20 +56,20 @@ export class RequestVariableCompletionItemProvider implements CompletionItemProv
         // Remove last dot if present
         fullPath = fullPath.replace(/\.$/, "");
 
-        const result = RequestVariableCacheValueProcessor.resolveRequestVariable(
+        const resolveResult = RequestVariableCacheValueProcessor.resolveRequestVariable(
           value as HttpResponse | undefined,
           fullPath,
         );
         if (
-          result.state === ResolveState.Warning &&
-          result.message === ResolveWarningMessage.MissingHeaderName
+          resolveResult.state === ResolveState.Warning &&
+          resolveResult.message === ResolveWarningMessage.MissingHeaderName
         ) {
-          const { value } = result;
-          return Object.keys(value).map((p) => {
-            const item = new CompletionItem(p);
+          const { value: headers } = resolveResult;
+          return Object.keys(headers).map((headerName) => {
+            const item = new CompletionItem(headerName);
             item.detail = `HTTP ${ElementType[ElementType.RequestCustomVariable]}`;
-            item.documentation = new MarkdownString(`Value: \`${value[p]}\``);
-            item.insertText = p;
+            item.documentation = new MarkdownString(`Value: \`${headers[headerName]}\``);
+            item.insertText = headerName;
             item.kind = CompletionItemKind.Field;
             return item;
           });

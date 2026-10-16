@@ -9,17 +9,17 @@ import {
   excelFreezeToExpr,
   excelRowHeightToPx,
   readAutofilterRef,
-} from "./excel_meta";
-import { readWorksheetSortStateXml } from "./excel_sort_state";
-import { excelJsCellToStyle, StyleRegistry } from "./excel_styles";
-import { mergeHyperlinkMaps, readCellHyperlink } from "./excel_hyperlink";
-import { readWorksheetBackgroundImage, readWorksheetImages } from "./excel_images";
-import { readWorksheetValidations } from "./excel_validation";
+} from "./excelMeta";
+import { readWorksheetSortStateXml } from "./excelSortState";
+import { excelJsCellToStyle, StyleRegistry } from "./excelStyles";
+import { mergeHyperlinkMaps, readCellHyperlink } from "./excelHyperlink";
+import { readWorksheetBackgroundImage, readWorksheetImages } from "./excelImages";
+import { readWorksheetValidations } from "./excelValidation";
 import {
   isWorksheetProtected,
   readCellEditableFromExcel,
   readWorksheetProtection,
-} from "./excel_protection";
+} from "./excelProtection";
 import type { CellData, SheetData } from "./x-spreadsheet/index";
 
 type RowMap = NonNullable<SheetData["rows"]>;
@@ -124,8 +124,8 @@ const buildColsFromWorksheet = (worksheet: ExcelJS.Worksheet, colCount: number) 
 const formatCellText = (cell: ExcelJS.Cell) => {
   const raw = cell.value;
   if (raw && typeof raw === "object" && "hyperlink" in raw) {
-    const hv = raw as ExcelJS.CellHyperlinkValue;
-    return hv.text || hv.hyperlink || "";
+    const hyperlinkValue = raw as ExcelJS.CellHyperlinkValue;
+    return hyperlinkValue.text || hyperlinkValue.hyperlink || "";
   }
   if (cell.formula) return `=${cell.formula}`;
   const value = cell.value;

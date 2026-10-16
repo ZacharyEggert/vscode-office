@@ -38,15 +38,15 @@ function withBranchOnCommit(
   branch: string,
   hash: string,
 ): GitCommit[] | null {
-  let changed = false;
+  let hasChanged = false;
   const next = commits.map((commit) => {
     if (commit.hash !== hash || commit.heads.includes(branch)) {
       return commit;
     }
-    changed = true;
+    hasChanged = true;
     return { ...commit, heads: [...commit.heads, branch] };
   });
-  return changed ? next : null;
+  return hasChanged ? next : null;
 }
 
 interface CheckoutStateUpdate {

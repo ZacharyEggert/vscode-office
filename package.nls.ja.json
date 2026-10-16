@@ -1,6 +1,4 @@
 {
-  "ext.common.yes": "はい",
-  "ext.common.no": "いいえ",
   "ext.compress.startExtract": "展開を開始しています...",
   "ext.compress.extractSuccess": "展開に成功しました！",
   "ext.compress.wrongPassword": "パスワードが間違っています",

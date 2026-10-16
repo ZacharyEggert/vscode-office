@@ -55,23 +55,23 @@ function readRows(csvStr: string, colDelim: string, limit = Infinity): string[][
   let row: string[] = [];
   // uDSV states: 0 = field start, 1 = unquoted, 2 = quoted.
   let inCol = 0;
-  let v = "";
+  let fieldValue = "";
   let linePos = 0;
   let nextColPos = -1;
   let nextRowPos = -1;
 
   while (pos < length) {
-    const c = csvStr.charCodeAt(pos);
-    if (inCol === 0 && c === colEnclChar) {
+    const charCode = csvStr.charCodeAt(pos);
+    if (inCol === 0 && charCode === colEnclChar) {
       inCol = 2;
       pos += 1;
-    } else if (inCol !== 2 && (c === colDelimChar || c === 13 || c === 10)) {
-      row.push(v);
-      v = "";
+    } else if (inCol !== 2 && (charCode === colDelimChar || charCode === 13 || charCode === 10)) {
+      row.push(fieldValue);
+      fieldValue = "";
       inCol = 0;
       pos += 1;
-      if (c !== colDelimChar) {
-        if (c === 13 && csvStr.charCodeAt(pos) === 10) pos += 1;
+      if (charCode !== colDelimChar) {
+        if (charCode === 13 && csvStr.charCodeAt(pos) === 10) pos += 1;
         rows.push(row);
         if (rows.length >= limit) return rows;
         row = [];
@@ -91,7 +91,7 @@ function readRows(csvStr: string, colDelim: string, limit = Infinity): string[][
         nextRowPos = rowBreak.exec(csvStr)?.index ?? length;
       }
       const pos2 = Math.min(nextColPos, nextRowPos);
-      v += csvStr.slice(pos, pos2);
+      fieldValue += csvStr.slice(pos, pos2);
       pos = pos2;
     }
 
@@ -101,10 +101,10 @@ function readRows(csvStr: string, colDelim: string, limit = Infinity): string[][
       while (true) {
         const pos2 = csvStr.indexOf(colEncl, pos);
         if (pos2 === -1) throw new Error("CSV contains an unterminated quoted field.");
-        v += csvStr.slice(pos, pos2);
+        fieldValue += csvStr.slice(pos, pos2);
         pos = pos2 + 1;
         if (csvStr.charCodeAt(pos) === colEnclChar) {
-          v += colEncl;
+          fieldValue += colEncl;
           pos += 1;
         } else {
           // Remain in the field after closing, including for "".
@@ -118,7 +118,7 @@ function readRows(csvStr: string, colDelim: string, limit = Infinity): string[][
   // Preserve trailing empty fields and single-column records. A terminal
   // newline closes the last record rather than creating an extra one.
   if (linePos < length) {
-    row.push(v);
+    row.push(fieldValue);
     rows.push(row);
   }
   return rows;

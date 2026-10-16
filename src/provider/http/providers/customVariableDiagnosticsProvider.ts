@@ -141,16 +141,19 @@ export class CustomVariableDiagnosticsProvider {
             RequestVariableCache.has(document, name),
         )
         .forEach(([name, variables]) => {
-          const value = RequestVariableCache.get(document, name);
+          const cachedResponse = RequestVariableCache.get(document, name);
           variables.forEach(({ path, begin, end }) => {
             path = path.replace(/^\{{2}\s*/, "").replace(/\s*\}{2}$/, "");
-            const result = RequestVariableCacheValueProcessor.resolveRequestVariable(value, path);
-            if (result.state !== ResolveState.Success) {
+            const resolveResult = RequestVariableCacheValueProcessor.resolveRequestVariable(
+              cachedResponse,
+              path,
+            );
+            if (resolveResult.state !== ResolveState.Success) {
               diagnostics.push(
                 new Diagnostic(
                   new Range(begin, end),
-                  result.message,
-                  result.state === ResolveState.Error
+                  resolveResult.message,
+                  resolveResult.state === ResolveState.Error
                     ? DiagnosticSeverity.Error
                     : DiagnosticSeverity.Warning,
                 ),

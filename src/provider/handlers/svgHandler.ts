@@ -4,7 +4,7 @@ import { readUriText } from "@/provider/handlers/officeContent";
 import { extname } from "path";
 import { type Uri } from "vscode";
 
-export function handleSvg(handler: Handler, uri: Uri) {
+export function bindSvgViewer(handler: Handler, uri: Uri) {
   const send = async () => {
     if (shouldSkipFileChange(uri)) {
       return;

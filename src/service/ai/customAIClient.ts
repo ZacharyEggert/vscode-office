@@ -203,8 +203,8 @@ const readTextContent = (value: unknown): string => {
   return "";
 };
 
-const parseOpenAIResponse = (data: any): string => {
-  const choice = data?.choices?.[0];
+const parseOpenAIResponse = (responseBody: any): string => {
+  const choice = responseBody?.choices?.[0];
   const messageContent = choice?.message?.content;
   if (typeof messageContent === "string") {
     return messageContent;
@@ -229,12 +229,12 @@ const parseOpenAIResponse = (data: any): string => {
   return "";
 };
 
-const parseAnthropicResponse = (data: any): string => {
-  if (!Array.isArray(data?.content)) {
+const parseAnthropicResponse = (responseBody: any): string => {
+  if (!Array.isArray(responseBody?.content)) {
     return "";
   }
   let text = "";
-  for (const block of data.content) {
+  for (const block of responseBody.content) {
     if (block?.type === "text" && typeof block.text === "string") {
       text += block.text;
     }
@@ -242,8 +242,8 @@ const parseAnthropicResponse = (data: any): string => {
   return text;
 };
 
-const parseGeminiResponse = (data: any): string => {
-  const parts = data?.candidates?.[0]?.content?.parts;
+const parseGeminiResponse = (responseBody: any): string => {
+  const parts = responseBody?.candidates?.[0]?.content?.parts;
   if (!Array.isArray(parts)) {
     return "";
   }
@@ -256,25 +256,25 @@ const parseGeminiResponse = (data: any): string => {
   return text;
 };
 
-const parseOllamaResponse = (data: any): string => {
-  if (typeof data?.message?.content === "string") {
-    return data.message.content;
+const parseOllamaResponse = (responseBody: any): string => {
+  if (typeof responseBody?.message?.content === "string") {
+    return responseBody.message.content;
   }
-  if (typeof data?.response === "string") {
-    return data.response;
+  if (typeof responseBody?.response === "string") {
+    return responseBody.response;
   }
   return "";
 };
 
-const parseGenericResponse = (data: any): string => {
+const parseGenericResponse = (responseBody: any): string => {
   const direct = [
-    data?.output,
-    data?.response,
-    data?.result,
-    data?.text,
-    data?.content,
-    data?.data?.output,
-    data?.data?.text,
+    responseBody?.output,
+    responseBody?.response,
+    responseBody?.result,
+    responseBody?.text,
+    responseBody?.content,
+    responseBody?.data?.output,
+    responseBody?.data?.text,
   ];
   for (const item of direct) {
     const text = readTextContent(item);
@@ -285,28 +285,31 @@ const parseGenericResponse = (data: any): string => {
   return "";
 };
 
-const parseResponseText = (format: Exclude<CustomAIApiFormat, "auto">, data: any): string => {
+const parseResponseText = (
+  format: Exclude<CustomAIApiFormat, "auto">,
+  responseBody: any,
+): string => {
   const parsers: Array<() => string> = [];
   switch (format) {
     case "anthropic":
-      parsers.push(() => parseAnthropicResponse(data));
+      parsers.push(() => parseAnthropicResponse(responseBody));
       break;
     case "gemini":
-      parsers.push(() => parseGeminiResponse(data));
+      parsers.push(() => parseGeminiResponse(responseBody));
       break;
     case "ollama":
-      parsers.push(() => parseOllamaResponse(data));
+      parsers.push(() => parseOllamaResponse(responseBody));
       break;
     default:
-      parsers.push(() => parseOpenAIResponse(data));
+      parsers.push(() => parseOpenAIResponse(responseBody));
       break;
   }
   parsers.push(
-    () => parseOpenAIResponse(data),
-    () => parseAnthropicResponse(data),
-    () => parseGeminiResponse(data),
-    () => parseOllamaResponse(data),
-    () => parseGenericResponse(data),
+    () => parseOpenAIResponse(responseBody),
+    () => parseAnthropicResponse(responseBody),
+    () => parseGeminiResponse(responseBody),
+    () => parseOllamaResponse(responseBody),
+    () => parseGenericResponse(responseBody),
   );
 
   for (const parser of parsers) {
@@ -318,13 +321,13 @@ const parseResponseText = (format: Exclude<CustomAIApiFormat, "auto">, data: any
   return "";
 };
 
-const parseErrorMessage = (data: any, status: number, statusText: string): string => {
+const parseErrorMessage = (responseBody: any, status: number, statusText: string): string => {
   const message =
-    data?.error?.message ??
-    data?.error?.msg ??
-    data?.message ??
-    data?.detail ??
-    (typeof data?.error === "string" ? data.error : undefined);
+    responseBody?.error?.message ??
+    responseBody?.error?.msg ??
+    responseBody?.message ??
+    responseBody?.detail ??
+    (typeof responseBody?.error === "string" ? responseBody.error : undefined);
   if (typeof message === "string" && message.trim()) {
     return message;
   }
@@ -342,14 +345,14 @@ const parseStreamChunk = (format: Exclude<CustomAIApiFormat, "auto">, line: stri
     const raw = line.slice(dataPrefix.length).trim();
     if (raw === "[DONE]") return "";
     try {
-      const obj = JSON.parse(raw);
+      const streamEvent = JSON.parse(raw);
       switch (format) {
         case "anthropic":
-          return obj?.delta?.text ?? "";
+          return streamEvent?.delta?.text ?? "";
         case "gemini":
-          return obj?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+          return streamEvent?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
         default:
-          return obj?.choices?.[0]?.delta?.content ?? "";
+          return streamEvent?.choices?.[0]?.delta?.content ?? "";
       }
     } catch {
       return "";
@@ -358,8 +361,8 @@ const parseStreamChunk = (format: Exclude<CustomAIApiFormat, "auto">, line: stri
   // Ollama: newline-delimited JSON (no "data:" prefix)
   if (format === "ollama" && line.trim()) {
     try {
-      const obj = JSON.parse(line);
-      return obj?.message?.content ?? obj?.response ?? "";
+      const streamEvent = JSON.parse(line);
+      return streamEvent?.message?.content ?? streamEvent?.response ?? "";
     } catch {
       return "";
     }
@@ -401,43 +404,43 @@ export const streamCustomAI = async (options: StreamCustomAIOptions): Promise<vo
   const streamUrl = format === "gemini" ? toGeminiStreamUrl(request.url) : request.url;
   const streamBody = buildStreamBody(format, request.body as Record<string, unknown>);
 
-  const resp = await fetch(streamUrl, {
+  const response = await fetch(streamUrl, {
     method: "POST",
     headers: request.headers,
     body: JSON.stringify(streamBody),
     signal: options.signal,
   });
 
-  if (!resp.ok) {
-    const rawText = await resp.text().catch(() => "");
-    let data: any;
+  if (!response.ok) {
+    const rawText = await response.text().catch(() => "");
+    let errorBody: any;
     try {
-      data = rawText ? JSON.parse(rawText) : {};
+      errorBody = rawText ? JSON.parse(rawText) : {};
     } catch {
-      data = {};
+      errorBody = {};
     }
-    throw new Error(parseErrorMessage(data, resp.status, resp.statusText));
+    throw new Error(parseErrorMessage(errorBody, response.status, response.statusText));
   }
 
-  const reader = resp.body?.getReader();
+  const reader = response.body?.getReader();
   if (!reader) throw new Error("No response body.");
 
   const decoder = new TextDecoder();
-  let buf = "";
+  let pendingText = "";
   while (true) {
     const { done, value } = await reader.read();
     if (done) break;
-    buf += decoder.decode(value, { stream: true });
-    const lines = buf.split("\n");
-    buf = lines.pop() ?? "";
+    pendingText += decoder.decode(value, { stream: true });
+    const lines = pendingText.split("\n");
+    pendingText = lines.pop() ?? "";
     for (const line of lines) {
       const chunk = parseStreamChunk(format, line);
       if (chunk) options.onChunk(chunk);
     }
   }
   // flush remaining buffer
-  if (buf.trim()) {
-    const chunk = parseStreamChunk(format, buf);
+  if (pendingText.trim()) {
+    const chunk = parseStreamChunk(format, pendingText);
     if (chunk) options.onChunk(chunk);
   }
 };

@@ -2,11 +2,11 @@ import { ReactApp } from "@/service/reactApp";
 import { getFileSuffix } from "@/common/fileSuffix";
 import { Handler } from "@/common/handler";
 import { getExtensionResourceRoots } from "@/common/extensionResource";
-import { handleCommonEvent } from "@/provider/handlers/commonHandler";
-import { handleZip } from "@/provider/compress/zipHandler";
-import { handleRar } from "@/provider/compress/rarHandler";
-import { handleTarGz } from "@/provider/compress/tarHandler";
-import { handleSevenZip } from "@/provider/compress/sevenZipHandler";
+import { bindCommonEditorEvents } from "@/provider/handlers/commonHandler";
+import { bindZipViewer } from "@/provider/compress/zipHandler";
+import { bindRarViewer } from "@/provider/compress/rarHandler";
+import { bindTarViewer } from "@/provider/compress/tarHandler";
+import { bindSevenZipViewer } from "@/provider/compress/sevenZipHandler";
 import { TelemetryService } from "@/service/telemetryService";
 import * as vscode from "vscode";
 
@@ -44,7 +44,7 @@ export class ArchiveViewerProvider implements vscode.CustomReadonlyEditorProvide
 
     const handler = Handler.bind(webviewPanel, uri);
     const suffix = getFileSuffix(uri.fsPath);
-    handleCommonEvent(uri, handler);
+    bindCommonEditorEvents(uri, handler);
 
     switch (suffix) {
       case ".zip":
@@ -52,19 +52,19 @@ export class ArchiveViewerProvider implements vscode.CustomReadonlyEditorProvide
       case ".apk":
       case ".vsix":
       case ".crx":
-        void handleZip(uri, handler);
+        void bindZipViewer(uri, handler);
         break;
       case ".7z":
-        void handleSevenZip(uri, handler);
+        void bindSevenZipViewer(uri, handler);
         break;
       case ".rar":
-        void handleRar(uri, handler);
+        void bindRarViewer(uri, handler);
         break;
       case ".tar.gz":
-        void handleTarGz(uri, handler, true);
+        void bindTarViewer(uri, handler, true);
         break;
       case ".tar":
-        void handleTarGz(uri, handler, false);
+        void bindTarViewer(uri, handler, false);
         break;
       default:
         vscode.commands.executeCommand("vscode.openWith", uri, "default");

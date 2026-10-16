@@ -1,7 +1,7 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Card, Flex, Input } from "antd";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useWindowSize } from "../../util/reactUtils";
+import { useWindowSize } from "../../util/useWindowSize";
 import { handler } from "../../util/vscode";
 import Sponsor from "../components/Sponsor";
 import "./FontViewer.less";

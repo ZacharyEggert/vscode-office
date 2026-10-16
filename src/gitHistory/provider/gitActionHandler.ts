@@ -29,12 +29,12 @@ const MUTATING_ACTIONS = new Set([
 export class GitActionHandler {
   constructor(private readonly commands: GitRepoCommands) {}
 
-  async handle(payload: GitActionPayload): Promise<GitActionResult> {
-    const result = await this.dispatch(payload);
+  async executeGitAction(payload: GitActionPayload): Promise<GitActionResult> {
+    const actionResult = await this.dispatch(payload);
     return {
-      error: result.error,
-      warning: result.warning,
-      refresh: result.error === null && this.shouldRefresh(payload),
+      error: actionResult.error,
+      warning: actionResult.warning,
+      refresh: actionResult.error === null && this.shouldRefresh(payload),
     };
   }
 
@@ -86,15 +86,15 @@ export class GitActionHandler {
             : [];
         let warning: string | null = null;
         for (const remote of targets) {
-          const result = await this.commands.pushBranch(
+          const pushResult = await this.commands.pushBranch(
             payload.repo,
             remote,
             payload.branch,
             true,
             payload.force,
           );
-          if (result.error) return result;
-          warning ??= result.warning;
+          if (pushResult.error) return pushResult;
+          warning ??= pushResult.warning;
         }
         return { error: null, warning };
       }
@@ -145,13 +145,13 @@ export class GitActionHandler {
         if (deleteResult.error) return deleteResult;
         let warning = deleteResult.warning;
         for (const remote of payload.deleteFromRemotes ?? []) {
-          const result = await this.commands.pushTag(
+          const pushResult = await this.commands.pushTag(
             payload.repo,
             `:refs/tags/${payload.tag}`,
             remote,
           );
-          if (result.error) return result;
-          warning ??= result.warning;
+          if (pushResult.error) return pushResult;
+          warning ??= pushResult.warning;
         }
         return { error: null, warning };
       }
@@ -163,9 +163,9 @@ export class GitActionHandler {
             : [];
         let warning: string | null = null;
         for (const remote of targets) {
-          const result = await this.commands.pushTag(payload.repo, payload.tag, remote);
-          if (result.error) return result;
-          warning ??= result.warning;
+          const pushResult = await this.commands.pushTag(payload.repo, payload.tag, remote);
+          if (pushResult.error) return pushResult;
+          warning ??= pushResult.warning;
         }
         return { error: null, warning };
       }

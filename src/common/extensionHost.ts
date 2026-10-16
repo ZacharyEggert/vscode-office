@@ -2,13 +2,13 @@ import * as vscode from "vscode";
 
 const EXTENSION_HOST_WEB_CONTEXT = "office.extensionHost.web";
 
-let webExtensionHost = false;
+let isRunningInWebHost = false;
 
 export function setExtensionHostContext(): void {
-  webExtensionHost = true;
+  isRunningInWebHost = true;
   void vscode.commands.executeCommand("setContext", EXTENSION_HOST_WEB_CONTEXT, true);
 }
 
 export function isWebExtensionHost(): boolean {
-  return webExtensionHost;
+  return isRunningInWebHost;
 }

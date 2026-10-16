@@ -15,20 +15,20 @@ import { mkdirSync, writeFileSync } from "fs";
 import { basename, resolve } from "path";
 import { i18n } from "@/common/global";
 import { Uri, commands, window, workspace } from "vscode";
-import { handlerCommonDecompress } from "./decompressHandler";
+import { prepareDecompressTarget } from "./decompressHandler";
 
 function applyPassword(current: string | undefined, input?: string) {
   return input !== undefined ? input.trim() || undefined : current;
 }
 
-export async function handleZip(uri: Uri, handler: Handler) {
-  const decompressPath = handlerCommonDecompress(uri, handler);
+export async function bindZipViewer(uri: Uri, handler: Handler) {
+  const decompressPath = prepareDecompressTarget(uri, handler);
   let archivePassword: string | undefined;
   let filenameEncoding: string | undefined;
 
   handler.on("init", async () => {
-    const data = (await workspace.fs.readFile(uri)) as Buffer;
-    const opened = await ZipArchive.open(data);
+    const archiveBytes = (await workspace.fs.readFile(uri)) as Buffer;
+    const opened = await ZipArchive.open(archiveBytes);
     let { files, folderMap, fileMap } = opened;
     const { archive, encrypted, encoding } = opened;
     filenameEncoding = encoding;
@@ -39,7 +39,7 @@ export async function handleZip(uri: Uri, handler: Handler) {
     handler.emit("encrypted", encrypted);
     handler.emit("encoding", encoding);
     handler.emit("extension", extension);
-    handler.emit("size", prettyBytes(data.length));
+    handler.emit("size", prettyBytes(archiveBytes.length));
 
     let jarInfo;
     if (suffix === ".jar") {

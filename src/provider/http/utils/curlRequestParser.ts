@@ -3,7 +3,8 @@ import { RequestHeaders } from "../models/types";
 import { RestClientSettings } from "../models/configurationSettings";
 import { HttpRequest } from "../models/httpRequest";
 import { RequestParser } from "../models/requestParser";
-import { base64, hasHeader } from "./misc";
+import { hasHeader } from "./httpHeaders";
+import { base64 } from "./encoding";
 import { parseRequestHeaders, resolveRequestBodyPath } from "./requestParserUtil";
 
 const DefaultContentType = "application/x-www-form-urlencoded";
@@ -34,27 +35,27 @@ function parseCurlArgs(command: string): Record<string, any> {
   }
   if (current) tokens.push(current);
 
-  const result: Record<string, any> = { _: [] as string[] };
+  const parsedArgs: Record<string, any> = { _: [] as string[] };
   if (tokens[0]?.toLowerCase() === "curl") tokens.shift();
 
   for (let i = 0; i < tokens.length; i++) {
     const token = tokens[i];
     if (token.startsWith("-X") && token.length > 2) {
-      result.X = token.slice(2);
+      parsedArgs.X = token.slice(2);
       continue;
     }
     if (!token.startsWith("-")) {
-      const args = result._ as string[];
+      const args = parsedArgs._ as string[];
       if (!args[1]) args[1] = token;
       else args.push(token);
       continue;
     }
     const next = tokens[i + 1];
     const setFlag = (key: string, value = next) => {
-      const existing = result[key];
-      if (existing === undefined) result[key] = value;
+      const existing = parsedArgs[key];
+      if (existing === undefined) parsedArgs[key] = value;
       else if (Array.isArray(existing)) existing.push(value);
-      else result[key] = [existing, value];
+      else parsedArgs[key] = [existing, value];
       if (value === next) i++;
     };
     switch (token) {
@@ -89,21 +90,21 @@ function parseCurlArgs(command: string): Record<string, any> {
         break;
       case "-L":
       case "--location":
-        result.L = true;
+        parsedArgs.L = true;
         break;
       case "--compressed":
-        result.compressed = true;
+        parsedArgs.compressed = true;
         break;
       case "--url":
         setFlag("url");
         break;
       case "-I":
       case "--head":
-        result.X = "HEAD";
+        parsedArgs.X = "HEAD";
         break;
     }
   }
-  return result;
+  return parsedArgs;
 }
 
 export class CurlRequestParser implements RequestParser {

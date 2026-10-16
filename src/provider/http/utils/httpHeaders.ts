@@ -5,14 +5,6 @@ import {
   ResponseHeaderValue,
 } from "../models/types";
 
-export function encodeUrl(uri: string): string {
-  try {
-    return new URL(uri).href;
-  } catch {
-    return uri.replace(/[^\w\-._~:/?#[\]@!$&'()*+,;=%]/g, encodeURIComponent);
-  }
-}
-
 export function getHeader(headers: ResponseHeaders, name: string): ResponseHeaderValue;
 export function getHeader(headers: RequestHeaders, name: string): RequestHeaderValue;
 export function getHeader(
@@ -28,8 +20,8 @@ export function getHeader(
 }
 
 export function getContentType(headers: RequestHeaders | ResponseHeaders): string | undefined {
-  const value = getHeader(headers, "content-type");
-  return value?.toString();
+  const contentType = getHeader(headers, "content-type");
+  return contentType?.toString();
 }
 
 export function hasHeader(headers: RequestHeaders | ResponseHeaders, name: string): boolean {
@@ -48,19 +40,5 @@ export function removeHeader(headers: RequestHeaders | ResponseHeaders, name: st
   const headerName = Object.keys(headers).find((h) => h.toLowerCase() === name.toLowerCase());
   if (headerName) {
     delete headers[headerName];
-  }
-}
-
-export function base64(text: string | Buffer): string {
-  const buffer = Buffer.isBuffer(text) ? text : Buffer.from(text);
-  return buffer.toString("base64");
-}
-
-export function isJSONString(text: string): boolean {
-  try {
-    JSON.parse(text);
-    return true;
-  } catch {
-    return false;
   }
 }

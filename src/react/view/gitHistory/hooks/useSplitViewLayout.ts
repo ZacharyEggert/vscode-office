@@ -4,7 +4,7 @@ import { isSplitViewLayout } from "../util/splitViewLayout";
 
 export function useSplitViewLayout(initialViewColumn?: number): boolean {
   const [viewColumn, setViewColumn] = useState(initialViewColumn);
-  const [splitView, setSplitView] = useState(() =>
+  const [isSplitView, setIsSplitView] = useState(() =>
     isSplitViewLayout(window.innerHeight, initialViewColumn),
   );
 
@@ -18,17 +18,17 @@ export function useSplitViewLayout(initialViewColumn?: number): boolean {
   }, []);
 
   useEffect(() => {
-    const update = () => {
-      setSplitView(isSplitViewLayout(window.innerHeight, viewColumn));
+    const updateSplitView = () => {
+      setIsSplitView(isSplitViewLayout(window.innerHeight, viewColumn));
     };
-    update();
-    window.addEventListener("click", update);
-    window.addEventListener("focus", update);
+    updateSplitView();
+    window.addEventListener("click", updateSplitView);
+    window.addEventListener("focus", updateSplitView);
     return () => {
-      window.removeEventListener("click", update);
-      window.removeEventListener("focus", update);
+      window.removeEventListener("click", updateSplitView);
+      window.removeEventListener("focus", updateSplitView);
     };
   }, [viewColumn]);
 
-  return splitView;
+  return isSplitView;
 }

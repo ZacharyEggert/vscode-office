@@ -27,7 +27,7 @@ function InfoRow({ label, value, mono, inline }: InfoRowProps) {
 }
 
 export default function JarInfoPanel({ info }: JarInfoPanelProps) {
-  const [expanded, setExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(true);
 
   if (!info.mainClass && !info.javaMinVersion) {
     return null;
@@ -38,13 +38,13 @@ export default function JarInfoPanel({ info }: JarInfoPanelProps) {
       <button
         type="button"
         className="zip-jar-header"
-        onClick={() => setExpanded((prev) => !prev)}
-        aria-expanded={expanded}
+        onClick={() => setIsExpanded((prev) => !prev)}
+        aria-expanded={isExpanded}
       >
-        {expanded ? <IconChevronDown size={12} /> : <IconChevronRight size={12} />}
+        {isExpanded ? <IconChevronDown size={12} /> : <IconChevronRight size={12} />}
         <span>{$t("compress.jarInfo")}</span>
       </button>
-      {expanded ? (
+      {isExpanded ? (
         <div className="zip-jar-body">
           <InfoRow label={$t("compress.targetJavaVersion")} value={info.javaMinVersion} inline />
           <InfoRow label={$t("compress.mainClass")} value={info.mainClass} mono />

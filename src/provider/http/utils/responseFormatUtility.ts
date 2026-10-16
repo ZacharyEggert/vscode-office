@@ -1,6 +1,6 @@
 import { window } from "vscode";
 import { MimeUtility } from "./mimeUtility";
-import { isJSONString } from "./misc";
+import { isJSONString } from "./encoding";
 import { PrettyData } from "@/common/pretty-data";
 
 const pd = new PrettyData();

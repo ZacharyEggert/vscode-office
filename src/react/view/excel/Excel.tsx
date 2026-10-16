@@ -7,19 +7,19 @@ import { isVscodeEditorDark, observeVscodeThemeChange } from "../../util/vscodeT
 import { loadOfficeBuffer } from "../../util/loadOfficeContent.ts";
 import SponsorBar from "../components/SponsorBar";
 import "./Excel.less";
-import { MIN_VIEW_COLS, MIN_VIEW_ROWS } from "./excel_meta.ts";
+import { MIN_VIEW_COLS, MIN_VIEW_ROWS } from "./excelMeta.ts";
 import { detectCsvEncoding } from "./csvEncoding.ts";
-import { loadSheets } from "./excel_reader.ts";
+import { loadSheets } from "./excelReader.ts";
 import {
-  export_xlsx,
+  exportXlsx,
   exportSaveAs,
   buildFormattingSnapshot,
   hasFormattingChanged,
-} from "./excel_writer.ts";
+} from "./excelWriter.ts";
 import Spreadsheet from "./x-spreadsheet/index";
 import FindReplacePanel, { type FindReplacePanelHandle } from "./FindReplacePanel";
-import { parseSpreadsheetLink } from "./excel_hyperlink";
-import { initExcelLocale, t } from "./excel_i18n";
+import { parseSpreadsheetLink } from "./excelHyperlink";
+import { initExcelLocale, t } from "./excelI18n";
 
 initExcelLocale();
 
@@ -107,15 +107,15 @@ function isCsvLikeExt(ext: string): boolean {
 
 function ExcelViewer() {
   const { message, modal } = App.useApp();
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [colorMode, setColorMode] = useState(loadExcelColorMode);
   const [vscodeDark, setVscodeDark] = useState(isVscodeEditorDark);
-  const [readOnly, setReadOnly] = useState(false);
+  const [isReadOnly, setIsReadOnly] = useState(false);
   const [findPanel, setFindPanel] = useState<"find" | "replace" | null>(null);
   const findPanelRef = useRef<"find" | "replace" | null>(null);
   const findReplacePanelRef = useRef<FindReplacePanelHandle>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [saveAsVisible, setSaveAsVisible] = useState(false);
+  const [isSaveAsVisible, setIsSaveAsVisible] = useState(false);
   const [saveAsFormat, setSaveAsFormat] = useState("xlsx");
   const [activeSpreadsheet, setActiveSpreadsheet] = useState<Spreadsheet | null>(null);
   const [bottombarEl, setBottombarEl] = useState<HTMLElement | null>(null);
@@ -184,7 +184,7 @@ function ExcelViewer() {
   }, [message]);
 
   const handleSaveAs = useCallback(() => {
-    setSaveAsVisible(true);
+    setIsSaveAsVisible(true);
   }, []);
 
   const handleSave = useCallback(async () => {
@@ -215,7 +215,7 @@ function ExcelViewer() {
           getContainer: () => document.body,
           onOk: async () => {
             try {
-              await export_xlsx(spreadSheet, "xlsx", csvEncoding, { saveAs: true }, csvDelimiter);
+              await exportXlsx(spreadSheet, "xlsx", csvEncoding, { saveAs: true }, csvDelimiter);
             } catch (error) {
               console.error(`Failed to save Excel file: ${(error as Error).message}`);
               throw error;
@@ -236,7 +236,7 @@ function ExcelViewer() {
                   void (async () => {
                     dialog.destroy();
                     try {
-                      await export_xlsx(
+                      await exportXlsx(
                         spreadSheet,
                         extRef.current,
                         csvEncoding,
@@ -258,7 +258,7 @@ function ExcelViewer() {
                   void (async () => {
                     try {
                       dialog.destroy();
-                      await export_xlsx(
+                      await exportXlsx(
                         spreadSheet,
                         "xlsx",
                         csvEncoding,
@@ -282,7 +282,7 @@ function ExcelViewer() {
     }
 
     try {
-      await export_xlsx(spreadSheet, extRef.current, csvEncoding, undefined, csvDelimiter);
+      await exportXlsx(spreadSheet, extRef.current, csvEncoding, undefined, csvDelimiter);
       spreadSheet.setSaveEnabled(false);
     } catch (error) {
       console.error(`Failed to save Excel file: ${(error as Error).message}`);
@@ -292,7 +292,7 @@ function ExcelViewer() {
   const confirmSaveAs = useCallback(async (fmt: string) => {
     const spreadSheet = spreadSheetRef.current;
     if (!spreadSheet) return;
-    setSaveAsVisible(false);
+    setIsSaveAsVisible(false);
     try {
       await exportSaveAs(spreadSheet, fmt, csvEncodingRef.current, csvDelimiterRef.current);
       if (!readOnlyRef.current) {
@@ -381,7 +381,7 @@ function ExcelViewer() {
       });
       spreadSheetRef.current = spreadSheet;
       setActiveSpreadsheet(spreadSheet);
-      setLoading(false);
+      setIsLoading(false);
       spreadSheet.loadData(sheets);
       requestAnimationFrame(() => {
         setBottombarEl(document.querySelector(".x-spreadsheet-bottombar") as HTMLElement | null);
@@ -459,7 +459,7 @@ function ExcelViewer() {
         documentCacheIdRef.current = payload.documentCacheId ?? "";
         const fileReadOnly = payload.readOnly === true;
         readOnlyRef.current = fileReadOnly;
-        setReadOnly(fileReadOnly);
+        setIsReadOnly(fileReadOnly);
         loadOfficeBuffer(payload)
           .then(async (buffer) => {
             try {
@@ -468,14 +468,14 @@ function ExcelViewer() {
               const msg = (e as Error).message || String(e);
               console.error(`Failed to load Excel file: ${msg}`, e);
               setLoadError(msg);
-              setLoading(false);
+              setIsLoading(false);
             }
           })
           .catch((error) => {
             const msg = (error as Error).message || String(error);
             console.error(`Failed to load Excel file: ${msg}`, error);
             setLoadError(msg);
-            setLoading(false);
+            setIsLoading(false);
           });
       })
       .on("saveDone", () => {})
@@ -499,8 +499,8 @@ function ExcelViewer() {
 
   return (
     <div className="excel-viewer">
-      <Spin spinning={loading} fullscreen={true} />
-      {loadError && !loading && (
+      <Spin spinning={isLoading} fullscreen={true} />
+      {loadError && !isLoading && (
         <div className="excel-load-error">
           <div className="excel-load-error-panel">
             <svg
@@ -520,16 +520,16 @@ function ExcelViewer() {
           </div>
         </div>
       )}
-      {readOnly && !loading && !loadError && (
+      {isReadOnly && !isLoading && !loadError && (
         <div className="excel-readonly-banner">{t("viewer.readonlyBanner")}</div>
       )}
-      {findPanel && !loading && !loadError && (
+      {findPanel && !isLoading && !loadError && (
         <FindReplacePanel
           ref={findReplacePanelRef}
           spreadSheet={activeSpreadsheet}
           mode={findPanel}
           onClose={() => setFindPanel(null)}
-          readOnly={readOnly}
+          readOnly={isReadOnly}
           onChanged={() => {
             if (!readOnlyRef.current) {
               spreadSheetRef.current?.setSaveEnabled(true);
@@ -538,13 +538,13 @@ function ExcelViewer() {
         />
       )}
       <Modal
-        open={saveAsVisible}
+        open={isSaveAsVisible}
         title={t("button.saveAs")}
-        onCancel={() => setSaveAsVisible(false)}
+        onCancel={() => setIsSaveAsVisible(false)}
         footer={[
           <Button
             key="cancel"
-            onClick={() => setSaveAsVisible(false)}
+            onClick={() => setIsSaveAsVisible(false)}
             style={{ padding: "3px 12px", height: "auto" }}
           >
             {t("button.cancel")}
@@ -592,7 +592,7 @@ function ExcelViewer() {
         </div>
       </Modal>
       <div id="container"></div>
-      {!loading && !loadError && (
+      {!isLoading && !loadError && (
         <button
           type="button"
           className="dark-mode-toggle"
@@ -602,7 +602,7 @@ function ExcelViewer() {
           {adaptiveColorMode ? <SunOutlined /> : <MoonOutlined />}
         </button>
       )}
-      {!loading &&
+      {!isLoading &&
         !loadError &&
         bottombarEl &&
         createPortal(

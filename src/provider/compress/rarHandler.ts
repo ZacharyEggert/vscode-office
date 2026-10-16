@@ -12,25 +12,25 @@ import { createExtractorFromData, UnrarError } from "node-unrar-js";
 import { basename, resolve } from "path";
 import { i18n } from "@/common/global";
 import { Uri, commands, window, workspace } from "vscode";
-import { handlerCommonDecompress } from "./decompressHandler";
+import { prepareDecompressTarget } from "./decompressHandler";
 
 function applyPassword(current: string | undefined, input?: string) {
   return input !== undefined ? input.trim() || undefined : current;
 }
 
-export async function handleRar(uri: Uri, handler: Handler) {
-  const decompressPath = handlerCommonDecompress(uri, handler);
+export async function bindRarViewer(uri: Uri, handler: Handler) {
+  const decompressPath = prepareDecompressTarget(uri, handler);
   let archivePassword: string | undefined;
 
   handler.on("init", async () => {
-    const data = (await workspace.fs.readFile(uri)) as Buffer;
+    const archiveBytes = (await workspace.fs.readFile(uri)) as Buffer;
     const extractor = await createExtractorFromData({
-      data: new Uint8Array(data).buffer as ArrayBuffer,
+      data: new Uint8Array(archiveBytes).buffer as ArrayBuffer,
       password: archivePassword,
     });
     const list = extractor.getFileList();
     const headers = [...list.fileHeaders];
-    const encrypted =
+    const isEncrypted =
       list.arcHeader.flags.headerEncrypted || headers.some((h) => h.flags.encrypted);
 
     const { files, folderMap, filePaths } = buildFileTree(
@@ -42,8 +42,8 @@ export async function handleRar(uri: Uri, handler: Handler) {
       })),
     );
 
-    handler.emit("encrypted", encrypted);
-    handler.emit("size", prettyBytes(data.length));
+    handler.emit("encrypted", isEncrypted);
+    handler.emit("size", prettyBytes(archiveBytes.length));
     handler.emit("extension", "rar");
     handler.emit("data", {
       files,
@@ -61,21 +61,21 @@ export async function handleRar(uri: Uri, handler: Handler) {
           handler.emit("openDir", entryName);
           return;
         }
-        if (encrypted && !archivePassword) return;
+        if (isEncrypted && !archivePassword) return;
 
         await commands.executeCommand("workbench.action.keepEditor");
         const tempPath = resolveContainedPath(decompressPath, entryName);
         const success = await extractFiles(extractor, decompressPath, [entryName], archivePassword);
         if (success) {
           commands.executeCommand("vscode.open", Uri.file(tempPath));
-        } else if (archivePassword && encrypted) {
+        } else if (archivePassword && isEncrypted) {
           archivePassword = undefined;
           handler.emit("passwordError");
         }
       })
       .on("autoExtract", async (inputPassword?: string) => {
         archivePassword = applyPassword(archivePassword, inputPassword);
-        if (encrypted && !archivePassword) return;
+        if (isEncrypted && !archivePassword) return;
 
         window.showInformationMessage(i18n("ext.compress.startExtract"));
         const plan = planExtractTarget(uri.fsPath, files.length);
@@ -86,7 +86,7 @@ export async function handleRar(uri: Uri, handler: Handler) {
         if (success) {
           window.showInformationMessage(i18n("ext.compress.extractSuccess"));
           await revealExtractResult(plan, filePaths);
-        } else if (archivePassword && encrypted) {
+        } else if (archivePassword && isEncrypted) {
           archivePassword = undefined;
           handler.emit("passwordError");
         }

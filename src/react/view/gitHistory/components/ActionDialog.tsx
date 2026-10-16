@@ -342,7 +342,7 @@ export default function ActionDialog({
   }, [onCancel]);
 
   let primaryLabel = "OK";
-  let primaryDisabled = false;
+  let isPrimaryDisabled = false;
   let repositionDeps: unknown[] = [];
   let message: ReactNode = null;
   let body: ReactNode = null;
@@ -407,7 +407,7 @@ export default function ActionDialog({
     repositionDeps = [step.message, step.variant, step.commitHash];
   } else if (step.kind === "input") {
     primaryLabel = "Continue";
-    primaryDisabled = !step.optional && !inputValue.trim();
+    isPrimaryDisabled = !step.optional && !inputValue.trim();
     if (anchored) {
       message = step.title;
       body = (
@@ -424,7 +424,7 @@ export default function ActionDialog({
                   autoFocus
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter" && (!primaryDisabled || step.optional)) {
+                    if (e.key === "Enter" && (!isPrimaryDisabled || step.optional)) {
                       e.preventDefault();
                       onSubmit(inputValue);
                     }
@@ -447,7 +447,7 @@ export default function ActionDialog({
             autoFocus
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && (!primaryDisabled || step.optional)) {
+              if (e.key === "Enter" && (!isPrimaryDisabled || step.optional)) {
                 e.preventDefault();
                 onSubmit(inputValue);
               }
@@ -460,18 +460,18 @@ export default function ActionDialog({
   } else if (step.kind === "form") {
     primaryLabel = step.submitLabel;
     if (step.variant === "addTag") {
-      primaryDisabled = !formValues.tagName?.trim();
+      isPrimaryDisabled = !formValues.tagName?.trim();
     } else if (step.variant === "deleteBranch" || step.variant === "merge") {
-      primaryDisabled = false;
+      isPrimaryDisabled = false;
     } else if (
       (step.variant as string) === "pushBranch" ||
       (step.variant as string) === "pushTag"
     ) {
-      primaryDisabled = !step.fields.some(
+      isPrimaryDisabled = !step.fields.some(
         (f) => f.id.startsWith("remote_") && formValues[f.id] === "yes",
       );
     } else {
-      primaryDisabled = step.fields.some((field) => {
+      isPrimaryDisabled = step.fields.some((field) => {
         if (field.type !== "text") {
           return false;
         }
@@ -697,7 +697,7 @@ export default function ActionDialog({
                       setFormValues((prev) => ({ ...prev, [field.id]: e.target.value }));
                     }}
                     onKeyDown={(e) => {
-                      if (e.key === "Enter" && !primaryDisabled) {
+                      if (e.key === "Enter" && !isPrimaryDisabled) {
                         e.preventDefault();
                         onSubmit(formValues);
                       }
@@ -728,7 +728,7 @@ export default function ActionDialog({
     repositionDeps = [formValues, step.message, step.variant];
   } else {
     primaryLabel = step.submitLabel ?? "Continue";
-    primaryDisabled = step.options.length > 0 && !pickValue;
+    isPrimaryDisabled = step.options.length > 0 && !pickValue;
     if (step.variant === "pushRemote") {
       primaryLabel = step.submitLabel ?? "Push";
     } else if (step.variant === "openRemote") {
@@ -852,8 +852,8 @@ export default function ActionDialog({
           {body}
           <AnchoredDialogActions
             primaryLabel={primaryLabel}
-            primaryDisabled={primaryDisabled || isExecuting}
-            primaryDanger={isDangerStep(step)}
+            isPrimaryDisabled={isPrimaryDisabled || isExecuting}
+            isPrimaryDanger={isDangerStep(step)}
             isLoading={isExecuting}
             onPrimary={handlePrimary}
             onCancel={onCancel}
@@ -897,7 +897,7 @@ export default function ActionDialog({
           <button
             type="button"
             className={`git-graph-dialog-btn primary${isDangerStep(step) ? " danger" : ""}`}
-            disabled={primaryDisabled || isExecuting}
+            disabled={isPrimaryDisabled || isExecuting}
             onClick={handlePrimary}
             style={
               isExecuting ? { display: "inline-flex", alignItems: "center", gap: 6 } : undefined

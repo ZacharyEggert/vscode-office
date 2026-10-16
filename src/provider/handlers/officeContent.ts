@@ -147,14 +147,14 @@ export async function readUriBytes(uri: Uri): Promise<Uint8Array> {
 }
 
 export async function readUriText(uri: Uri): Promise<string> {
-  const data = await readUriBytes(uri);
-  return new TextDecoder("utf-8").decode(data);
+  const fileBytes = await readUriBytes(uri);
+  return new TextDecoder("utf-8").decode(fileBytes);
 }
 
-export function bytesToPayloadBuffer(data: Uint8Array): number[] {
-  const buffer: number[] = new Array(data.length);
-  for (let i = 0; i < data.length; i++) {
-    buffer[i] = data[i];
+export function bytesToPayloadBuffer(bytes: Uint8Array): number[] {
+  const buffer: number[] = new Array(bytes.length);
+  for (let i = 0; i < bytes.length; i++) {
+    buffer[i] = bytes[i];
   }
   return buffer;
 }
@@ -162,19 +162,19 @@ export function bytesToPayloadBuffer(data: Uint8Array): number[] {
 export async function emitVirtualOfficeOpen(handler: Handler, uri: Uri): Promise<void> {
   const now = Date.now();
   const ext = extname(uri.fsPath);
-  const readOnly = await isUriReadOnly(uri);
+  const isReadOnly = await isUriReadOnly(uri);
   try {
-    const data = await readUriBytes(uri);
+    const fileBytes = await readUriBytes(uri);
     const payload: Record<string, unknown> = {
       ext,
       path: getPayloadPath(uri),
       fileName: basename(uri.fsPath),
       scheme: uri.scheme,
       documentCacheId: buildDocumentCacheId(uri),
-      readOnly,
+      readOnly: isReadOnly,
       nonce: now,
     };
-    payload.buffer = bytesToPayloadBuffer(data);
+    payload.buffer = bytesToPayloadBuffer(fileBytes);
     handler.emit("open", payload);
   } catch (error) {
     handler.emit("open", {
@@ -183,7 +183,7 @@ export async function emitVirtualOfficeOpen(handler: Handler, uri: Uri): Promise
       fileName: basename(uri.fsPath),
       scheme: uri.scheme,
       documentCacheId: buildDocumentCacheId(uri),
-      readOnly,
+      readOnly: isReadOnly,
       error: error instanceof Error ? error.message : "Failed to read file",
       nonce: now,
     });
@@ -195,12 +195,12 @@ export async function emitFileOfficeOpen(
   uri: Uri,
   webview: Webview,
 ): Promise<void> {
-  const readOnly = await isUriReadOnly(uri);
+  const isReadOnly = await isUriReadOnly(uri);
   handler.emit("open", {
     ext: extname(uri.fsPath),
     path: webview.asWebviewUri(uri).toString(),
     fileName: basename(uri.fsPath),
     documentCacheId: buildDocumentCacheId(uri),
-    readOnly,
+    readOnly: isReadOnly,
   });
 }

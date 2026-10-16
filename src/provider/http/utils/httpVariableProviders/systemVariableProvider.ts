@@ -9,7 +9,7 @@ import { HttpVariable, HttpVariableContext, HttpVariableProvider } from "./httpV
 
 function parseDotenv(content: string | Buffer): Record<string, string> {
   const text = typeof content === "string" ? content : content.toString("utf8");
-  const result: Record<string, string> = {};
+  const envVars: Record<string, string> = {};
   for (const line of text.split(/\r?\n/)) {
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith("#")) continue;
@@ -23,9 +23,9 @@ function parseDotenv(content: string | Buffer): Record<string, string> {
     ) {
       value = value.slice(1, -1);
     }
-    result[key] = value;
+    envVars[key] = value;
   }
-  return result;
+  return envVars;
 }
 
 type SystemVariableValue = Pick<HttpVariable, Exclude<keyof HttpVariable, "name">>;
@@ -90,8 +90,8 @@ export class SystemVariableProvider implements HttpVariableProvider {
       return { name: variableName, error: ResolveErrorMessage.SystemVariableNotExist };
     }
 
-    const result = await this.resolveFuncs.get(variableName)!(name, document, context);
-    return { name: variableName, ...result };
+    const resolvedValue = await this.resolveFuncs.get(variableName)!(name, document, context);
+    return { name: variableName, ...resolvedValue };
   }
 
   public async getAll(document: undefined, context: HttpVariableContext): Promise<HttpVariable[]> {

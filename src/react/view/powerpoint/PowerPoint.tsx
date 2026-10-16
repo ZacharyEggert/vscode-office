@@ -95,15 +95,15 @@ export default function PowerPoint() {
   const touchPanRef = useRef<{ startX: number; startY: number; panX: number; panY: number } | null>(
     null,
   );
-  const [loading, setLoading] = useState(true);
-  const [thumbsLoading, setThumbsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingThumbnails, setIsLoadingThumbnails] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slideCount, setSlideCount] = useState(0);
   const [thumbnails, setThumbnails] = useState<string[]>([]);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
-  const [dragging, setDragging] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [dark, setDark] = useState(loadDarkMode);
 
   useEffect(() => {
@@ -198,8 +198,8 @@ export default function PowerPoint() {
 
   const loadPresentation = useCallback(
     async (payload: { path?: string; buffer?: number[]; error?: string }) => {
-      setLoading(true);
-      setThumbsLoading(false);
+      setIsLoading(true);
+      setIsLoadingThumbnails(false);
       setError(null);
       setThumbnails([]);
       setCurrentIndex(0);
@@ -216,7 +216,7 @@ export default function PowerPoint() {
           return;
         }
 
-        setLoading(false);
+        setIsLoading(false);
         await waitForCanvasContainer(wrap);
         applyCanvasSize(canvas, wrap.clientWidth, wrap.clientHeight);
 
@@ -234,7 +234,7 @@ export default function PowerPoint() {
         setSlideCount(count);
         setCurrentIndex(activeIndex);
 
-        setThumbsLoading(true);
+        setIsLoadingThumbnails(true);
         const urls = await generateThumbnails(viewer, count);
         setThumbnails(urls);
         applyCanvasSize(canvas, wrap.clientWidth, wrap.clientHeight);
@@ -243,9 +243,9 @@ export default function PowerPoint() {
         setCurrentIndex(activeIndex);
       } catch (e) {
         setError(e instanceof Error ? e.message : "Failed to load presentation");
-        setLoading(false);
+        setIsLoading(false);
       } finally {
-        setThumbsLoading(false);
+        setIsLoadingThumbnails(false);
       }
     },
     [resetView],
@@ -270,7 +270,7 @@ export default function PowerPoint() {
   useEffect(() => {
     const onKeyDown = async (e: KeyboardEvent) => {
       const viewer = viewerRef.current;
-      if (!viewer || loading) {
+      if (!viewer || isLoading) {
         return;
       }
       if (e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === "PageDown") {
@@ -285,16 +285,16 @@ export default function PowerPoint() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [loading, selectSlide]);
+  }, [isLoading, selectSlide]);
 
   useEffect(() => {
-    if (loading || slideCount === 0) {
+    if (isLoading || slideCount === 0) {
       return;
     }
     requestAnimationFrame(() => {
       rerenderSlide();
     });
-  }, [loading, slideCount, rerenderSlide]);
+  }, [isLoading, slideCount, rerenderSlide]);
 
   useEffect(() => {
     const el = canvasWrapRef.current;
@@ -339,7 +339,7 @@ export default function PowerPoint() {
     };
 
     const onWheel = (e: WheelEvent) => {
-      if (!isRightPanelEvent(e.target) || loading) {
+      if (!isRightPanelEvent(e.target) || isLoading) {
         return;
       }
       const viewer = viewerRef.current;
@@ -427,7 +427,7 @@ export default function PowerPoint() {
       el.removeEventListener("touchend", onTouchEnd);
       el.removeEventListener("touchcancel", onTouchEnd);
     };
-  }, [loading, selectSlide, applyPan, setZoomLevel]);
+  }, [isLoading, selectSlide, applyPan, setZoomLevel]);
 
   useEffect(() => {
     const el = canvasWrapRef.current;
@@ -446,7 +446,7 @@ export default function PowerPoint() {
         panX: panRef.current.x,
         panY: panRef.current.y,
       };
-      setDragging(true);
+      setIsDragging(true);
     };
 
     const onMouseMove = (e: MouseEvent) => {
@@ -460,7 +460,7 @@ export default function PowerPoint() {
 
     const endDrag = () => {
       dragRef.current = null;
-      setDragging(false);
+      setIsDragging(false);
     };
 
     const onTouchStart = (e: TouchEvent) => {
@@ -523,7 +523,7 @@ export default function PowerPoint() {
 
   return (
     <>
-      <Spin spinning={loading} fullscreen />
+      <Spin spinning={isLoading} fullscreen />
       {error && <Alert type="error" message={error} showIcon style={{ margin: 16 }} />}
       <Layout className="ppt-viewer office-viewer-themed">
         <Layout className="ppt-body">
@@ -531,12 +531,12 @@ export default function PowerPoint() {
             <div className="ppt-thumbnails-inner">
               <div className="ppt-thumbnails-header">
                 {slideCount > 0 ? `${slideCount} slides` : "Slides"}
-                {thumbsLoading && " · loading…"}
+                {isLoadingThumbnails && " · loading…"}
               </div>
               <div className="ppt-thumbnails-list" ref={thumbListRef}>
                 {slideCount > 0 &&
                   thumbnails.length === 0 &&
-                  thumbsLoading &&
+                  isLoadingThumbnails &&
                   Array.from({ length: Math.min(slideCount, 8) }, (_, i) => (
                     <div key={i} className="ppt-thumb">
                       <div className="ppt-thumb-placeholder" />
@@ -561,7 +561,7 @@ export default function PowerPoint() {
           </Sider>
           <Content className="ppt-main" ref={mainPanelRef}>
             <div
-              className={`ppt-main-canvas${zoom > 1 ? " is-pannable" : ""}${dragging ? " is-dragging" : ""}`}
+              className={`ppt-main-canvas${zoom > 1 ? " is-pannable" : ""}${isDragging ? " is-dragging" : ""}`}
               ref={canvasWrapRef}
             >
               <div className="ppt-canvas-stage" style={{ transform: getStageTransform(zoom, pan) }}>

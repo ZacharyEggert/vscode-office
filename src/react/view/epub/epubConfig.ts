@@ -220,14 +220,14 @@ export function applyEpubTheme(
 }
 
 function flattenNavItems(items: NavItem[]): NavItem[] {
-  const result: NavItem[] = [];
+  const flattenedItems: NavItem[] = [];
   for (const item of items) {
-    result.push(item);
+    flattenedItems.push(item);
     if (item.subitems?.length) {
-      result.push(...flattenNavItems(item.subitems));
+      flattenedItems.push(...flattenNavItems(item.subitems));
     }
   }
-  return result;
+  return flattenedItems;
 }
 
 export function getNavItem(book: Book, loc: { start: { href: string } }, ignoreHash = false) {

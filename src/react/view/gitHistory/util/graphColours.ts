@@ -9,12 +9,12 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 function parseRgb(color: string): [number, number, number] | null {
-  const value = color.trim();
-  if (!value) {
+  const trimmedColor = color.trim();
+  if (!trimmedColor) {
     return null;
   }
-  if (value.startsWith("#")) {
-    const hex = value.slice(1);
+  if (trimmedColor.startsWith("#")) {
+    const hex = trimmedColor.slice(1);
     if (hex.length === 3) {
       const r = parseInt(hex[0] + hex[0], 16);
       const g = parseInt(hex[1] + hex[1], 16);
@@ -29,7 +29,7 @@ function parseRgb(color: string): [number, number, number] | null {
     }
     return null;
   }
-  const match = value.match(/rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)/i);
+  const match = trimmedColor.match(/rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)/i);
   if (!match) {
     return null;
   }

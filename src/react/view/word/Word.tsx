@@ -50,13 +50,13 @@ export default function Word() {
   const editorRef = useRef<DocxEditorRef>(null);
   const readOnlyRef = useRef(false);
   const [colorMode, setColorMode] = useState<WordColorMode>(loadWordColorMode);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [readOnly, setReadOnly] = useState(false);
+  const [isReadOnly, setIsReadOnly] = useState(false);
   const [documentBuffer, setDocumentBuffer] = useState<ArrayBuffer | undefined>(undefined);
   const [documentKey, setDocumentKey] = useState("");
   const [fileName, setFileName] = useState("");
-  const [commentsSidebarOpen, setCommentsSidebarOpen] = useState(false);
+  const [isCommentsSidebarOpen, setIsCommentsSidebarOpen] = useState(false);
   const skipCommentsAutoOpenRef = useRef(true);
 
   const adaptiveColorMode = colorMode === "adaptive";
@@ -87,24 +87,24 @@ export default function Word() {
   }, [emitSave]);
 
   const loadDocument = useCallback(async (payload: WordOpenPayload) => {
-    setLoading(true);
+    setIsLoading(true);
     setError(null);
     setDocumentBuffer(undefined);
 
     try {
       const fileReadOnly = payload.readOnly === true;
       readOnlyRef.current = fileReadOnly;
-      setReadOnly(fileReadOnly);
+      setIsReadOnly(fileReadOnly);
       setFileName(payload.fileName ?? "");
       setDocumentKey(`${payload.documentCacheId ?? ""}-${payload.nonce ?? Date.now()}`);
       skipCommentsAutoOpenRef.current = true;
-      setCommentsSidebarOpen(false);
+      setIsCommentsSidebarOpen(false);
       const buffer = await loadOfficeBuffer(payload);
       setDocumentBuffer(buffer);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load document");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   }, []);
 
@@ -138,12 +138,12 @@ export default function Word() {
       >
         {adaptiveColorMode ? <SunOutlined /> : <MoonOutlined />}
       </button>
-      <Spin spinning={loading} fullscreen />
+      <Spin spinning={isLoading} fullscreen />
       {error && <Alert type="error" message={error} showIcon style={{ margin: 16 }} />}
-      {readOnly && !loading && !error && documentBuffer && (
+      {isReadOnly && !isLoading && !error && documentBuffer && (
         <div className="word-readonly-banner">Read-only — edits will be saved to a new file</div>
       )}
-      {documentBuffer && !loading && !error && (
+      {documentBuffer && !isLoading && !error && (
         <>
           <DocxEditor
             key={documentKey}
@@ -152,15 +152,15 @@ export default function Word() {
             documentBuffer={documentBuffer}
             documentName={fileName}
             documentNameEditable={false}
-            readOnly={readOnly}
-            {...(readOnly ? { mode: "viewing" as const } : {})}
-            commentsSidebarOpen={commentsSidebarOpen}
+            readOnly={isReadOnly}
+            {...(isReadOnly ? { mode: "viewing" as const } : {})}
+            commentsSidebarOpen={isCommentsSidebarOpen}
             onCommentsSidebarOpenChange={(open) => {
               if (open && skipCommentsAutoOpenRef.current) {
                 skipCommentsAutoOpenRef.current = false;
                 return;
               }
-              setCommentsSidebarOpen(open);
+              setIsCommentsSidebarOpen(open);
             }}
             colorMode="light"
             showFileOpen={false}

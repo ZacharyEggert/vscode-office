@@ -1,5 +1,5 @@
 import { Stream } from "stream";
-import { getContentType } from "../utils/misc";
+import { getContentType } from "../utils/httpHeaders";
 import { RequestHeaders } from "./types";
 
 export class HttpRequest {

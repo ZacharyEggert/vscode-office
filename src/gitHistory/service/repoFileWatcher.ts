@@ -11,7 +11,7 @@ export class RepoFileWatcher {
   private repo: string | null = null;
   private fsWatcher: vscode.FileSystemWatcher | null = null;
   private refreshTimeout: ReturnType<typeof setTimeout> | null = null;
-  private muted = false;
+  private isMuted = false;
   private resumeAt = 0;
 
   constructor(private readonly repoChangeCallback: () => void) {}
@@ -40,16 +40,16 @@ export class RepoFileWatcher {
   }
 
   mute(): void {
-    this.muted = true;
+    this.isMuted = true;
   }
 
   unmute(): void {
-    this.muted = false;
+    this.isMuted = false;
     this.resumeAt = Date.now() + 1500;
   }
 
   private refresh(uri: vscode.Uri): void {
-    if (this.muted || !this.repo) {
+    if (this.isMuted || !this.repo) {
       return;
     }
     const repoPrefix = normalizeRepoPath(this.repo) + "/";

@@ -108,9 +108,9 @@ export class MarkdownService {
     try {
       return chromeFinder();
     } catch (e) {
-      const msg = i18n("ext.markdown.noChromium");
-      vscode.window.showErrorMessage(msg);
-      throw new Error(msg);
+      const noChromiumMessage = i18n("ext.markdown.noChromium");
+      vscode.window.showErrorMessage(noChromiumMessage);
+      throw new Error(noChromiumMessage);
     }
   }
 
@@ -126,9 +126,9 @@ export class MarkdownService {
     }
 
     const uri = document.uri;
-    const info = adjustImgPath(uri, "png"),
-      { fullPath } = info;
-    let { relPath } = info;
+    const imagePathInfo = adjustImgPath(uri, "png"),
+      { fullPath } = imagePathInfo;
+    let { relPath } = imagePathInfo;
     const imagePath = isAbsolute(fullPath)
       ? fullPath
       : `${dirname(uri.fsPath)}/${relPath}`.replace(/\\/g, "/");
@@ -222,12 +222,12 @@ export class MarkdownService {
 
       const ascript = spawn("sh", [scriptPath, imagePath]);
       ascript.stdout.on("data", function (data) {
-        const result = data.toString().trim();
-        if (result == "no xclip") {
+        const scriptOutput = data.toString().trim();
+        if (scriptOutput == "no xclip") {
           vscode.window.showInformationMessage(i18n("ext.markdown.installXclip"));
           return;
         }
-        cb(result);
+        cb(scriptOutput);
       });
     }
   }

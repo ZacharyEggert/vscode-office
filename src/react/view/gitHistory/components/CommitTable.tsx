@@ -231,7 +231,7 @@ export default function CommitTable({
   onRowContextMenu,
   onRefContextMenu,
 }: CommitTableProps) {
-  const multiSelect = selectedIndices.size > 1;
+  const isMultiSelect = selectedIndices.size > 1;
   const [renderTime] = useState(() => Date.now());
   const formattedDates = useMemo(() => {
     const dates: string[] = [];
@@ -277,9 +277,9 @@ export default function CommitTable({
             const isSelected = selectedIndices.has(index);
             const rowClass = [
               "git-graph-row",
-              isSelected && multiSelect ? "multi-selected" : "",
-              isSelected && !multiSelect ? "selected" : "",
-              isSelected && multiSelect && focusIndex === index ? "selection-focus" : "",
+              isSelected && isMultiSelect ? "multi-selected" : "",
+              isSelected && !isMultiSelect ? "selected" : "",
+              isSelected && isMultiSelect && focusIndex === index ? "selection-focus" : "",
               findMatchIndex === index ? "find-match" : "",
               commitHead !== null && commit.hash === commitHead ? "current-head" : "",
               commit.hash === UNCOMMITTED ? "uncommitted" : "",

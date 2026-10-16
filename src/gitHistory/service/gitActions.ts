@@ -256,13 +256,13 @@ export class GitActions {
         return null;
       }),
     );
-    const result: RemoteWebUrl[] = [];
+    const remoteWebUrls: RemoteWebUrl[] = [];
     for (const entry of urls) {
       if (entry) {
-        result.push(entry);
+        remoteWebUrls.push(entry);
       }
     }
-    return result;
+    return remoteWebUrls;
   }
 
   async openRemoteUrl(url: string): Promise<string | null> {

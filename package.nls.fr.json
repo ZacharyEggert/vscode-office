@@ -1,6 +1,4 @@
 {
-  "ext.common.yes": "OUI",
-  "ext.common.no": "NON",
   "ext.compress.startExtract": "Extraction en cours...",
   "ext.compress.extractSuccess": "Extraction réussie !",
   "ext.compress.wrongPassword": "Mot de passe incorrect",

@@ -4,7 +4,7 @@ import Suggest from "./suggest";
 import Datepicker from "./datepicker";
 import { cssPrefix } from "../config";
 import { getFontSizePxByPt } from "../core/font";
-import { resolveExcelCellBg, resolveExcelCellColor } from "../../theme";
+import { resolveExcelCellBg, resolveExcelCellColor } from "../../excelTheme";
 // import { mouseMoveUp } from '../event';
 
 const EDITOR_CELL_HORIZONTAL_PADDING = 20;

@@ -8,13 +8,13 @@ interface FileTypeIconProps {
 }
 
 export function FileTypeIcon({ name, isDirectory, className }: FileTypeIconProps) {
-  const [failed, setFailed] = useState(false);
+  const [hasIconFailed, setHasIconFailed] = useState(false);
   const iconUrl = useMemo(() => {
     if (!name) return null;
     return isDirectory ? getFolderIconUrl(name) : getFileIconUrl(name);
   }, [name, isDirectory]);
 
-  if (!iconUrl || failed) {
+  if (!iconUrl || hasIconFailed) {
     const codicon = isDirectory ? "folder" : "file";
     return (
       <span
@@ -30,7 +30,7 @@ export function FileTypeIcon({ name, isDirectory, className }: FileTypeIconProps
       src={iconUrl}
       alt=""
       draggable={false}
-      onError={() => setFailed(true)}
+      onError={() => setHasIconFailed(true)}
     />
   );
 }

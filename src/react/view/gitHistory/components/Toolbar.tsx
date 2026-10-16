@@ -20,16 +20,16 @@ interface ToolbarProps {
   authors: string[];
   selectedAuthor: string | undefined;
   searchValue: string;
-  refreshing: boolean;
-  fetching: boolean;
-  pulling: boolean;
-  pushing: boolean;
+  isRefreshing: boolean;
+  isFetching: boolean;
+  isPulling: boolean;
+  isPushing: boolean;
   canPull: boolean;
   canPush: boolean;
   hasRemoteUrl: boolean;
-  findActive: boolean;
-  settingsActive: boolean;
-  splitView: boolean;
+  isFindActive: boolean;
+  isSettingsActive: boolean;
+  isSplitView: boolean;
   adaptiveColorMode: boolean;
   onRepoChange: (repo: string) => void;
   onBranchChange: (branch: string | null) => void;
@@ -60,16 +60,16 @@ export default function Toolbar({
   authors,
   selectedAuthor,
   searchValue,
-  refreshing,
-  fetching,
-  pulling,
-  pushing,
+  isRefreshing,
+  isFetching,
+  isPulling,
+  isPushing,
   canPull,
   canPush,
   hasRemoteUrl,
-  findActive,
-  settingsActive,
-  splitView,
+  isFindActive,
+  isSettingsActive,
+  isSplitView,
   adaptiveColorMode,
   onRepoChange,
   onBranchChange,
@@ -86,17 +86,17 @@ export default function Toolbar({
   onExpandLayout,
   onToggleColorMode,
 }: ToolbarProps) {
-  const showRepo = repos.length > 1;
-  const remoteOpClass = fetching
+  const shouldShowRepo = repos.length > 1;
+  const remoteOpClass = isFetching
     ? " git-graph-toolbar--fetching"
-    : pulling
+    : isPulling
       ? " git-graph-toolbar--pulling"
-      : pushing
+      : isPushing
         ? " git-graph-toolbar--pushing"
         : "";
 
   return (
-    <div className={`git-graph-toolbar${showRepo ? "" : " single-repo"}${remoteOpClass}`}>
+    <div className={`git-graph-toolbar${shouldShowRepo ? "" : " single-repo"}${remoteOpClass}`}>
       <div className="git-graph-toolbar-search">
         <input
           type="text"
@@ -111,7 +111,7 @@ export default function Toolbar({
       </div>
 
       <div className="git-graph-toolbar-filters">
-        {showRepo && (
+        {shouldShowRepo && (
           <VscodeDropdown
             label="Repo:"
             options={repos.map((r) => ({ value: r, label: repoLabel(r), hint: r }))}
@@ -147,26 +147,26 @@ export default function Toolbar({
         <RefreshIcon
           title="Refresh"
           onClick={onRefresh}
-          disabled={refreshing}
-          className={refreshing ? " spinning" : ""}
+          disabled={isRefreshing}
+          className={isRefreshing ? " spinning" : ""}
         />
         <FetchIcon
           title="Fetch from remote(s)"
           onClick={onFetch}
-          disabled={fetching || pushing || pulling || !repo}
-          className={fetching ? "running" : undefined}
+          disabled={isFetching || isPushing || isPulling || !repo}
+          className={isFetching ? "running" : undefined}
         />
         <PullIcon
           title="Pull current branch from remote"
           onClick={onPull}
-          disabled={pulling || pushing || fetching || !canPull}
-          className={pulling ? "running" : undefined}
+          disabled={isPulling || isPushing || isFetching || !canPull}
+          className={isPulling ? "running" : undefined}
         />
         <PushIcon
           title="Push current branch to remote"
           onClick={onPush}
-          disabled={pushing || fetching || pulling || !canPush}
-          className={pushing ? "running" : undefined}
+          disabled={isPushing || isFetching || isPulling || !canPush}
+          className={isPushing ? "running" : undefined}
         />
         <RemoteIcon
           title={hasRemoteUrl ? "Open remote repository" : "No remote URL configured"}
@@ -176,20 +176,20 @@ export default function Toolbar({
       </div>
 
       <div className="git-graph-toolbar-tools">
-        {splitView && (
+        {isSplitView && (
           <ExpandLayoutIcon title="Expand to single editor layout" onClick={onExpandLayout} />
         )}
         <ThemeToggleIcon adaptive={adaptiveColorMode} onClick={onToggleColorMode} />
         <FindIcon
           title="Find in commit history (Ctrl+F)"
           onClick={onToggleFind}
-          className={findActive ? "active" : undefined}
+          className={isFindActive ? "active" : undefined}
           disabled={!repo}
         />
         <SettingsIcon
           title="Repository settings"
           onClick={onToggleSettings}
-          className={settingsActive ? "active" : undefined}
+          className={isSettingsActive ? "active" : undefined}
           disabled={!repo}
         />
       </div>

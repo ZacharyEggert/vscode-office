@@ -111,16 +111,16 @@ export function readWorksheetImages(
   worksheet: ExcelJS.Worksheet,
   workbook: ExcelJS.Workbook,
 ): SheetImage[] {
-  const items = worksheet.getImages();
+  const worksheetImages = worksheet.getImages();
   const images: SheetImage[] = [];
-  for (let i = 0; i < items.length; i += 1) {
-    const item = items[i];
-    const imageId = Number(item.imageId);
+  for (let i = 0; i < worksheetImages.length; i += 1) {
+    const worksheetImage = worksheetImages[i];
+    const imageId = Number(worksheetImage.imageId);
     if (Number.isNaN(imageId)) continue;
     const media = workbook.getImage(imageId);
     const payload = mediaToSheetImageData(media);
     if (!payload) continue;
-    const range = item.range;
+    const range = worksheetImage.range;
     if (!range?.tl) continue;
     images.push({
       id: `img_${i}`,

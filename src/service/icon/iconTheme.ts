@@ -23,11 +23,11 @@ function iconNameToFileName(
   iconDefinitions: Record<string, { iconPath: string }>,
   iconName: string,
 ): string {
-  const def = iconDefinitions[iconName];
-  if (!def?.iconPath) {
+  const iconDefinition = iconDefinitions[iconName];
+  if (!iconDefinition?.iconPath) {
     return `${iconName}.svg`;
   }
-  const normalized = def.iconPath.replace(/\\/g, "/");
+  const normalized = iconDefinition.iconPath.replace(/\\/g, "/");
   const slash = normalized.lastIndexOf("/");
   return slash >= 0 ? normalized.slice(slash + 1) : normalized;
 }
@@ -36,11 +36,11 @@ function mapAssociationToFiles(
   associations: Record<string, string>,
   iconDefinitions: Record<string, { iconPath: string }>,
 ): Record<string, string> {
-  const result: Record<string, string> = {};
+  const iconFilesByKey: Record<string, string> = {};
   for (const [key, iconName] of Object.entries(associations)) {
-    result[key.toLowerCase()] = iconNameToFileName(iconDefinitions, iconName);
+    iconFilesByKey[key.toLowerCase()] = iconNameToFileName(iconDefinitions, iconName);
   }
-  return result;
+  return iconFilesByKey;
 }
 
 export function buildIconMaps(theme: MaterialIconThemeJson): IconMaps {

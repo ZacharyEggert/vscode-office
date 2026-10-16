@@ -271,26 +271,26 @@ export class MessageRouter {
     const relPath = this.resolveRelPath(payload.repo, payload.relPath);
     const request = { ...payload, relPath };
 
-    let resultPromise: ReturnType<CommitService["loadRepository"]>;
+    let loadedRepositoryPromise: ReturnType<CommitService["loadRepository"]>;
     if (this.canReuseWarmup(payload, relPath)) {
-      resultPromise = this.warmupPromise!;
+      loadedRepositoryPromise = this.warmupPromise!;
     } else {
-      resultPromise = this.commitService.loadRepository(request);
+      loadedRepositoryPromise = this.commitService.loadRepository(request);
     }
     this.warmupPromise = null;
     this.warmupRepo = null;
     this.warmupRelPath = undefined;
 
-    const result = await resultPromise;
+    const loadedRepository = await loadedRepositoryPromise;
     if (refreshId !== this.loadRepositoryId) {
       return;
     }
     this.handler.emit("repositoryLoaded", {
-      repoInfo: result.repoInfo,
-      commitData: result.commitData,
+      repoInfo: loadedRepository.repoInfo,
+      commitData: loadedRepository.commitData,
       relPath: relPath ?? null,
     });
-    if (!result.repoInfo.error) {
+    if (!loadedRepository.repoInfo.error) {
       this.startWatchingRepo(payload.repo);
       void this.loadRepoExtras(
         {
@@ -301,13 +301,13 @@ export class MessageRouter {
           includeCommitsMentionedByReflogs: request.includeCommitsMentionedByReflogs,
           onlyFollowFirstParent: request.onlyFollowFirstParent,
           commitOrdering: request.commitOrdering,
-          remotes: result.repoInfo.remotes,
+          remotes: loadedRepository.repoInfo.remotes,
           hideRemotes: request.hideRemotes,
-          stashes: result.repoInfo.stashes,
+          stashes: loadedRepository.repoInfo.stashes,
           searchValue: request.searchValue,
           relPath,
         },
-        result.repoInfo.remotes,
+        loadedRepository.repoInfo.remotes,
       );
     }
   }
@@ -329,7 +329,7 @@ export class MessageRouter {
 
   private async onLoadRepoInfo(payload: LoadRepoInfoPayload): Promise<void> {
     const refreshId = ++this.loadRepoInfoId;
-    const info = await this.commitService.getRepoInfo(
+    const repoInfo = await this.commitService.getRepoInfo(
       payload.repo,
       payload.showRemoteBranches,
       payload.showStashes,
@@ -337,7 +337,7 @@ export class MessageRouter {
     if (refreshId !== this.loadRepoInfoId) {
       return;
     }
-    this.handler.emit("repoInfo", info);
+    this.handler.emit("repoInfo", repoInfo);
     void this.loadRepoExtras(
       {
         repo: payload.repo,
@@ -347,12 +347,12 @@ export class MessageRouter {
         includeCommitsMentionedByReflogs: false,
         onlyFollowFirstParent: false,
         commitOrdering: "date",
-        remotes: info.remotes,
+        remotes: repoInfo.remotes,
         hideRemotes: [],
-        stashes: info.stashes,
+        stashes: repoInfo.stashes,
         relPath: this.resolveRelPath(payload.repo),
       },
-      info.remotes,
+      repoInfo.remotes,
     );
   }
 
@@ -378,7 +378,7 @@ export class MessageRouter {
   private async onLoadCommits(payload: LoadCommitsPayload): Promise<void> {
     const refreshId = ++this.loadCommitsId;
     const relPath = this.resolveRelPath(payload.repo, payload.relPath);
-    const data = await this.commitService.getCommits({
+    const commitsPage = await this.commitService.getCommits({
       repo: payload.repo,
       branches: payload.branches,
       maxCommits: payload.maxCommits || DEFAULT_MAX_COMMITS,
@@ -395,7 +395,7 @@ export class MessageRouter {
       relPath,
     });
     if (refreshId === this.loadCommitsId) {
-      this.handler.emit("commits", { ...data, relPath: relPath ?? null });
+      this.handler.emit("commits", { ...commitsPage, relPath: relPath ?? null });
       void this.loadRepoExtras(
         {
           repo: payload.repo,
@@ -417,13 +417,13 @@ export class MessageRouter {
   }
 
   private async onCommitDetails(payload: CommitDetailsPayload): Promise<void> {
-    const data = await this.commitService.getCommitDetails(
+    const commitDetails = await this.commitService.getCommitDetails(
       payload.repo,
       payload.commitHash,
       payload.hasParents,
       payload.stash,
     );
-    this.handler.emit("commitDetails", data);
+    this.handler.emit("commitDetails", commitDetails);
   }
 
   private async onRefresh(): Promise<void> {
@@ -510,15 +510,15 @@ export class MessageRouter {
   }
 
   private async onRemoteAction(payload: RemoteActionPayload): Promise<void> {
-    const result = await this.gitActions.manageRemote(payload);
-    if (result.cancelled) {
+    const remoteActionOutcome = await this.gitActions.manageRemote(payload);
+    if (remoteActionOutcome.cancelled) {
       this.handler.emit("remoteActionResult", { error: null, cancelled: true, refresh: false });
       return;
     }
     this.handler.emit("remoteActionResult", {
-      error: result.error,
+      error: remoteActionOutcome.error,
       cancelled: false,
-      refresh: result.error === null,
+      refresh: remoteActionOutcome.error === null,
     });
   }
 
@@ -535,11 +535,15 @@ export class MessageRouter {
   }
 
   private async onGitAction(payload: GitActionPayload): Promise<void> {
-    const result = await this.gitActionHandler.handle(payload);
-    if (result.error) {
-      this.handler.emit("gitActionResult", { error: result.error, warning: null, refresh: false });
+    const actionResult = await this.gitActionHandler.executeGitAction(payload);
+    if (actionResult.error) {
+      this.handler.emit("gitActionResult", {
+        error: actionResult.error,
+        warning: null,
+        refresh: false,
+      });
       return;
     }
-    this.handler.emit("gitActionResult", result);
+    this.handler.emit("gitActionResult", actionResult);
   }
 }

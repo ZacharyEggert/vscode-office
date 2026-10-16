@@ -60,8 +60,8 @@ function getMermaidScriptSrc(type) {
  * create toc if not exists.
  */
 function addTocToContent(text, config) {
-  const needOutline = !text.match(/\[toc\]/i) && !config.withoutOutline;
-  if (!needOutline) {
+  const shouldAddOutline = !text.match(/\[toc\]/i) && !config.withoutOutline;
+  if (!shouldAddOutline) {
     return text;
   }
   const frontMatterMatch = text.match(/^---[\s\S]*?\n---\s*\n?/);

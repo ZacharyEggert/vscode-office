@@ -1,4 +1,4 @@
-import type { SpreadsheetAutofilter } from "./excel_meta";
+import type { SpreadsheetAutofilter } from "./excelMeta";
 
 const AUTO_FILTER_RE = /<autoFilter\b[^>]*ref="([^"]+)"[^>]*(?:\/>|>([\s\S]*?)<\/autoFilter>)/i;
 const SORT_STATE_RE = /<sortState\b[\s\S]*?<\/sortState>/i;

@@ -1,6 +1,6 @@
 import { basename } from "path";
 import { Uri, ViewColumn, window, type ExtensionContext } from "vscode";
-import { Util } from "../common/util";
+import { onDocumentTextChange, rewriteWebviewResourcePaths } from "../common/webviewDocument";
 import { extensionResource, getExtensionResourceRoots } from "../common/extensionResource";
 import { readUriText } from "../common/workspaceFs";
 import { fileTypeFromPath } from "@/service/officeViewType";
@@ -33,13 +33,17 @@ export class HtmlService {
     const render = async () => {
       const useActiveEditor = activeEditor?.document.uri.toString() === uri.toString();
       const content = useActiveEditor ? activeEditor.document.getText() : await readUriText(uri);
-      webviewPanel.webview.html = Util.buildPath(content, webviewPanel.webview, folderUri);
+      webviewPanel.webview.html = rewriteWebviewResourcePaths(
+        content,
+        webviewPanel.webview,
+        folderUri,
+      );
     };
 
     webviewPanel.iconPath = extensionResource(context, "icons", "html.svg");
     void render();
 
-    Util.listen(webviewPanel, uri, () => {
+    onDocumentTextChange(webviewPanel, uri, () => {
       void render().then(() => {
         webviewPanel.webview.html += `<input type="hidden" value="${new Date().getTime()}"/>`;
       });

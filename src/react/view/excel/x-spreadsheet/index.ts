@@ -15,8 +15,8 @@ import {
   replaceCellText,
   type FindMatch,
   type FindOptions,
-} from "../excel_find";
-import { parseSpreadsheetLink } from "../excel_hyperlink";
+} from "../excelFind";
+import { parseSpreadsheetLink } from "../excelHyperlink";
 import { expr2xy } from "./core/alphabet";
 import { getFontSizePxByPt } from "./core/font";
 
@@ -637,4 +637,4 @@ if (window) {
 
 export default Spreadsheet;
 export { spreadsheet };
-export type { FindMatch, FindOptions } from "../excel_find";
+export type { FindMatch, FindOptions } from "../excelFind";

@@ -14,7 +14,7 @@ import { basename, dirname, parse, relative, sep } from "path";
 import SevenZip from "7z-wasm";
 import { i18n } from "@/common/global";
 import { Uri, commands, window, workspace } from "vscode";
-import { handlerCommonDecompress } from "./decompressHandler";
+import { prepareDecompressTarget } from "./decompressHandler";
 
 function applyPassword(current: string | undefined, input?: string) {
   return input !== undefined ? input.trim() || undefined : current;
@@ -28,8 +28,8 @@ interface SevenZipEntry {
   modifyDateTime?: string | null;
 }
 
-export async function handleSevenZip(uri: Uri, handler: Handler) {
-  const decompressPath = handlerCommonDecompress(uri, handler);
+export async function bindSevenZipViewer(uri: Uri, handler: Handler) {
+  const decompressPath = prepareDecompressTarget(uri, handler);
   let archivePassword: string | undefined;
   let filenameEncoding: string | undefined;
 
@@ -42,14 +42,14 @@ export async function handleSevenZip(uri: Uri, handler: Handler) {
     const stat = await workspace.fs.stat(uri);
 
     try {
-      const { entries, encrypted } = await listSevenZipEntries(
+      const { entries, encrypted: isEncrypted } = await listSevenZipEntries(
         uri.fsPath,
         archivePassword,
         filenameEncoding,
       );
       const { files, folderMap, filePaths } = buildFileTree(entries);
 
-      handler.emit("encrypted", encrypted);
+      handler.emit("encrypted", isEncrypted);
       handler.emit("size", prettyBytes(stat.size));
       handler.emit("extension", "7z");
       handler.emit("data", {
@@ -68,7 +68,7 @@ export async function handleSevenZip(uri: Uri, handler: Handler) {
             handler.emit("openDir", entryName);
             return;
           }
-          if (encrypted && !archivePassword) return;
+          if (isEncrypted && !archivePassword) return;
 
           await commands.executeCommand("workbench.action.keepEditor");
           const tempPath = resolveContainedPath(decompressPath, entryName);
@@ -81,14 +81,14 @@ export async function handleSevenZip(uri: Uri, handler: Handler) {
           );
           if (success) {
             commands.executeCommand("vscode.open", Uri.file(tempPath));
-          } else if (archivePassword && encrypted) {
+          } else if (archivePassword && isEncrypted) {
             archivePassword = undefined;
             handler.emit("passwordError");
           }
         })
         .on("autoExtract", async (inputPassword?: string) => {
           archivePassword = applyPassword(archivePassword, inputPassword);
-          if (encrypted && !archivePassword) return;
+          if (isEncrypted && !archivePassword) return;
 
           window.showInformationMessage(i18n("ext.compress.startExtract"));
           const plan = planExtractTarget(uri.fsPath, files.length);
@@ -106,7 +106,7 @@ export async function handleSevenZip(uri: Uri, handler: Handler) {
           if (success) {
             window.showInformationMessage(i18n("ext.compress.extractSuccess"));
             await revealExtractResult(plan, filePaths);
-          } else if (archivePassword && encrypted) {
+          } else if (archivePassword && isEncrypted) {
             archivePassword = undefined;
             handler.emit("passwordError");
           }
@@ -142,43 +142,45 @@ async function listSevenZipEntries(archivePath: string, password?: string, encod
   // 7z-wasm stdout omits the dash separators between entries, so split on each "Path = " line.
   const blocks = stdout.split(/\r?\n(?=Path = )/);
   const entries: SevenZipEntry[] = [];
-  let encrypted = false;
+  let isEncrypted = false;
 
   for (const block of blocks) {
-    const info: Record<string, string> = {};
+    const entryFields: Record<string, string> = {};
     for (const line of block.split(/\r?\n/)) {
       const match = line.match(/^([^=]+) = (.*)$/);
       if (match) {
-        info[match[1].trim()] = match[2].trim();
+        entryFields[match[1].trim()] = match[2].trim();
       }
     }
 
-    if (!info.Path) {
+    if (!entryFields.Path) {
       continue;
     }
 
-    const path = info.Path.replace(/\\/g, "/");
+    const path = entryFields.Path.replace(/\\/g, "/");
     const isDirectory =
-      info.Folder === "+" || path.endsWith("/") || /^D(\s|$)/.test(info.Attributes ?? "");
+      entryFields.Folder === "+" ||
+      path.endsWith("/") ||
+      /^D(\s|$)/.test(entryFields.Attributes ?? "");
 
-    if (!isDirectory && info.Size === undefined) {
+    if (!isDirectory && entryFields.Size === undefined) {
       continue;
     }
 
-    const fileSize = Number(info.Size ?? 0);
-    const compressedSize = Number(info["Packed Size"] ?? info.Size ?? 0);
+    const fileSize = Number(entryFields.Size ?? 0);
+    const compressedSize = Number(entryFields["Packed Size"] ?? entryFields.Size ?? 0);
 
-    encrypted = encrypted || info.Encrypted === "+";
+    isEncrypted = isEncrypted || entryFields.Encrypted === "+";
     entries.push({
       path: isDirectory && !path.endsWith("/") ? `${path}/` : path,
       fileSize,
       compressedSize,
       isDirectory,
-      modifyDateTime: info.Modified ?? null,
+      modifyDateTime: entryFields.Modified ?? null,
     });
   }
 
-  return { entries, encrypted };
+  return { entries, encrypted: isEncrypted };
 }
 
 async function extractSevenZipEntries(
