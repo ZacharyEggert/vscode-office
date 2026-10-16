@@ -1,7 +1,7 @@
 import type * as ExcelJS from "@cweijan/exceljs";
 import { expr2xy, xy2expr } from "./x-spreadsheet/core/alphabet";
 
-export interface SpreadsheetValidationItem {
+interface SpreadsheetValidationItem {
   refs: string[];
   mode: string;
   type: string;
@@ -143,7 +143,7 @@ function detectCustomValidationType(formula: string, ref: string): "phone" | "em
   return null;
 }
 
-export function excelValidationToSpreadsheet(
+function excelValidationToSpreadsheet(
   ref: string,
   dv: ExcelJS.DataValidation,
 ): SpreadsheetValidationItem | null {
@@ -215,7 +215,7 @@ export function readWorksheetValidations(
   return collapseExcelJsValidations(model);
 }
 
-export function spreadsheetValidationToExcel(
+function spreadsheetValidationToExcel(
   item: SpreadsheetValidationItem,
   ref?: string,
 ): ExcelJS.DataValidation | null {

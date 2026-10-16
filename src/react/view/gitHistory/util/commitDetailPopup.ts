@@ -7,7 +7,7 @@ export interface PopupAnchor {
   centerHorizontally?: boolean;
 }
 
-export interface ViewportBounds {
+interface ViewportBounds {
   top: number;
   left: number;
   width: number;

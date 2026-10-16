@@ -94,7 +94,7 @@ export interface GitCommitDetailsData {
   readonly error: string | null;
 }
 
-export type CommitOrdering = "date" | "author-date" | "topo";
+type CommitOrdering = "date" | "author-date" | "topo";
 
 export interface LoadCommitsRequest {
   readonly repo: string;
@@ -158,18 +158,18 @@ export interface GitCommitRecord {
   readonly message: string;
 }
 
-export interface GitRefHead {
+interface GitRefHead {
   readonly hash: string;
   readonly name: string;
 }
 
-export interface GitRefTag {
+interface GitRefTag {
   readonly hash: string;
   readonly name: string;
   readonly annotated: boolean;
 }
 
-export interface GitRefRemote {
+interface GitRefRemote {
   readonly hash: string;
   readonly name: string;
 }

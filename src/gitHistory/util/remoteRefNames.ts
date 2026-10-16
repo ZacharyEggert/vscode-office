@@ -34,7 +34,7 @@ export function normalizeGitBranchListName(name: string, remotes: ReadonlyArray<
   return prefix + normalizeRemoteRefBranchName(name.substring(prefix.length), remotes);
 }
 
-export function remoteBranchListPrefix(remote: string): string {
+function remoteBranchListPrefix(remote: string): string {
   return `remotes/${remote}/`;
 }
 

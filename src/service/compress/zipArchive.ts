@@ -16,7 +16,7 @@ import prettyBytes from "./pretty-bytes";
 import { detectZipFilenameEncoding } from "./zipEncoding";
 import { resolveContainedPath, unwrapCrx } from "./archiveUtils";
 
-export interface ZipDisplayEntry {
+interface ZipDisplayEntry {
   name?: string;
   isDirectory?: boolean;
   entryName?: string;
@@ -29,7 +29,7 @@ export interface ZipDisplayEntry {
   encrypted?: boolean;
 }
 
-export interface ZipParseResult {
+interface ZipParseResult {
   files: ZipDisplayEntry[];
   fileMap: Record<string, FileEntry>;
   folderMap: Record<string, ZipDisplayEntry>;

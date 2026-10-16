@@ -83,7 +83,7 @@ function spreadsheetFormatToNumFmt(format?: string): string | undefined {
   return FORMAT_TO_NUMFMT[format];
 }
 
-export function colorToHex(color?: Partial<ExcelJS.Color>): string | undefined {
+function colorToHex(color?: Partial<ExcelJS.Color>): string | undefined {
   if (!color?.argb) return undefined;
   const argb = color.argb.replace(/^#/, "");
   if (argb.length === 8) return `#${argb.slice(2).toLowerCase()}`;
@@ -91,7 +91,7 @@ export function colorToHex(color?: Partial<ExcelJS.Color>): string | undefined {
   return undefined;
 }
 
-export function hexToArgb(hex?: string): string | undefined {
+function hexToArgb(hex?: string): string | undefined {
   if (!hex) return undefined;
   const normalized = hex.replace(/^#/, "");
   if (normalized.length === 6) return `FF${normalized.toUpperCase()}`;

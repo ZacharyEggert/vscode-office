@@ -13,7 +13,7 @@ function stripUtf8Bom(bytes: Uint8Array): Uint8Array {
   return bytes;
 }
 
-export function isValidUtf8(buffer: ArrayBuffer): boolean {
+function isValidUtf8(buffer: ArrayBuffer): boolean {
   try {
     new TextDecoder("utf-8", { fatal: true }).decode(toUint8Array(buffer));
     return true;

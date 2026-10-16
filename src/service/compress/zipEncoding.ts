@@ -1,4 +1,4 @@
-export type ZipFilenameEncoding = "utf8" | "gbk";
+type ZipFilenameEncoding = "utf8" | "gbk";
 
 const SIG_CENTRAL_DIR = 0x02014b50;
 const SIG_EOCD = 0x06054b50;

@@ -15,7 +15,7 @@ function isTarDirectory(entry: ReadEntry): boolean {
   return entry.type === "Directory" || entry.path.endsWith("/");
 }
 
-export interface TarEntryInfo {
+interface TarEntryInfo {
   path: string;
   size: number;
   isDirectory: boolean;

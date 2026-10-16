@@ -96,7 +96,7 @@ function getWarningMessage(stderr: Buffer): string | null {
   return priorityLine ?? stderrLines[0];
 }
 
-export interface GitSpawnResult<T> {
+interface GitSpawnResult<T> {
   value: T;
   warning: string | null;
 }

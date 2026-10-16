@@ -1,4 +1,4 @@
-export type AIVditorLang = "en_US" | "zh_CN" | "zh_TW" | "ja_JP" | "ko_KR" | "ru_RU";
+type AIVditorLang = "en_US" | "zh_CN" | "zh_TW" | "ja_JP" | "ko_KR" | "ru_RU";
 
 const LANG_PROMPT_NAMES: Record<AIVditorLang, string> = {
   en_US: "English",
@@ -16,7 +16,7 @@ const normalizeVditorLang = (lang: string | undefined): AIVditorLang => {
   return "en_US";
 };
 
-export const resolveAIOutputLanguageName = (
+const resolveAIOutputLanguageName = (
   outputLanguage: string | undefined,
   uiLanguage: string | undefined,
 ): string => {

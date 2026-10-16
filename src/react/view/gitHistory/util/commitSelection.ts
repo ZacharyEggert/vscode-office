@@ -13,7 +13,7 @@ export function isInspectableCommit(commit: GitCommit | undefined): boolean {
   return Boolean(commit);
 }
 
-export function abbrevCommitHash(hash: string): string {
+function abbrevCommitHash(hash: string): string {
   return hash === UNCOMMITTED ? "*" : hash.substring(0, 7);
 }
 
@@ -31,20 +31,6 @@ export function computeRangeSelection(
     }
   }
   return result;
-}
-
-export function getSelectedCommits(
-  commits: ReadonlyArray<GitCommit>,
-  selectedIndices: ReadonlySet<number>,
-): GitCommit[] {
-  const selected: GitCommit[] = [];
-  for (const index of selectedIndices) {
-    const commit = commits[index];
-    if (isSelectableCommit(commit)) {
-      selected.push(commit);
-    }
-  }
-  return selected;
 }
 
 export function sortCommitsByListOrder(

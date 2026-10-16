@@ -2,14 +2,14 @@ import type { GitFileChange } from "../types";
 
 export type FileViewMode = "tree" | "flat";
 
-export interface FileTreeFolder {
+interface FileTreeFolder {
   kind: "folder";
   name: string;
   path: string;
   children: FileTreeNode[];
 }
 
-export interface FileTreeFile {
+interface FileTreeFile {
   kind: "file";
   change: GitFileChange;
   displayPath: string;

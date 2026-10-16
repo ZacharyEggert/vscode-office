@@ -119,7 +119,7 @@ function isLightBackground(background: string): boolean {
 const LIGHT_BG_LIGHTNESS_BLEND = 0.55;
 
 /** Boost saturation and normalize lightness so every branch colour reads well on light backgrounds. */
-export function adjustColourForLightBackground(colour: string, background: string): string {
+function adjustColourForLightBackground(colour: string, background: string): string {
   const source = parseRgb(colour);
   const bg = parseRgb(background);
   if (!source || !bg || !isLightBackground(background)) {

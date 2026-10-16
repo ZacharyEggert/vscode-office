@@ -7,13 +7,11 @@ const { fileTypeFromFile } = require("file-type");
 const { createOutline } = require("./outline");
 const isDev = process.argv.indexOf("--type=extensionHost") >= 0;
 
-export async function exportHtml(exportFilePath, data) {
-  console.log("[pretty-md-pdf] Exported to file: " + exportFilePath);
+async function exportHtml(exportFilePath, data) {
   fs.writeFileSync(exportFilePath, data, "utf-8");
 }
 
-export async function exportDocx(exportFilePath, data, config) {
-  console.log("[pretty-md-pdf] Exported to file: " + exportFilePath);
+async function exportDocx(exportFilePath, data, config) {
   const html = await replaceDynamicContentWithImages(data, config, exportFilePath);
   const htmlToDocx = require("@turbodocx/html-to-docx");
   fs.writeFileSync(exportFilePath, await htmlToDocx(await inlineLocalImages(html), "", {}, ""));
@@ -40,7 +38,6 @@ async function inlineLocalImages(html) {
  * export a html to a pdf file
  */
 export async function exportByType(filePath, data, type, config) {
-  console.log("[pretty-md-pdf] Exporting (" + type + ") ...");
   const originPath = path.parse(filePath);
   let targetFilePath = originPath.dir + "/" + originPath.name + "." + type;
 
@@ -88,12 +85,9 @@ export async function exportByType(filePath, data, type, config) {
     const margin = config["margin"] || {};
     const pdfOptions = {
       format: config["format"] || "A4",
-      printBackground: config["printBackground"] || true,
+      printBackground: true,
       margin: {
         top: margin.top != null ? `${margin.top}px` : undefined,
-        right: margin.right != null ? `${margin.right}px` : undefined,
-        bottom: margin.bottom != null ? `${margin.bottom}px` : undefined,
-        left: margin.left != null ? `${margin.left}px` : undefined,
       },
     };
     const pdf = await page.pdf(pdfOptions).catch((error) => {
@@ -114,14 +108,9 @@ export async function exportByType(filePath, data, type, config) {
   await browser.close();
 
   // delete temporary file
-  let debug = config["debug"] || false;
-  if (!debug) {
-    if (isExistsPath(tmpfilename)) {
-      fs.unlink(tmpfilename, () => {});
-    }
+  if (isExistsPath(tmpfilename)) {
+    fs.unlink(tmpfilename, () => {});
   }
-
-  console.log("[pretty-md-pdf] Exported to file: " + targetFilePath);
 }
 
 async function replaceDynamicContentWithImages(data, config = {}, exportFilePath = "") {
@@ -181,7 +170,7 @@ async function replaceDynamicContentWithImages(data, config = {}, exportFilePath
     if (browser) {
       await browser.close();
     }
-    if (!config["debug"] && tmpfilename && isExistsPath(tmpfilename)) {
+    if (tmpfilename && isExistsPath(tmpfilename)) {
       fs.unlink(tmpfilename, () => {});
     }
   }
@@ -351,10 +340,8 @@ async function replaceElementWithImage(handle, options = {}) {
 function showErrorMessage(msg, error) {
   if (!error) return;
   console.error("ERROR: " + msg);
-  console.log("ERROR: " + msg);
   if (error) {
-    console.error(error.toString());
-    console.log(error);
+    console.error(error);
   }
 }
 

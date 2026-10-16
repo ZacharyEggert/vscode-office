@@ -3,7 +3,7 @@ import type Spreadsheet from "./x-spreadsheet/index";
 import type { FindMatch, FindOptions } from "./x-spreadsheet/index";
 import { t } from "./excel_i18n";
 
-export interface FindReplacePanelProps {
+interface FindReplacePanelProps {
   spreadSheet: Spreadsheet | null;
   mode: "find" | "replace";
   onClose: () => void;

@@ -1,7 +1,3 @@
-import Icon from "@ant-design/icons/lib/components/Icon";
-import { CSSProperties } from "react";
-import { handler } from "../util/vscode";
-
 export function VSCodeLogoSVG() {
   return (
     <svg height="24" width="24" viewBox="-11.9 -2 1003.9 995.6" xmlns="http://www.w3.org/2000/svg">
@@ -22,21 +18,5 @@ export function VSCodeLogoSVG() {
         fill="#3c99d4"
       />
     </svg>
-  );
-}
-
-interface VSCodeLogoProps {
-  full?: boolean;
-  style?: CSSProperties;
-}
-
-export default function VSCodeLogo({ style = {}, full = true }: VSCodeLogoProps) {
-  return (
-    <Icon
-      component={VSCodeLogoSVG}
-      title="Edit In VS Code"
-      onClick={() => handler.emit("editInVSCode", full)}
-      style={{ zIndex: 999999, position: "absolute", left: 15, top: 3, ...style }}
-    />
   );
 }

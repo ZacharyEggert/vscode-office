@@ -1,4 +1,4 @@
-export interface SvgColors {
+interface SvgColors {
   background: string;
   fill: string;
 }

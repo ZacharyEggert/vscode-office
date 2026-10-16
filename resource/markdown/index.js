@@ -54,7 +54,7 @@ handler
       mermaidTheme,
       lang: mapVscodeLanguageToVditorLang(language),
       tab: "\t",
-      toolbar: await getToolbar(rootPath, () => {
+      toolbar: await getToolbar(() => {
         handler.emit("doSave", getMarkdownValue());
         editor?.markSaved();
       }),
@@ -88,7 +88,6 @@ handler
         handler.emit("openLink", uri);
       },
       debugger: isDev,
-      wysiwygInputPerf: isDev && false,
       changeEditorTheme(theme) {
         handler.emit("editorTheme", theme);
       },

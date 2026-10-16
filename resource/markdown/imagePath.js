@@ -60,7 +60,7 @@ export function restoreWorkspaceBaseUrls(markdown, workspaceBaseUrl) {
   return markdown.split(workspaceBaseUrl.replace(/\/$/, "")).join("");
 }
 
-export function readMarkdownWithOriginalImagePaths(editor, root, workspaceBaseUrl) {
+function readMarkdownWithOriginalImagePaths(editor, root, workspaceBaseUrl) {
   const rewrittenImages = Array.from(
     root?.querySelectorAll?.("img[data-workspace-absolute-src]") ?? [],
   );

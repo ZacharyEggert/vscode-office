@@ -17,7 +17,7 @@ if (argv.join(",").includes("mode")) {
 }
 
 // https://vitejs.dev/config/
-export default defineConfig(({ command, mode }) => ({
+export default defineConfig(({ command }) => ({
   fmt: {
     // ponytail: vendored/minified files and markdown fixtures must stay byte-exact
     ignorePatterns: ["**/*.min.*", "resource/pdf/**", "test/markdown/**"],

@@ -4,10 +4,6 @@ export interface GitRemoteDetail {
   pushUrl: string | null;
 }
 
-export interface GitRepoConfigData {
-  remotes: GitRemoteDetail[];
-}
-
 export type RemoteActionPayload =
   | { action: "add"; repo: string; name: string; url: string; pushUrl?: string }
   | { action: "edit"; repo: string; name: string; newName: string; url: string; pushUrl?: string }

@@ -1,7 +1,7 @@
 /** 主流 AI HTTP API 格式 */
-export type CustomAIApiFormat = "auto" | "openai" | "anthropic" | "gemini" | "ollama";
+type CustomAIApiFormat = "auto" | "openai" | "anthropic" | "gemini" | "ollama";
 
-export interface CustomAIRequestOptions {
+interface CustomAIRequestOptions {
   url: string;
   apiKey?: string;
   model?: string;
@@ -20,7 +20,7 @@ const DEFAULT_MODELS: Record<Exclude<CustomAIApiFormat, "auto">, string> = {
 const trimTrailingSlash = (url: string) => url.replace(/\/+$/, "");
 
 /** 根据 URL 猜测 API 格式 */
-export const detectCustomAIFormat = (url: string): Exclude<CustomAIApiFormat, "auto"> => {
+const detectCustomAIFormat = (url: string): Exclude<CustomAIApiFormat, "auto"> => {
   const lower = url.toLowerCase();
   if (lower.includes("anthropic.com") || lower.includes("/v1/messages")) {
     return "anthropic";
@@ -331,7 +331,7 @@ const parseErrorMessage = (data: any, status: number, statusText: string): strin
   return `HTTP ${status} ${statusText}`;
 };
 
-export interface StreamCustomAIOptions extends CustomAIRequestOptions {
+interface StreamCustomAIOptions extends CustomAIRequestOptions {
   onChunk: (chunk: string) => void;
 }
 
@@ -440,44 +440,4 @@ export const streamCustomAI = async (options: StreamCustomAIOptions): Promise<vo
     const chunk = parseStreamChunk(format, buf);
     if (chunk) options.onChunk(chunk);
   }
-};
-
-/** 调用自定义 AI HTTP 接口，自动适配 OpenAI / Anthropic / Gemini / Ollama 等格式 */
-export const callCustomAI = async (options: CustomAIRequestOptions): Promise<string> => {
-  const rawUrl = options.url?.trim();
-  if (!rawUrl) {
-    throw new Error("API URL is required.");
-  }
-
-  const format = resolveFormat(rawUrl, options.format);
-  const model = resolveModel(format, options.model);
-  const request = buildRequest(format, options.prompt, model, rawUrl, options.apiKey?.trim());
-
-  const resp = await fetch(request.url, {
-    method: "POST",
-    headers: request.headers,
-    body: JSON.stringify(request.body),
-    signal: options.signal,
-  });
-
-  const rawText = await resp.text();
-  let data: any;
-  try {
-    data = rawText ? JSON.parse(rawText) : {};
-  } catch {
-    if (!resp.ok) {
-      throw new Error(`HTTP ${resp.status} ${resp.statusText}`);
-    }
-    return rawText.trim();
-  }
-
-  if (!resp.ok) {
-    throw new Error(parseErrorMessage(data, resp.status, resp.statusText));
-  }
-
-  const result = parseResponseText(format, data);
-  if (!result) {
-    throw new Error("Empty response from AI API.");
-  }
-  return result;
 };

@@ -1,4 +1,4 @@
-export function normalizeRepoPath(p: string): string {
+function normalizeRepoPath(p: string): string {
   return p.replace(/\\/g, "/");
 }
 

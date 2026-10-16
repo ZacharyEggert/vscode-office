@@ -1,6 +1,6 @@
 const DETACHED_HEAD_REGEX = /^\(HEAD detached (?:at|from) (.+)\)$/;
 
-export function isDetachedHead(branchHead: string | null): boolean {
+function isDetachedHead(branchHead: string | null): boolean {
   return branchHead !== null && branchHead.startsWith("(HEAD detached");
 }
 

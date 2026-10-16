@@ -39,10 +39,6 @@ export function PushIcon(props: Omit<CodiconButtonProps, "icon" | "variant">) {
   return <CodiconButton icon="repo-push" variant="push" {...props} />;
 }
 
-export function QuickSyncIcon(props: Omit<CodiconButtonProps, "icon" | "variant">) {
-  return <CodiconButton icon="repo-sync" variant="sync" {...props} />;
-}
-
 export function RefreshIcon(props: Omit<CodiconButtonProps, "icon" | "variant">) {
   return <CodiconButton icon="refresh" {...props} />;
 }

@@ -33,11 +33,3 @@ export function getRelativeRepoPath(repo: string, filePath: string): string | nu
   }
   return fileNorm.slice(prefix.length);
 }
-
-export function fileTouchesPath(
-  relPath: string,
-  oldFilePath: string,
-  newFilePath: string,
-): boolean {
-  return oldFilePath === relPath || newFilePath === relPath;
-}

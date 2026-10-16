@@ -1,6 +1,6 @@
 import type * as ExcelJS from "@cweijan/exceljs";
 
-export interface SheetImageAnchor {
+interface SheetImageAnchor {
   /** 0-based，可为小数（表示在单元格内的偏移） */
   col: number;
   row: number;
@@ -13,7 +13,7 @@ export interface SheetImageAnchor {
   editAs?: string;
 }
 
-export interface SheetImage {
+interface SheetImage {
   id: string;
   imageId: number;
   extension: "jpeg" | "png" | "gif";
@@ -21,7 +21,7 @@ export interface SheetImage {
   anchor: SheetImageAnchor;
 }
 
-export interface SheetBackgroundImage {
+interface SheetBackgroundImage {
   imageId: number;
   extension: "jpeg" | "png" | "gif";
   base64: string;
@@ -53,7 +53,7 @@ function base64ToBytes(base64: string): Uint8Array {
   return bytes;
 }
 
-export function mediaToSheetImageData(
+function mediaToSheetImageData(
   media: ImageMedia,
 ): { extension: "jpeg" | "png" | "gif"; base64: string } | null {
   if (media.base64) {
@@ -151,7 +151,7 @@ export function readWorksheetBackgroundImage(
   };
 }
 
-export function buildExcelJsImageRange(anchor: SheetImageAnchor) {
+function buildExcelJsImageRange(anchor: SheetImageAnchor) {
   if (anchor.width != null && anchor.height != null) {
     return {
       tl: { col: anchor.col, row: anchor.row },

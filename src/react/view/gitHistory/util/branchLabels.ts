@@ -1,11 +1,11 @@
 import type { GitCommitRemote } from "../types";
 
-export interface BranchHeadLabel {
+interface BranchHeadLabel {
   name: string;
   remotes: string[];
 }
 
-export interface BranchLabels {
+interface BranchLabels {
   heads: BranchHeadLabel[];
   remotes: GitCommitRemote[];
 }

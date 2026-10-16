@@ -11,7 +11,7 @@ import { Holder } from "./markdown/holder";
 import { convertMd } from "./markdown/markdown-pdf";
 import { Global, i18n } from "@/common/global";
 
-export type ExportType = "pdf" | "html" | "docx";
+type ExportType = "pdf" | "html" | "docx";
 
 interface ExportOption {
   type?: ExportType;
@@ -44,7 +44,6 @@ export class MarkdownService {
     const { type = "pdf", withoutOutline = false } = option;
     return {
       type,
-      styles: [],
       withoutOutline,
       // chromium path
       executablePath: this.getChromiumPath(),
@@ -103,14 +102,11 @@ export class MarkdownService {
     const paths = [chromiumPath, ...this.paths];
     for (const path of paths) {
       if (existsSync(path)) {
-        console.debug(`using chromium path is ${path}`);
         return path;
       }
     }
     try {
-      const chromePath = chromeFinder();
-      console.debug(`using chrome path is ${chromePath}`);
-      return chromePath;
+      return chromeFinder();
     } catch (e) {
       const msg = i18n("ext.markdown.noChromium");
       vscode.window.showErrorMessage(msg);
@@ -210,7 +206,6 @@ export class MarkdownService {
         scriptPath,
         imagePath,
       ]);
-      powershell.on("exit", function (code, signal) {});
       powershell.stdout.on("data", function (data) {
         cb(data.toString().trim());
       });
@@ -218,7 +213,6 @@ export class MarkdownService {
       // Mac
       const scriptPath = path.join(this.context.extensionPath, "./lib/mac.applescript");
       const ascript = spawn("osascript", [scriptPath, imagePath]);
-      ascript.on("exit", function (code, signal) {});
       ascript.stdout.on("data", function (data) {
         cb(data.toString().trim());
       });
@@ -227,7 +221,6 @@ export class MarkdownService {
       const scriptPath = path.join(this.context.extensionPath, "./lib/linux.sh");
 
       const ascript = spawn("sh", [scriptPath, imagePath]);
-      ascript.on("exit", function (code, signal) {});
       ascript.stdout.on("data", function (data) {
         const result = data.toString().trim();
         if (result == "no xclip") {

@@ -30,7 +30,7 @@ function parseClassPath(uri: Uri): string {
   return uri.fsPath.replace(/\.java$/i, ".class");
 }
 
-export function createDecompileJavaUri(classPath: string): Uri {
+function createDecompileJavaUri(classPath: string): Uri {
   const javaPath = classPathToJavaPath(classPath);
   let mtimeMs = 0;
   try {

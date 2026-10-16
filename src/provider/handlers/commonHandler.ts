@@ -12,15 +12,6 @@ import {
 const fileSaveTimes: Record<string, number> = {};
 const INTERNAL_SAVE_CHANGE_WINDOW_MS = 1500;
 
-function buildDefaultXlsxUri(uri: Uri): Uri {
-  const { dir, name } = parse(uri.fsPath);
-  const fileName = `${name}.xlsx`;
-  if (uri.scheme === "file") {
-    return Uri.file(join(dir, fileName));
-  }
-  return Uri.joinPath(uri, "..", fileName);
-}
-
 export function shouldSkipFileChange(uri: Uri): boolean {
   const lastSaveTime = fileSaveTimes[uri.toString()];
   return !!(lastSaveTime && Date.now() - lastSaveTime < INTERNAL_SAVE_CHANGE_WINDOW_MS);

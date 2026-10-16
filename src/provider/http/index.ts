@@ -101,5 +101,3 @@ export async function activateHttp(context: ExtensionContext): Promise<void> {
     new CustomVariableDiagnosticsProvider(),
   );
 }
-
-export function deactivateHttp(): void {}

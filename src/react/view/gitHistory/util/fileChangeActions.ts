@@ -4,7 +4,7 @@ import type { GitActionRequest } from "./gitActionPromptFlow";
 const UNCOMMITTED = "*";
 const EMPTY_TREE_HASH = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
 
-export function getFilePathForActions(change: GitFileChange): string {
+function getFilePathForActions(change: GitFileChange): string {
   return change.type === "D" ? change.oldFilePath : change.newFilePath;
 }
 

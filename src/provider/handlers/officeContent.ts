@@ -14,7 +14,7 @@ function getPayloadPath(uri: Uri): string {
 }
 
 /** 与 markdown documentCacheId 一致，用于 webview localStorage 键前缀 */
-export function buildDocumentCacheId(uri: Uri): string {
+function buildDocumentCacheId(uri: Uri): string {
   return `${uri.scheme}:${uri.toString()}`;
 }
 
@@ -195,7 +195,6 @@ export async function emitFileOfficeOpen(
   uri: Uri,
   webview: Webview,
 ): Promise<void> {
-  const now = Date.now();
   const readOnly = await isUriReadOnly(uri);
   handler.emit("open", {
     ext: extname(uri.fsPath),

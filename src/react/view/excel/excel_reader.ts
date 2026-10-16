@@ -32,7 +32,7 @@ type ExcelJsWorksheetWithMerges = ExcelJS.Worksheet & {
   };
 };
 
-export interface ExcelData {
+interface ExcelData {
   sheets: SheetData[];
   maxCols: number;
   maxLength?: number;
@@ -485,13 +485,5 @@ export async function loadSheets(buffer: ArrayBuffer, ext: string): Promise<Exce
   if (isXlsExt(ext) || isOdsExt(ext)) {
     return loadWithSheetJs(buffer);
   }
-  return loadWithExcelJs(buffer);
-}
-
-export function readCSV(buffer: ArrayBuffer): ExcelData {
-  return loadCsv(buffer);
-}
-
-export async function readExcel(buffer: ArrayBuffer): Promise<ExcelData> {
   return loadWithExcelJs(buffer);
 }

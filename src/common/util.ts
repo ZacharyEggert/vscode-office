@@ -16,12 +16,7 @@ export class Util {
       );
   }
 
-  public static listen(
-    webviewPanel: vscode.WebviewPanel,
-    uri: vscode.Uri,
-    callback: () => void,
-    disposeCallback?: () => void,
-  ) {
+  public static listen(webviewPanel: vscode.WebviewPanel, uri: vscode.Uri, callback: () => void) {
     const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument((e) => {
       if (e.document.uri.toString() === uri.toString()) {
         callback();

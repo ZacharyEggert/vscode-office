@@ -2,7 +2,7 @@ import { TextDocument } from "vscode";
 import { HttpResponse } from "../../models/httpResponse";
 import { VariableType } from "../../models/types";
 
-export type HttpVariableValue = string | {} | HttpResponse;
+type HttpVariableValue = string | {} | HttpResponse;
 
 export interface HttpVariable {
   name: string;

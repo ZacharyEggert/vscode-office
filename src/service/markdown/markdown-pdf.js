@@ -81,7 +81,6 @@ function convertMarkdownToHtml(filename, type, text, config) {
   try {
     try {
       const hljs = require("highlight.js");
-      console.log("[pretty-md-pdf] Converting (convertMarkdownToHtml) ...");
       const breaks = config["breaks"];
       md = markdownIt({
         html: true,
@@ -110,13 +109,11 @@ function convertMarkdownToHtml(filename, type, text, config) {
     md.renderer.rules.image = function (tokens, idx, options, env, self) {
       let token = tokens[idx];
       let href = token.attrs[token.attrIndex("src")][1];
-      // console.log("original href: " + href)
       if (type === "html") {
         href = decodeURIComponent(href).replace(/("|")/g, "");
       } else {
         href = convertImgPath(href, filename);
       }
-      // console.log("converted href: " + href)
       token.attrs[token.attrIndex("src")][1] = href;
       // // pass token to default renderer.
       return defaultRender(tokens, idx, options, env, self);
@@ -283,16 +280,13 @@ function readStyles(type) {
 
 function showErrorMessage(msg, error) {
   console.error("ERROR: " + msg);
-  console.log("ERROR: " + msg);
   if (error) {
-    console.error(error.toString());
-    console.log(error);
+    console.error(error);
   }
 }
 
 export const convertMd = async (options) => {
   const config = options.config;
   options.outputFileType = config.type[0];
-  console.log(`[pretty-md-pdf] Converting markdown file: ${options.markdownFilePath}`);
   await convertMarkdown(path.resolve(options.markdownFilePath), config);
 };

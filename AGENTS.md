@@ -83,7 +83,7 @@ Every host feature registers in **both** `src/extension.ts` (desktop, Node) and 
 
 - Host strings: `i18n(key)` from `src/common/global.ts`, keys in `package.nls*.json`.
 - React strings: `$t("area.key")` from `src/react/i18n/i18nConfig.ts`; `messages/en.ts` is the source, mirror every key into all 10 locale files.
-- Markdown webview: `resource/markdown/lang.js`, `ai-i18n.js`.
+- Markdown webview: `resource/markdown/lang.js`.
 
 ## Running and verifying
 

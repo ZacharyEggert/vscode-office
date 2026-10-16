@@ -11,18 +11,18 @@ import {
 } from "yaml";
 import { DocumentSymbol, Position, Range, SymbolKind, TextDocument } from "vscode";
 
-export interface YamlAliasRef {
+interface YamlAliasRef {
   source: string;
   range: Range;
 }
 
-export interface YamlAnchorDef {
+interface YamlAnchorDef {
   name: string;
   range: Range;
   selectionRange: Range;
 }
 
-export interface YamlDocumentModel {
+interface YamlDocumentModel {
   symbols: DocumentSymbol[];
   anchors: Map<string, YamlAnchorDef>;
   aliases: YamlAliasRef[];

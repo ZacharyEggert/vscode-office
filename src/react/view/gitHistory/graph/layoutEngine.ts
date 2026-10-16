@@ -1,18 +1,18 @@
 export const UNCOMMITTED = "*";
 
-export interface GraphPoint {
+interface GraphPoint {
   x: number;
   y: number;
 }
 
-export interface GraphPath {
+interface GraphPath {
   d: string;
   color: string;
   dashed: boolean;
   dimmed?: boolean;
 }
 
-export interface GraphVertex {
+interface GraphVertex {
   id: number;
   cx: number;
   cy: number;
@@ -43,11 +43,6 @@ export interface GraphConfig {
     offsetY: number;
   };
 }
-
-export const DEFAULT_GRAPH_GRID = {
-  style: "rounded" as const,
-  grid: { x: 16, y: 24, offsetX: 8, offsetY: 12 },
-};
 
 interface GitCommitInput {
   hash: string;

@@ -59,7 +59,7 @@ export function unwrapCrx(data: Buffer): { payload: Buffer; prefix?: Buffer } {
   return { payload: data };
 }
 
-export function getArchiveBaseName(fsPath: string): string {
+function getArchiveBaseName(fsPath: string): string {
   const lower = fsPath.toLowerCase();
   const name = basename(fsPath);
   if (lower.endsWith(".tar.gz")) return name.slice(0, -7);
@@ -67,7 +67,7 @@ export function getArchiveBaseName(fsPath: string): string {
   return parse(fsPath).name;
 }
 
-export interface ExtractPlan {
+interface ExtractPlan {
   targetDir: string;
   createSubfolder: boolean;
 }
@@ -81,7 +81,7 @@ export function planExtractTarget(archivePath: string, rootItemCount: number): E
   };
 }
 
-export function getRevealPathAfterExtract(plan: ExtractPlan, extractedPaths: string[]): string {
+function getRevealPathAfterExtract(plan: ExtractPlan, extractedPaths: string[]): string {
   if (plan.createSubfolder) {
     return plan.targetDir;
   }

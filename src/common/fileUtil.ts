@@ -1,13 +1,6 @@
 import { isAbsolute, parse } from "path";
 import * as vscode from "vscode";
-import { ensureParentDirectory } from "./workspaceFs";
 import { Global } from "./global";
-
-export async function writeFile(path: string, buffer: Uint8Array) {
-  const uri = vscode.Uri.file(path);
-  await ensureParentDirectory(uri);
-  await vscode.workspace.fs.writeFile(uri, buffer);
-}
 
 export function adjustImgPath(uri: vscode.Uri, ext: string = "png") {
   const now = new Date();

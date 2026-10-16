@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-export async function pathExists(uri: vscode.Uri): Promise<boolean> {
+async function pathExists(uri: vscode.Uri): Promise<boolean> {
   try {
     await vscode.workspace.fs.stat(uri);
     return true;

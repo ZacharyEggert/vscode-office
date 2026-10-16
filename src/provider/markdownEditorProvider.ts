@@ -28,14 +28,7 @@ import { parseWebviewResourceUri } from "@/common/webviewUri";
 import { MarkdownDocumentSync } from "@/service/markdown/documentSync";
 import { openLinkedFile } from "@/service/markdown/linkedFile";
 
-function getRuntimePlatform(): string {
-  if (typeof process !== "undefined" && process.platform) {
-    return process.platform;
-  }
-  return "web";
-}
-
-export interface MarkdownEditorProviderOptions {
+interface MarkdownEditorProviderOptions {
   isWeb?: boolean;
 }
 
@@ -139,7 +132,6 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
     webviewPanel: vscode.WebviewPanel,
     token: vscode.CancellationToken,
   ): void | Thenable<void> {
-    // console.log('schema', document.uri.scheme, document.uri.path, document.uri.query);
     const uri = document.uri;
     const webview = webviewPanel.webview;
     const folderPath = vscode.Uri.joinPath(uri, "..");

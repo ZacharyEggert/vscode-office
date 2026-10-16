@@ -1,7 +1,7 @@
 import { ParsedUrlQuery } from "querystring";
 import { parse as urlParse } from "url";
 
-export interface HARNameValue {
+interface HARNameValue {
   name: string;
   value: string;
 }
@@ -20,7 +20,7 @@ export class HARCookie implements HARNameValue {
   ) {}
 }
 
-export class HARParam implements HARNameValue {
+class HARParam implements HARNameValue {
   public constructor(
     public name: string,
     public value: string,

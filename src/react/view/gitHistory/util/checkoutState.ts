@@ -3,7 +3,7 @@ import type { GitActionRequest } from "./gitActionPromptFlow";
 
 const CHECKOUT_ACTIONS = new Set(["checkoutBranch", "checkoutCommit", "createBranch"]);
 
-export function isCheckoutStateAction(action: GitActionRequest): boolean {
+function isCheckoutStateAction(action: GitActionRequest): boolean {
   if (!CHECKOUT_ACTIONS.has(action.action)) {
     return false;
   }
@@ -49,7 +49,7 @@ function withBranchOnCommit(
   return changed ? next : null;
 }
 
-export interface CheckoutStateUpdate {
+interface CheckoutStateUpdate {
   branchHead: string | null;
   commitHead: string | null;
   branches?: readonly string[];

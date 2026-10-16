@@ -2,9 +2,6 @@ const BYTE_UNITS = ["B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
 
 const BIBYTE_UNITS = ["B", "k", "M", "G", "T", "P", "E", "Z", "Y"];
 
-// 尽管这个才是正确的,  但由于windows的误用, 导致没多人认识
-// const BIBYTE_UNITS = [ 'B', 'kiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB', ];
-
 const BIT_UNITS = ["b", "kbit", "Mbit", "Gbit", "Tbit", "Pbit", "Ebit", "Zbit", "Ybit"];
 
 const BIBIT_UNITS = ["b", "kibit", "Mibit", "Gibit", "Tibit", "Pibit", "Eibit", "Zibit", "Yibit"];

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 
-export interface DropdownOption {
+interface DropdownOption {
   value: string;
   label: string;
   hint?: string;

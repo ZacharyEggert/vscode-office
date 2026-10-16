@@ -18,7 +18,7 @@ function formatMergeMenuLabel(source: string): Pick<ContextMenuItem, "label" | "
   };
 }
 
-export interface GitActionEmitter {
+interface GitActionEmitter {
   (action: GitActionRequest): void;
 }
 
@@ -140,7 +140,7 @@ export function buildStashContextMenu(selector: string, _ctx: MenuContext): Cont
   ].map((item) => ({ ...item, _selector: selector })) as ContextMenuItem[];
 }
 
-export function buildUncommittedContextMenu(_ctx: MenuContext): ContextMenuItem[] {
+function buildUncommittedContextMenu(_ctx: MenuContext): ContextMenuItem[] {
   return [
     { id: "pushStash", label: $t("git.stashUncommitted") },
     ...sep([

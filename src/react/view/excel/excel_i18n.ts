@@ -41,11 +41,6 @@ export function initExcelLocale(): string {
   return lang;
 }
 
-export function getExcelLang(): string {
-  if (!initialized) initExcelLocale();
-  return currentLang;
-}
-
 /** Translate a locale key; `{}` placeholders are filled in order. */
 export function t(key: string, ...args: (string | number)[]): string {
   if (!initialized) initExcelLocale();

@@ -34,7 +34,7 @@ export function pxToExcelRowHeight(px: number): number {
 }
 
 /** x-spreadsheet freeze 字符串，如 "B2" */
-export function freezeToExpr(rowIndex: number, colIndex: number): string {
+function freezeToExpr(rowIndex: number, colIndex: number): string {
   return `${stringAt(colIndex)}${rowIndex + 1}`;
 }
 

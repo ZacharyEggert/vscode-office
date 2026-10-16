@@ -1,13 +1,9 @@
 import { createMarkdownValueReader } from "./imagePath.js";
 
-function loadRes(url) {
-  return fetch(url).then((r) => r.text());
-}
-
 const isMac = navigator.userAgent.includes("Mac OS");
 const shortcutTip = isMac ? "⌘ ^ E" : "Ctrl Alt E";
 
-export async function getToolbar(resPath, onSave = null) {
+export async function getToolbar(onSave = null) {
   const codicon = (name) => `<span class="codicon codicon-${name}" aria-hidden="true"></span>`;
   return [
     "outline",

@@ -11,7 +11,7 @@ for rendering output.
 "use strict";
 
 function math_inline(state, silent) {
-  var start, match, token, res, pos, esc_count;
+  var start, match, token, pos;
 
   if (state.src[state.pos] !== "$") {
     return false;
@@ -143,7 +143,7 @@ module.exports = function math_plugin(md, options) {
       return katex.renderToString(latex, options);
     } catch (error) {
       if (options.throwOnError) {
-        console.log(error);
+        console.error(error);
       }
       return latex;
     }
@@ -159,7 +159,7 @@ module.exports = function math_plugin(md, options) {
       return "<p>" + katex.renderToString(latex, options) + "</p>";
     } catch (error) {
       if (options.throwOnError) {
-        console.log(error);
+        console.error(error);
       }
       return latex;
     }

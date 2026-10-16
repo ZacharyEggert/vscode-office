@@ -5,7 +5,7 @@ const pendingBlockScroll = new Map<string, string>();
 const webviewHandlers = new Map<string, Handler>();
 
 /** 按文件路径缓存 webview，忽略 query / fragment */
-export function markdownUriKey(uri: vscode.Uri): string {
+function markdownUriKey(uri: vscode.Uri): string {
   return uri.with({ query: "", fragment: "" }).toString();
 }
 

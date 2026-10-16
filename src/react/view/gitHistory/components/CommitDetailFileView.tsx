@@ -24,7 +24,7 @@ import { FolderTreeIcon } from "./FileTreeIcons";
 import { folderRowPaddingLeft, fileRowPaddingLeft, getChangeIconPath } from "../util/fileIcon";
 import type { GitActionRequest } from "../util/gitActionPromptFlow";
 
-export type FileChangeActionPayload = GitActionRequest;
+type FileChangeActionPayload = GitActionRequest;
 
 const FILE_CHANGE_BADGE_LABEL: Record<string, string> = {
   A: "A",

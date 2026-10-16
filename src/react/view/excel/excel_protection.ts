@@ -1,7 +1,7 @@
 import type * as ExcelJS from "@cweijan/exceljs";
 import type { CellData, SheetData } from "./x-spreadsheet/index";
 
-export type StoredSheetProtection = Record<string, unknown>;
+type StoredSheetProtection = Record<string, unknown>;
 
 const DEFAULT_PROTECT_OPTIONS: Partial<ExcelJS.WorksheetProtection> = {
   selectLockedCells: true,

@@ -303,7 +303,7 @@ function abbrevHash(hash: string): string {
   return hash.length > 8 ? hash.substring(0, 8) : hash;
 }
 
-export function toGitUri(repo: string, filePath: string, ref: string): vscode.Uri {
+function toGitUri(repo: string, filePath: string, ref: string): vscode.Uri {
   const normalizedPath = filePath.replace(/\\/g, "/");
   const absPath = path.normalize(path.join(repo, normalizedPath));
   const fileUri = vscode.Uri.file(absPath);
@@ -313,7 +313,7 @@ export function toGitUri(repo: string, filePath: string, ref: string): vscode.Ur
   });
 }
 
-export function toWorkingTreeUri(repo: string, filePath: string): vscode.Uri {
+function toWorkingTreeUri(repo: string, filePath: string): vscode.Uri {
   const normalizedPath = filePath.replace(/\\/g, "/");
   return vscode.Uri.file(path.normalize(path.join(repo, normalizedPath)));
 }

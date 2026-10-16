@@ -2,11 +2,8 @@
 export type {
   GitCommit,
   GitCommitDetails,
-  GitCommitDetailsData,
   GitCommitData,
   GitCommitRemote,
-  GitCommitStash,
-  GitCommitTag,
   GitFileChange,
   GitRepoInfo,
   GitStash,

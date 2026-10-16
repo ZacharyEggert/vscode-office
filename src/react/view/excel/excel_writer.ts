@@ -18,7 +18,7 @@ const DEFAULT_COL_WIDTH = 100;
 
 export { buildFormattingSnapshot, hasFormattingChanged } from "./excel_meta";
 
-export interface ExportOptions {
+interface ExportOptions {
   /** 通过另存为对话框保存，而非覆盖当前文件 */
   saveAs?: boolean;
   /** saveAs 时指定目标格式 */

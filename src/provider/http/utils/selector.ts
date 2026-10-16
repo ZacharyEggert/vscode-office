@@ -3,14 +3,14 @@ import { Range, TextEditor } from "vscode";
 import * as Constants from "../common/constants";
 import { VariableProcessor } from "./variableProcessor";
 
-export interface RequestRangeOptions {
+interface RequestRangeOptions {
   ignoreCommentLine?: boolean;
   ignoreEmptyLine?: boolean;
   ignoreFileVariableDefinitionLine?: boolean;
   ignoreResponseRange?: boolean;
 }
 
-export interface SelectedRequest {
+interface SelectedRequest {
   text: string;
   name?: string;
   warnBeforeSend: boolean;

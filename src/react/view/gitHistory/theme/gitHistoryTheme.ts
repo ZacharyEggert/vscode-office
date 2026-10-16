@@ -19,7 +19,7 @@ import type { GitHistoryColorMode } from "../util/gitHistoryState";
 
 export type { GitHistoryColorMode };
 
-export interface GitHistoryTheme {
+interface GitHistoryTheme {
   graphConfig: GraphConfig;
   antTheme: ThemeConfig;
   cssVars: Record<string, string>;
@@ -91,11 +91,6 @@ function resolveGraphBranchColours(background: string, forceLight = false): stri
     return unique;
   }
   return uniqueColours(adjustBranchColoursForLightBackground(unique, background));
-}
-
-export function getGraphBranchColours(background?: string): string[] {
-  const bg = background ?? getVscodeThemeColor("--vscode-editor-background", "#ffffff");
-  return resolveGraphBranchColours(bg);
 }
 
 function buildAntTheme(cssVars: Record<string, string>, dark: boolean): ThemeConfig {
@@ -350,7 +345,7 @@ function buildLightGitHistoryTheme(): GitHistoryTheme {
   };
 }
 
-export function buildGitHistoryTheme(mode: GitHistoryColorMode = "adaptive"): GitHistoryTheme {
+function buildGitHistoryTheme(mode: GitHistoryColorMode = "adaptive"): GitHistoryTheme {
   if (mode === "light") {
     return buildLightGitHistoryTheme();
   }

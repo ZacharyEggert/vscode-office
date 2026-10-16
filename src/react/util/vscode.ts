@@ -20,7 +20,7 @@ export function loadDarkMode(): boolean {
   }
 }
 
-export function saveDarkMode(dark: boolean) {
+function saveDarkMode(dark: boolean) {
   try {
     localStorage.setItem(DARK_MODE_KEY, dark ? "1" : "0");
   } catch {}
@@ -67,7 +67,7 @@ const getVscodeEvent = () => {
 };
 export const handler = getVscodeEvent();
 
-export function isCompose(e) {
+function isCompose(e) {
   return e.metaKey || e.ctrlKey;
 }
 

@@ -1,6 +1,6 @@
 import { basename } from "path";
 
-export interface ArchiveFileInfo {
+interface ArchiveFileInfo {
   name: string;
   entryName: string;
   fileSize: number;

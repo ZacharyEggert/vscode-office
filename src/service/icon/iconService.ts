@@ -8,7 +8,7 @@ import {
   resolveFolderIcon,
 } from "./iconTheme";
 
-export interface WebviewIconConfig {
+interface WebviewIconConfig {
   iconBaseUrl: string;
   maps: IconMaps;
 }

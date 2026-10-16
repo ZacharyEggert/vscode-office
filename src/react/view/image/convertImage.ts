@@ -51,10 +51,6 @@ function getFormatHint(src: string, ext?: string): "heic" | "tiff" | null {
   return null;
 }
 
-export function needsConversion(image: ImageSource): boolean {
-  return getFormatHint(image.src ?? "", image.ext) !== null;
-}
-
 async function loadImageBlob(image: ImageSource, format: "heic" | "tiff"): Promise<Blob> {
   if (image.buffer?.length) {
     const mime = image.mime ?? (format === "heic" ? "image/heic" : "image/tiff");

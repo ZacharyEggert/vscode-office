@@ -1,6 +1,6 @@
 import type { GitCommit } from "../types";
 
-export interface FindCommitMatchesResult {
+interface FindCommitMatchesResult {
   indices: number[];
   error: string | null;
 }

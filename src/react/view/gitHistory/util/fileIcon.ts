@@ -10,9 +10,9 @@ export function getChangeIconPath(change: {
 }
 
 /** Indent per tree depth (px). */
-export const CDV_TREE_INDENT = 16;
+const CDV_TREE_INDENT = 16;
 
-export const CDV_ROW_BASE_PADDING = 4;
+const CDV_ROW_BASE_PADDING = 4;
 
 export function fileRowPaddingLeft(depth: number): number {
   return CDV_ROW_BASE_PADDING + depth * CDV_TREE_INDENT;

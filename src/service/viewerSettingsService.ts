@@ -8,9 +8,9 @@ const AI_PROMPTS_KEY = "aiPrompts";
 const AI_MODELS_KEY = "aiModels";
 const JSON_ARRAY_GLOBAL_KEYS = [AI_PROMPTS_KEY, AI_MODELS_KEY] as const;
 
-export type ViewerSettingsPayload = Record<string, unknown>;
+type ViewerSettingsPayload = Record<string, unknown>;
 
-export type VditorViewerSettings = {
+type VditorViewerSettings = {
   globalSettings: Record<string, unknown>;
   aiPreferences?: Record<string, string>;
 };
@@ -45,9 +45,7 @@ const deserializeGlobalSettingsForVditor = (
   return result;
 };
 
-export const serializeViewerSettingsForFile = (
-  settings: VditorViewerSettings,
-): ViewerSettingsPayload => ({
+const serializeViewerSettingsForFile = (settings: VditorViewerSettings): ViewerSettingsPayload => ({
   globalSettings: serializeGlobalSettingsForFile(settings.globalSettings ?? {}),
   aiPreferences: settings.aiPreferences ?? {},
 });

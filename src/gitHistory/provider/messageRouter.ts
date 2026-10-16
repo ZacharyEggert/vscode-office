@@ -14,7 +14,6 @@ import type {
   CommitDetailsPayload,
 } from "../types/messages";
 import type { LoadRepositoryRequest } from "../types/git";
-import { buildGitHistoryInitPayload } from "./gitHistoryInitPayload";
 import { GitActionHandler } from "./gitActionHandler";
 import { setFileHistorySplitLayout } from "../util/gitHistoryPreferences";
 import type { FileHistorySplitLayout } from "../types/messages";
@@ -212,11 +211,6 @@ export class MessageRouter {
     }
     this.watchedRepo = repo;
     this.repoFileWatcher.start(repo);
-  }
-
-  private resolveInitialRepo(): string | null {
-    return buildGitHistoryInitPayload(this.extensionContext, this.repoDiscovery, this.panelContext)
-      .initialRepo;
   }
 
   private resolveRelPath(repo: string, relPath?: string): string | undefined {

@@ -6,7 +6,7 @@ export interface GitPullDefaults {
   squash: boolean;
 }
 
-export const DEFAULT_PULL_DEFAULTS: GitPullDefaults = {
+const DEFAULT_PULL_DEFAULTS: GitPullDefaults = {
   noFastForward: false,
   squash: false,
 };
@@ -15,12 +15,12 @@ export type { FileHistorySplitLayout };
 
 export type GitHistoryColorMode = "adaptive" | "light";
 
-export const DEFAULT_COLOR_MODE: GitHistoryColorMode = "adaptive";
+const DEFAULT_COLOR_MODE: GitHistoryColorMode = "adaptive";
 const COLOR_MODE_KEY = "office.gitHistory.colorMode";
 
-export const DEFAULT_FILE_HISTORY_SPLIT_LAYOUT: FileHistorySplitLayout = "vertical";
+const DEFAULT_FILE_HISTORY_SPLIT_LAYOUT: FileHistorySplitLayout = "vertical";
 
-export interface GitHistorySavedState {
+interface GitHistorySavedState {
   repo?: string;
   selectedBranch?: string | null;
   selectedAuthor?: string;

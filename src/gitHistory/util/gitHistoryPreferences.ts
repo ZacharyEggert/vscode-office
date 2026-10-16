@@ -1,8 +1,6 @@
 import * as vscode from "vscode";
 import type { FileHistorySplitLayout } from "../types/messages";
 
-export const DEFAULT_FILE_HISTORY_SPLIT_LAYOUT: FileHistorySplitLayout = "vertical";
-
 const FILE_HISTORY_SPLIT_LAYOUT_KEY = "office.gitHistory.fileSplitLayout";
 
 export function getFileHistorySplitLayout(

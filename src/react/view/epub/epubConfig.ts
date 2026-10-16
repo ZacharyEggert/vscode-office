@@ -5,7 +5,7 @@ function spineItems(book: Book) {
   return (book.spine as unknown as { spineItems: ReturnType<Book["section"]>[] }).spineItems;
 }
 
-export const STORAGE_PREFIX = "ePubViewer:";
+const STORAGE_PREFIX = "ePubViewer:";
 
 export const THEME_OPTIONS = [
   { label: "A", value: "#fff;#000", bg: "#fff", fg: "#000" },
@@ -16,7 +16,7 @@ export const THEME_OPTIONS = [
   { label: "A", value: "#111b21;#e8e8e8", bg: "#111b21", fg: "#e8e8e8" },
 ];
 
-export const SYSTEM_FONT =
+const SYSTEM_FONT =
   "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
 
 export const FONT_OPTIONS = [
@@ -38,7 +38,7 @@ export interface EpubSettings {
   lineSpacing: string;
 }
 
-export const DEFAULT_SETTINGS: EpubSettings = {
+const DEFAULT_SETTINGS: EpubSettings = {
   theme: "#fff;#000",
   font: SYSTEM_FONT,
   fontSize: "13pt",
@@ -167,7 +167,7 @@ function themeRulesToCss(rules: ReturnType<typeof buildThemeRules>): string {
   return parts.join("\n");
 }
 
-export function buildThemeRules(settings: EpubSettings) {
+function buildThemeRules(settings: EpubSettings) {
   const [bg, fg] = settings.theme.split(";");
   const linkColor = "#1e83d2";
   return {
@@ -219,7 +219,7 @@ export function applyEpubTheme(
   }
 }
 
-export function flattenNavItems(items: NavItem[]): NavItem[] {
+function flattenNavItems(items: NavItem[]): NavItem[] {
   const result: NavItem[] = [];
   for (const item of items) {
     result.push(item);
