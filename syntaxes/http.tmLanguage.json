@@ -1,9 +1,6 @@
 {
   "scopeName": "source.http",
-  "fileTypes": [
-    "http",
-    "rest"
-  ],
+  "fileTypes": ["http", "rest"],
   "keyEquivalent": "^~H",
   "name": "http",
   "patterns": [
