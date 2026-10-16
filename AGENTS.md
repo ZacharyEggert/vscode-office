@@ -36,7 +36,7 @@ Four separately built pieces; know which one a change lives in.
 
 | Piece                                        | Source                                            | Built by                                            | Output                                                     |
 | -------------------------------------------- | ------------------------------------------------- | --------------------------------------------------- | ---------------------------------------------------------- |
-| Extension host                               | `src/` (minus `src/react`)                        | esbuild via `build.ts`                              | `out/extension.js` (desktop), `out/extension.web.js` (web) |
+| Extension host                               | `src/` (minus `src/react`)                        | Rolldown (`vite/rolldown`) via `build.ts`           | `out/extension.js` (desktop), `out/extension.web.js` (web) |
 | React webview (all viewers + Git History UI) | `src/react`                                       | Vite (`vite.config.ts`)                             | `out/webview`                                              |
 | Markdown editor webview                      | `vditor/` fork + glue in `resource/markdown/*.js` | `vite/vditorPlugin.ts` runs `vditor/vite.config.ts` | `resource/markdown/dist`                                   |
 | PDF viewer                                   | `resource/pdf` (vendored pdf.js)                  | none                                                | as-is                                                      |

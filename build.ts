@@ -1,8 +1,7 @@
-import { existsSync, readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { copyFileSync, cpSync, existsSync, readdirSync, readFileSync } from "node:fs";
+import { basename, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { build, context, type BuildOptions, type Plugin } from "esbuild";
-import { copy } from "esbuild-plugin-copy";
+import { build, watch, type BuildOptions, type Plugin } from "vite/rolldown";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -34,68 +33,58 @@ const nodeBuiltinStubs = [
   "string_decoder",
 ];
 
-function createDesktopAssetCopyPlugins(shouldWatch: boolean) {
-  return [
-    copy({
-      resolveFrom: "out",
-      watch: shouldWatch,
-      assets: [
-        {
-          from: ["./template/**/*"],
-          to: ["./"],
-        },
-        {
-          from: ["./node_modules/node-unrar-js/dist/js/unrar.wasm"],
-          to: ["./"],
-        },
-        {
-          from: ["./node_modules/7z-wasm/7zz.wasm"],
-          to: ["./"],
-        },
-      ],
-    }),
+function createDesktopAssetCopyPlugin(): Plugin {
+  const templateDir = resolve(__dirname, "template");
+  const wasmFiles = [
+    "node_modules/node-unrar-js/dist/js/unrar.wasm",
+    "node_modules/7z-wasm/7zz.wasm",
   ];
+  return {
+    name: "copy-desktop-assets",
+    buildStart() {
+      for (const file of readdirSync(templateDir, { recursive: true, encoding: "utf-8" })) {
+        this.addWatchFile(resolve(templateDir, file));
+      }
+    },
+    writeBundle() {
+      cpSync(templateDir, "out", { recursive: true });
+      for (const file of wasmFiles) {
+        copyFileSync(file, `out/${basename(file)}`);
+      }
+    },
+  };
 }
 
 function createNodeShimPlugin(): Plugin {
   const shimDir = resolve(__dirname, "src/shims");
-  const packageStubs = {
+  const packageStubs: Record<string, string> = {
     "puppeteer-core": "puppeteer-core.ts",
     "chrome-finder": "chrome-finder.ts",
     "file-type": "file-type.ts",
   };
+  const stubOrEmpty = (name: string) => {
+    const stubPath = resolve(shimDir, `${name}.ts`);
+    return existsSync(stubPath) ? stubPath : resolve(shimDir, "empty-stub.ts");
+  };
   return {
     name: "node-shim",
-    setup(build) {
-      build.onResolve({ filter: /^path$/ }, () => ({ path: resolve(shimDir, "path.ts") }));
-      build.onResolve({ filter: /^node:path$/ }, () => ({ path: resolve(shimDir, "path.ts") }));
-      build.onResolve({ filter: /markdown[\\/]markdown-pdf(\.js)?$/ }, () => ({
-        path: resolve(shimDir, "markdown-pdf.ts"),
-      }));
-      build.onResolve({ filter: /markdown[\\/]html-export\.js$/ }, () => ({
-        path: resolve(shimDir, "markdown-pdf.ts"),
-      }));
-      for (const [moduleName, stubFile] of Object.entries(packageStubs)) {
-        build.onResolve({ filter: new RegExp(`^${moduleName}$`) }, () => ({
-          path: resolve(shimDir, stubFile),
-        }));
+    resolveId(source) {
+      if (source === "path" || source === "node:path") {
+        return resolve(shimDir, "path.ts");
       }
-      for (const moduleName of nodeBuiltinStubs) {
-        const stubPath = resolve(shimDir, `${moduleName}.ts`);
-        build.onResolve({ filter: new RegExp(`^${moduleName}$`) }, () => ({
-          path: existsSync(stubPath) ? stubPath : resolve(shimDir, "empty-stub.ts"),
-        }));
+      if (/markdown[\\/](markdown-pdf(\.js)?|html-export\.js)$/.test(source)) {
+        return resolve(shimDir, "markdown-pdf.ts");
       }
-      build.onResolve({ filter: /^node:/ }, (args) => {
-        const bare = args.path.slice(5);
-        if (bare === "fs/promises") {
-          return { path: resolve(shimDir, "fs.ts") };
-        }
-        const stubPath = resolve(shimDir, `${bare}.ts`);
-        return {
-          path: existsSync(stubPath) ? stubPath : resolve(shimDir, "empty-stub.ts"),
-        };
-      });
+      if (packageStubs[source]) {
+        return resolve(shimDir, packageStubs[source]);
+      }
+      if (nodeBuiltinStubs.includes(source)) {
+        return stubOrEmpty(source);
+      }
+      if (source.startsWith("node:")) {
+        const bare = source.slice(5);
+        return bare === "fs/promises" ? resolve(shimDir, "fs.ts") : stubOrEmpty(bare);
+      }
     },
   };
 }
@@ -103,22 +92,31 @@ function createNodeShimPlugin(): Plugin {
 function createBuildNoticePlugin(): Plugin {
   return {
     name: "build notice",
-    setup(build) {
-      build.onStart(() => {
-        console.log("build start");
-      });
-      build.onEnd(() => {
-        console.log("build success");
-      });
+    buildStart() {
+      console.log("build start");
+    },
+    writeBundle() {
+      console.log("build success");
     },
   };
 }
 
+// esbuild-style externals: a bare name also covers its subpaths
+const isExternal = (names: string[]) => (id: string) =>
+  names.some((name) => id === name || id.startsWith(`${name}/`));
+
 async function runBuild(shouldWatch: boolean, options: BuildOptions) {
   if (shouldWatch) {
-    const ctx = await context(options);
-    await ctx.watch();
-    return ctx;
+    const watcher = watch(options);
+    watcher.on("event", (event) => {
+      if (event.code === "ERROR") {
+        console.error(event.error);
+      }
+      if ("result" in event) {
+        void event.result?.close();
+      }
+    });
+    return watcher;
   }
   return build(options);
 }
@@ -126,40 +124,36 @@ async function runBuild(shouldWatch: boolean, options: BuildOptions) {
 function buildDesktopExtension() {
   const shouldWatch = !isProd && devExtensionTarget !== "web";
   return runBuild(shouldWatch, {
-    entryPoints: ["./src/extension.ts"],
-    bundle: true,
-    outfile: "out/extension.js",
-    external: ["vscode", ...dependencies],
-    format: "cjs",
+    input: "./src/extension.ts",
     platform: "node",
-    minify: isProd,
-    sourcemap: !isProd,
-    logOverride: {
-      "duplicate-object-key": "silent",
-      "suspicious-boolean-not": "silent",
+    external: isExternal(["vscode", ...dependencies]),
+    output: {
+      file: "out/extension.js",
+      format: "cjs",
+      codeSplitting: false,
+      minify: isProd,
+      sourcemap: !isProd,
     },
-    plugins: [...createDesktopAssetCopyPlugins(shouldWatch), createBuildNoticePlugin()],
+    plugins: [createDesktopAssetCopyPlugin(), createBuildNoticePlugin()],
   });
 }
 
 function buildWebExtension() {
   const shouldWatch = !isProd && devExtensionTarget === "web";
   return runBuild(shouldWatch, {
-    entryPoints: ["./src/extension.web.ts"],
-    bundle: true,
-    outfile: "out/extension.web.js",
-    external: ["vscode", ...dependencies],
-    format: "cjs",
+    input: "./src/extension.web.ts",
     platform: "browser",
-    target: ["es2021"],
-    minify: isProd,
-    sourcemap: !isProd,
-    logOverride: {
-      "duplicate-object-key": "silent",
-      "suspicious-boolean-not": "silent",
-    },
-    banner: {
-      js: 'var global = globalThis; var Buffer = globalThis.Buffer || { from: (value, encoding) => encoding === "binary" ? Uint8Array.from(value, (c) => c.charCodeAt(0)) : new TextEncoder().encode(String(value)) };',
+    // stubbed packages must reach the shim plugin, not be externalized first
+    external: isExternal(["vscode", ...dependencies.filter((name) => name !== "puppeteer-core")]),
+    transform: { target: "es2021" },
+    output: {
+      file: "out/extension.web.js",
+      format: "cjs",
+      codeSplitting: false,
+      minify: isProd,
+      sourcemap: !isProd,
+      banner:
+        'var global = globalThis; var Buffer = globalThis.Buffer || { from: (value, encoding) => encoding === "binary" ? Uint8Array.from(value, (c) => c.charCodeAt(0)) : new TextEncoder().encode(String(value)) };',
     },
     plugins: [createNodeShimPlugin(), createBuildNoticePlugin()],
   });
@@ -181,16 +175,22 @@ async function createLib() {
     },
     {} as Record<string, string>,
   );
-  await build({
-    entryPoints: points,
-    bundle: true,
-    outdir: "out/node_modules",
-    format: "cjs",
-    platform: "node",
-    minify: true,
-    treeShaking: true,
-    metafile: true,
-  });
+  // one build per package: a multi-input build would split shared code into chunks
+  await Promise.all(
+    Object.entries(points).map(([name, input]) =>
+      build({
+        input,
+        platform: "node",
+        output: {
+          file: `out/node_modules/${name}.js`,
+          format: "cjs",
+          codeSplitting: false,
+          exports: "named",
+          minify: true,
+        },
+      }),
+    ),
+  );
 }
 
 (async () => {
@@ -202,7 +202,8 @@ async function createLib() {
     if (buildWeb) {
       await buildWebExtension();
     }
-  } catch {
+  } catch (error) {
+    console.error(error);
     process.exit(1);
   }
 })();

@@ -134,8 +134,6 @@
     "@types/vscode": "^1.64.0",
     "@vitejs/plugin-react": "^6.0.2",
     "chokidar": "^5.0.0",
-    "esbuild": "^0.28.1",
-    "esbuild-plugin-copy": "2.1.1",
     "eslint-plugin-unused-imports": "^4.4.1",
     "globals": "^17.7.0",
     "less": "^4.2.0",

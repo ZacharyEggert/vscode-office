@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { test } from "vite-plus/test";
-import { buildSync } from "esbuild";
+import { build } from "vite/rolldown";
 import puppeteer from "puppeteer-core";
 
 // Prefer a locally built Lute override, else the vendored one.
@@ -9,15 +9,15 @@ const lutePath = existsSync("test/output/lute/lute.min.js")
   ? "test/output/lute/lute.min.js"
   : "vditor/src/js/lute/lute.min.js";
 
-const bundle = (entry, name) =>
-  buildSync({
-    entryPoints: [entry],
-    bundle: true,
-    write: false,
-    format: "iife",
-    globalName: name,
-    define: { VDITOR_VERSION: '"test"' },
-  }).outputFiles[0].text;
+const bundle = async (entry, name) =>
+  (
+    await build({
+      input: entry,
+      write: false,
+      transform: { define: { VDITOR_VERSION: '"test"' } },
+      output: { format: "iife", name },
+    })
+  ).output[0].code;
 
 test("wikilink boundaries preserve outside typing and paragraph breaks", async () => {
   const browser = await puppeteer.launch({
@@ -30,9 +30,9 @@ test("wikilink boundaries preserve outside typing and paragraph breaks", async (
     await page.setContent('<div id="editor" class="vditor-reset" contenteditable="true"></div>');
     await page.addScriptTag({ content: readFileSync(lutePath, "utf8") });
     await page.addScriptTag({
-      content: bundle("vditor/src/ts/util/wikilinkBoundary.ts", "Boundary"),
+      content: await bundle("vditor/src/ts/util/wikilinkBoundary.ts", "Boundary"),
     });
-    await page.addScriptTag({ content: bundle("vditor/src/ts/ir/expandMarker.ts", "Markers") });
+    await page.addScriptTag({ content: await bundle("vditor/src/ts/ir/expandMarker.ts", "Markers") });
     await page.evaluate(() => {
       window.lute = Lute.New();
       lute.SetObsidian(true);

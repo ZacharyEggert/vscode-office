@@ -1,13 +1,13 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "vite-plus/test";
-import { transformSync } from "esbuild";
+import { transformSync } from "vite/rolldown/utils";
 
 const source = readFileSync(
   new URL("../../src/service/markdown/documentSync.ts", import.meta.url),
   "utf8",
 );
-const { code } = transformSync(source, { loader: "ts", format: "esm" });
+const { code } = transformSync("documentSync.ts", source);
 const { MarkdownDocumentSync } = await import(
   `data:text/javascript;base64,${Buffer.from(code).toString("base64")}`
 );
