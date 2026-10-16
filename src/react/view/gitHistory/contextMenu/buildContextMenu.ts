@@ -1,7 +1,8 @@
-import type { ContextMenuItem } from "../components/ContextMenu";
+import type { ContextMenuItem, MenuPayloadMeta } from "../components/ContextMenu";
 import { $t } from "../../../i18n/i18nConfig";
 import type { GitCommit, GitCommitRemote, GitFileChange } from "../types";
 import type { GitPullDefaults } from "../util/gitHistoryState";
+import type { GitActionRequest } from "../util/gitActionPromptFlow";
 
 const UNCOMMITTED = "*";
 const EMPTY_TREE_HASH = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
@@ -18,14 +19,14 @@ function formatMergeMenuLabel(source: string): Pick<ContextMenuItem, "label" | "
 }
 
 export interface GitActionEmitter {
-  (action: Record<string, unknown> & { action: string }): void;
+  (action: GitActionRequest): void;
 }
 
 export interface MenuContext {
   repo: string;
   head: string | null;
-  remotes: string[];
-  branches: string[];
+  remotes: readonly string[];
+  branches: readonly string[];
   relPath?: string | null;
   pullDefaults: GitPullDefaults;
   emit: GitActionEmitter;
@@ -177,20 +178,6 @@ export function buildFileChangeContextMenu(
     _hasParents: hasParents,
     _path: path,
   })) as ContextMenuItem[];
-}
-
-export interface MenuPayloadMeta {
-  _hash?: string;
-  _parents?: string[];
-  _message?: string;
-  _branch?: string;
-  _remote?: string;
-  _ref?: string;
-  _tag?: string;
-  _selector?: string;
-  _change?: GitFileChange;
-  _hasParents?: boolean;
-  _path?: string;
 }
 
 export function runContextMenuAction(id: string, meta: MenuPayloadMeta, ctx: MenuContext): void {

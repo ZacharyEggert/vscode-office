@@ -1,5 +1,6 @@
 import type { GitCommit } from "../types";
 import { UNCOMMITTED } from "../graph/layoutEngine";
+import type { GitActionRequest } from "./gitActionPromptFlow";
 
 export function isSelectableCommit(commit: GitCommit | undefined): boolean {
   if (!commit) {
@@ -139,10 +140,7 @@ export function buildBatchActionMessage(
   return lines.join("\n");
 }
 
-export function buildCherryPickAction(
-  commit: GitCommit,
-  repo: string,
-): Record<string, unknown> & { action: string } {
+export function buildCherryPickAction(commit: GitCommit, repo: string): GitActionRequest {
   return {
     action: "cherryPick",
     repo,
@@ -154,10 +152,7 @@ export function buildCherryPickAction(
   };
 }
 
-export function buildRevertAction(
-  commit: GitCommit,
-  repo: string,
-): Record<string, unknown> & { action: string } {
+export function buildRevertAction(commit: GitCommit, repo: string): GitActionRequest {
   return {
     action: "revertCommit",
     repo,

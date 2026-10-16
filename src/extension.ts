@@ -10,7 +10,7 @@ import { HtmlService } from "./service/htmlService";
 import { MarkdownService } from "./service/markdownService";
 import { switchCsvEditor } from "./service/csvService";
 import { FileUtil } from "./common/fileUtil";
-import { ReactApp } from "./common/reactApp";
+import { ReactApp } from "./service/reactApp";
 import { activateHttp } from "./provider/http";
 import { activateYaml } from "./provider/yaml";
 import { activateXml } from "./provider/xml";

@@ -1,3 +1,4 @@
+import type { FileHistorySplitLayout } from "../../../../gitHistory/types/messages";
 import { vscodeApi } from "../../../util/vscode";
 
 export interface GitPullDefaults {
@@ -10,7 +11,7 @@ export const DEFAULT_PULL_DEFAULTS: GitPullDefaults = {
   squash: false,
 };
 
-export type FileHistorySplitLayout = "vertical" | "horizontal";
+export type { FileHistorySplitLayout };
 
 export type GitHistoryColorMode = "adaptive" | "light";
 

@@ -1,5 +1,5 @@
 import { basename } from "path";
-import { ReactApp } from "@/common/reactApp";
+import { ReactApp } from "@/service/reactApp";
 import { getExtensionResourceRoots } from "@/common/extensionResource";
 import * as vscode from "vscode";
 

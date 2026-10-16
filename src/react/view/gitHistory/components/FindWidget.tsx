@@ -4,7 +4,7 @@ import { findCommitMatches } from "../util/findCommits";
 
 interface FindWidgetProps {
   open: boolean;
-  commits: GitCommit[];
+  commits: readonly GitCommit[];
   currentIndex: number | null;
   onClose: () => void;
   onNavigate: (index: number | null) => void;

@@ -14,12 +14,10 @@ import type {
   CommitDetailsPayload,
 } from "../types/messages";
 import type { LoadRepositoryRequest } from "../types/git";
-import { buildGitHistoryInitPayload } from "../util/gitHistoryInitPayload";
+import { buildGitHistoryInitPayload } from "./gitHistoryInitPayload";
 import { GitActionHandler } from "./gitActionHandler";
-import {
-  setFileHistorySplitLayout,
-  type FileHistorySplitLayout,
-} from "../util/gitHistoryPreferences";
+import { setFileHistorySplitLayout } from "../util/gitHistoryPreferences";
+import type { FileHistorySplitLayout } from "../types/messages";
 import { Global } from "@/common/global";
 
 const DEFAULT_MAX_COMMITS = 300;

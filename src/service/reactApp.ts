@@ -1,12 +1,12 @@
 import axios from "axios";
 import * as vscode from "vscode";
-import { extensionResource, getExtensionUri, readExtensionText } from "./extensionResource";
-import { IconService } from "../service/icon/iconService";
+import { extensionResource, getExtensionUri, readExtensionText } from "../common/extensionResource";
+import { IconService } from "./icon/iconService";
 
 interface ViewOption {
   route: string;
   fileName?: string;
-  gitHistoryInit?: import("../gitHistory/util/gitHistoryInitPayload").GitHistoryEmbeddedInit;
+  gitHistoryInit?: import("../gitHistory/types/messages").GitHistoryEmbeddedInit;
   gitHistorySettings?: { quickSyncButton: boolean };
 }
 

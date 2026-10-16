@@ -52,8 +52,8 @@ function withBranchOnCommit(
 export interface CheckoutStateUpdate {
   branchHead: string | null;
   commitHead: string | null;
-  branches?: string[];
-  commits?: GitCommit[];
+  branches?: readonly string[];
+  commits?: readonly GitCommit[];
 }
 
 export function buildCheckoutStateUpdate(

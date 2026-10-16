@@ -33,6 +33,8 @@ export interface GitCommit {
 
 export type GitFileStatus = "A" | "M" | "D" | "R" | "U";
 
+export type GitResetMode = "soft" | "mixed" | "hard";
+
 export interface GitFileChange {
   readonly oldFilePath: string;
   readonly newFilePath: string;

@@ -1,5 +1,5 @@
 import { Handler } from "@/common/handler";
-import { shouldSkipFileChange } from "@/provider/compress/commonHandler";
+import { shouldSkipFileChange } from "@/provider/handlers/commonHandler";
 import { readUriText } from "@/provider/handlers/officeContent";
 import { extname } from "path";
 import { type Uri } from "vscode";

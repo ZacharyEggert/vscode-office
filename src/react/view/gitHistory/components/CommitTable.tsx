@@ -18,7 +18,7 @@ const UNCOMMITTED = "*";
 export type RefContextType = "head" | "tag" | "remote" | "stash";
 
 interface CommitTableProps {
-  commits: GitCommit[];
+  commits: readonly GitCommit[];
   branchHead: string | null;
   commitHead: string | null;
   selectedIndices: ReadonlySet<number>;

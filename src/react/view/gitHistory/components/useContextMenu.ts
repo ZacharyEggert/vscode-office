@@ -1,6 +1,5 @@
 import { useCallback, useState } from "react";
-import type { MenuPayloadMeta } from "../contextMenu/buildContextMenu";
-import type { ContextMenuItem, ContextMenuState } from "./ContextMenu";
+import type { ContextMenuItem, ContextMenuState, MenuPayloadMeta } from "./ContextMenu";
 
 export function useContextMenu() {
   const [menu, setMenu] = useState<ContextMenuState | null>(null);

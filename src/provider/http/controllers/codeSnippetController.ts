@@ -3,7 +3,7 @@ import * as url from "url";
 import { Clipboard, env, window, TextDocument, Range } from "vscode";
 import { HARCookie, HARHeader, HARHttpRequest, HARPostData } from "../models/harHttpRequest";
 import { HttpRequest } from "../models/httpRequest";
-import { createRequestParser } from "../models/requestParser";
+import { createRequestParser } from "../utils/createRequestParser";
 import { base64, encodeUrl } from "../utils/misc";
 import { Selector } from "../utils/selector";
 import { getCurrentTextDocument } from "../utils/workspaceUtility";

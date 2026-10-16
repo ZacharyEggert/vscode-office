@@ -1,6 +1,6 @@
 import * as nodePath from "path";
 import * as vscode from "vscode";
-import { ReactApp } from "../../common/reactApp";
+import { ReactApp } from "../../service/reactApp";
 import { getExtensionResourceRoots } from "../../common/extensionResource";
 import type { CommitService } from "../service/commitService";
 import type { GitActions } from "../service/gitActions";
@@ -13,13 +13,11 @@ import {
 import type { GitActionHandler } from "./gitActionHandler";
 import { MessageRouter } from "./messageRouter";
 import { PanelHandler } from "./panelHandler";
-import { buildGitHistoryInitPayload } from "../util/gitHistoryInitPayload";
-import { resolvePreferredRepo } from "../util/resolveGitHistoryCommandContext";
+import { buildGitHistoryInitPayload } from "./gitHistoryInitPayload";
+import { resolvePreferredRepo } from "./resolveGitHistoryCommandContext";
 import { Global } from "@/common/global";
-import {
-  getFileHistorySplitLayout,
-  type FileHistorySplitLayout,
-} from "../util/gitHistoryPreferences";
+import { getFileHistorySplitLayout } from "../util/gitHistoryPreferences";
+import type { FileHistorySplitLayout } from "../types/messages";
 
 export const GIT_HISTORY_VIEW_TYPE = "office-git-history";
 

@@ -1,20 +1,10 @@
 import type * as vscode from "vscode";
 import type { RepoDiscovery } from "../service/repoDiscovery";
-import type { GitHistoryPanelContext } from "../provider/gitHistoryPanelContext";
-import { getRelativeRepoPath } from "./repoPath";
+import type { GitHistoryPanelContext } from "./gitHistoryPanelContext";
+import { getRelativeRepoPath } from "../util/repoPath";
 import { resolvePreferredRepo } from "./resolveGitHistoryCommandContext";
-import { getFileHistorySplitLayout, type FileHistorySplitLayout } from "./gitHistoryPreferences";
-
-export interface GitHistoryEmbeddedInit {
-  repos: string[];
-  initialRepo: string | null;
-  preferredRepo: string | null;
-  filePath: string | null;
-  fileName: string | null;
-  relPath: string | null;
-  fileHistorySplitLayout: FileHistorySplitLayout;
-  viewColumn?: number;
-}
+import { getFileHistorySplitLayout } from "../util/gitHistoryPreferences";
+import type { GitHistoryEmbeddedInit } from "../types/messages";
 
 function resolveInitialRepo(
   repoDiscovery: RepoDiscovery,

@@ -11,7 +11,7 @@ import {
   formatTarModifyTime,
   listTarEntries,
 } from "@/service/compress/tarUtils";
-import prettyBytes from "@/service/zip/pretty-bytes";
+import prettyBytes from "@/service/compress/pretty-bytes";
 import { mkdirSync } from "fs";
 import { basename } from "path";
 import { i18n } from "@/common/global";

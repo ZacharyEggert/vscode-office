@@ -18,7 +18,7 @@ interface PromptState {
 }
 
 interface PromptContext {
-  remotes: string[];
+  remotes: readonly string[];
   branchHead: string | null;
 }
 

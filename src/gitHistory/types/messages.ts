@@ -6,6 +6,20 @@ import type {
   LoadRepositoryRequest,
 } from "./git";
 
+export type FileHistorySplitLayout = "vertical" | "horizontal";
+
+/** Initial Git History state embedded in the webview's data-config. */
+export interface GitHistoryEmbeddedInit {
+  repos: string[];
+  initialRepo: string | null;
+  preferredRepo: string | null;
+  filePath: string | null;
+  fileName: string | null;
+  relPath: string | null;
+  fileHistorySplitLayout: FileHistorySplitLayout;
+  viewColumn?: number;
+}
+
 export interface GitHistoryReadyPayload {
   readonly repos: ReadonlyArray<string>;
   readonly initialRepo: string | null;

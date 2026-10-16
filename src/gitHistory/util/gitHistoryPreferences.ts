@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
-
-export type FileHistorySplitLayout = "vertical" | "horizontal";
+import type { FileHistorySplitLayout } from "../types/messages";
 
 export const DEFAULT_FILE_HISTORY_SPLIT_LAYOUT: FileHistorySplitLayout = "vertical";
 

@@ -1,3 +1,4 @@
+import type { GitActionPayload } from "../../../../gitHistory/types/gitActions";
 import { $t } from "../../../i18n/i18nConfig";
 
 export type FormField =
@@ -66,7 +67,8 @@ export type PromptStep =
       branchName?: string | null;
     };
 
-export type GitActionRequest = Record<string, unknown> & { action: string };
+// ponytail: only `action` is checked against the host contract; fields fill in across prompt steps.
+export type GitActionRequest = Record<string, unknown> & { action: GitActionPayload["action"] };
 
 export type PromptSubmitValue = string | Record<string, string>;
 
@@ -76,7 +78,7 @@ function abbrevHash(hash: string): string {
 
 export function getPromptSteps(
   payload: GitActionRequest,
-  ctx: { remotes: string[]; branchHead: string | null },
+  ctx: { remotes: readonly string[]; branchHead: string | null },
 ): PromptStep[] | null {
   switch (payload.action) {
     case "createBranch":

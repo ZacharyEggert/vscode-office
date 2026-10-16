@@ -1,5 +1,4 @@
-import type { GitFileStatus } from "./git";
-import type { GitResetMode } from "../service/gitRepoCommands";
+import type { GitFileStatus, GitResetMode } from "./git";
 
 export type GitActionPayload =
   | { action: "copyToClipboard"; text: string }

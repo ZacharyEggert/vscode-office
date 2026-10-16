@@ -1,5 +1,5 @@
 import type { FileEntry } from "@zip.js/zip.js";
-import type { ZipArchive } from "@/service/zip/zipArchive";
+import type { ZipArchive } from "@/service/compress/zipArchive";
 
 export interface JarInfo {
   mainClass?: string;

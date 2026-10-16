@@ -22,8 +22,9 @@ import {
 import { FileTypeIcon } from "../../components/FileTypeIcon";
 import { FolderTreeIcon } from "./FileTreeIcons";
 import { folderRowPaddingLeft, fileRowPaddingLeft, getChangeIconPath } from "../util/fileIcon";
+import type { GitActionRequest } from "../util/gitActionPromptFlow";
 
-export type FileChangeActionPayload = Record<string, unknown> & { action: string };
+export type FileChangeActionPayload = GitActionRequest;
 
 const FILE_CHANGE_BADGE_LABEL: Record<string, string> = {
   A: "A",
@@ -34,7 +35,7 @@ interface CommitDetailFileViewProps {
   repo: string;
   commitHash: string;
   hasParents: boolean;
-  fileChanges: GitFileChange[];
+  fileChanges: readonly GitFileChange[];
   relPath?: string | null;
   viewMode: FileViewMode;
   onFileAction: (payload: FileChangeActionPayload) => void;

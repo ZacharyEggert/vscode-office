@@ -1,5 +1,5 @@
 import { FormattingOptions } from "vscode";
-import { PrettyData, pd } from "../../http/utils/pretty-data";
+import { PrettyData, pd } from "@/common/pretty-data";
 
 function getIndentStep(options?: FormattingOptions): string {
   if (options?.insertSpaces === false) {

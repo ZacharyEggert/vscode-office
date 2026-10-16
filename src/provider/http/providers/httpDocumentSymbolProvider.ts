@@ -9,7 +9,7 @@ import {
   TextDocument,
 } from "vscode";
 import * as Constants from "../common/constants";
-import { createRequestParser } from "../models/requestParser";
+import { createRequestParser } from "../utils/createRequestParser";
 import { Selector } from "../utils/selector";
 import { VariableProcessor } from "../utils/variableProcessor";
 import { getCurrentHttpFileName } from "../utils/workspaceUtility";

@@ -6,7 +6,7 @@ export interface FindCommitMatchesResult {
 }
 
 export function findCommitMatches(
-  commits: GitCommit[],
+  commits: readonly GitCommit[],
   text: string,
   caseSensitive: boolean,
   useRegex = false,

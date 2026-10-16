@@ -15,7 +15,7 @@ import {
 interface ToolbarProps {
   repos: string[];
   repo: string;
-  branches: string[];
+  branches: readonly string[];
   selectedBranch: string | null;
   authors: string[];
   selectedAuthor: string | undefined;

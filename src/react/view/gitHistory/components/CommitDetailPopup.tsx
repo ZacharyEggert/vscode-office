@@ -13,6 +13,7 @@ import {
 } from "../util/commitDetailPopup";
 import type { FileViewMode } from "../util/commitFileTree";
 import CommitDetailFileView from "./CommitDetailFileView";
+import type { GitActionRequest } from "../util/gitActionPromptFlow";
 
 const { Text } = Typography;
 const COMMIT_INFO_POPUP_WIDTH = 480;
@@ -43,7 +44,7 @@ interface CommitDetailPopupProps {
   filterCurrentFile: boolean;
   onClose: () => void;
   onToggleFilterCurrentFile: () => void;
-  onFileAction: (action: Record<string, unknown> & { action: string }) => void;
+  onFileAction: (action: GitActionRequest) => void;
   onFileContextMenu: (event: MouseEvent, change: GitFileChange) => void;
 }
 
@@ -136,7 +137,7 @@ function filterFileChanges(
   details: GitCommitDetails,
   relPath: string | null | undefined,
   filterCurrentFile: boolean,
-): GitFileChange[] {
+): readonly GitFileChange[] {
   if (!filterCurrentFile || !relPath) {
     return details.fileChanges;
   }
@@ -156,7 +157,7 @@ function CommitInfoPanel({
 }: {
   commit: GitCommit;
   details: GitCommitDetails;
-  fileChanges: GitFileChange[];
+  fileChanges: readonly GitFileChange[];
 }) {
   const additions = fileChanges.reduce((sum, change) => sum + (change.additions ?? 0), 0);
   const deletions = fileChanges.reduce((sum, change) => sum + (change.deletions ?? 0), 0);

@@ -73,7 +73,7 @@ function compactFolders(nodes: FileTreeNode[]): FileTreeNode[] {
   return result;
 }
 
-export function buildFileTree(changes: GitFileChange[]): FileTreeNode[] {
+export function buildFileTree(changes: readonly GitFileChange[]): FileTreeNode[] {
   const root: FileTreeFolder = { kind: "folder", name: "", path: "", children: [] };
   const folderMap = new Map<string, FileTreeFolder>();
   folderMap.set("", root);
@@ -121,7 +121,7 @@ export function collectFolderPaths(nodes: FileTreeNode[]): string[] {
   return paths;
 }
 
-export function sortFlatFileChanges(changes: GitFileChange[]): GitFileChange[] {
+export function sortFlatFileChanges(changes: readonly GitFileChange[]): GitFileChange[] {
   const sorted = [...changes];
   sorted.sort((a, b) => getChangeDisplayPath(a).localeCompare(getChangeDisplayPath(b)));
   return sorted;

@@ -1,4 +1,4 @@
-import { ReactApp } from "@/common/reactApp";
+import { ReactApp } from "@/service/reactApp";
 import { getFileSuffix } from "@/common/fileSuffix";
 import * as vscode from "vscode";
 import { Handler } from "../common/handler";
@@ -6,7 +6,7 @@ import { Util } from "../common/util";
 import { handleImage, isImage } from "./handlers/imageHanlder";
 import { handleSvg } from "./handlers/svgHandler";
 import { isVirtualUri, readUriText } from "./handlers/officeContent";
-import { handleCommonEvent } from "./compress/commonHandler";
+import { handleCommonEvent } from "./handlers/commonHandler";
 import { TelemetryService } from "@/service/telemetryService";
 import {
   extensionResource,

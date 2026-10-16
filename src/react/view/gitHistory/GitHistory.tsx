@@ -22,7 +22,7 @@ import {
   anchorFromMouseEvent,
   type PopupAnchor,
 } from "./util/commitDetailPopup";
-import { ContextMenu } from "./components/ContextMenu";
+import { ContextMenu, type MenuPayloadMeta } from "./components/ContextMenu";
 import { useContextMenu } from "./components/useContextMenu";
 import {
   buildBranchContextMenu,
@@ -37,7 +37,6 @@ import {
   runContextMenuAction,
   type ExtendedContextMenuItem,
   type MenuContext,
-  type MenuPayloadMeta,
 } from "./contextMenu/buildContextMenu";
 import {
   themeStyle,
@@ -151,15 +150,15 @@ function GitHistoryView({
   );
   const [repos, setRepos] = useState<string[]>([]);
   const [repo, setRepo] = useState("");
-  const [branches, setBranches] = useState<string[]>([]);
-  const [remotes, setRemotes] = useState<string[]>([]);
-  const [stashes, setStashes] = useState<GitStash[]>([]);
+  const [branches, setBranches] = useState<readonly string[]>([]);
+  const [remotes, setRemotes] = useState<readonly string[]>([]);
+  const [stashes, setStashes] = useState<readonly GitStash[]>([]);
   const [selectedBranch, setSelectedBranch] = useState<string | null>(null);
   const [authors, setAuthors] = useState<string[]>([]);
   const [selectedAuthor, setSelectedAuthor] = useState<string>();
   const showRemoteBranches = true;
   const [searchValue, setSearchValue] = useState("");
-  const [commits, setCommits] = useState<GitCommit[]>([]);
+  const [commits, setCommits] = useState<readonly GitCommit[]>([]);
   const [branchHead, setBranchHead] = useState<string | null>(null);
   const [commitHead, setCommitHead] = useState<string | null>(null);
   const [selectedIndices, setSelectedIndices] = useState<Set<number>>(() => new Set());
@@ -205,7 +204,7 @@ function GitHistoryView({
   const [remoteDeleteName, setRemoteDeleteName] = useState<string | null>(null);
   const [batchConfirm, setBatchConfirm] = useState<{
     kind: "cherryPick" | "revert";
-    commits: GitCommit[];
+    commits: readonly GitCommit[];
   } | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<HTMLDivElement>(null);
@@ -404,7 +403,7 @@ function GitHistoryView({
   }, [clearSelection]);
 
   const startBatchExecution = useCallback(
-    (kind: "cherryPick" | "revert", selected: GitCommit[]) => {
+    (kind: "cherryPick" | "revert", selected: readonly GitCommit[]) => {
       batchQueueRef.current = selected.map((commit) =>
         kind === "cherryPick"
           ? (buildCherryPickAction(commit, repo) as GitActionRequest)

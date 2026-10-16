@@ -14,7 +14,7 @@ import { mkdirSync, writeFileSync } from "fs";
 import { basename, resolve } from "path";
 import prettyBytes from "./pretty-bytes";
 import { detectZipFilenameEncoding } from "./zipEncoding";
-import { resolveContainedPath, unwrapCrx } from "@/service/compress/archiveUtils";
+import { resolveContainedPath, unwrapCrx } from "./archiveUtils";
 
 export interface ZipDisplayEntry {
   name?: string;

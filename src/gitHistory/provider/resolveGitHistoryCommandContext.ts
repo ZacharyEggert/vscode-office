@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import type { GitHistoryPanelContext } from "../provider/gitHistoryPanelContext";
+import type { GitHistoryPanelContext } from "./gitHistoryPanelContext";
 import type { RepoDiscovery } from "../service/repoDiscovery";
 
 function isFileUri(uri: vscode.Uri | undefined): uri is vscode.Uri {

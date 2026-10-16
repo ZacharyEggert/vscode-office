@@ -1,8 +1,8 @@
-import { ReactApp } from "@/common/reactApp";
+import { ReactApp } from "@/service/reactApp";
 import { getFileSuffix } from "@/common/fileSuffix";
 import { Handler } from "@/common/handler";
 import { getExtensionResourceRoots } from "@/common/extensionResource";
-import { handleCommonEvent } from "@/provider/compress/commonHandler";
+import { handleCommonEvent } from "@/provider/handlers/commonHandler";
 import { handleZip } from "@/provider/compress/zipHandler";
 import { handleRar } from "@/provider/compress/rarHandler";
 import { handleTarGz } from "@/provider/compress/tarHandler";

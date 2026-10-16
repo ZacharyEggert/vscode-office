@@ -12,7 +12,7 @@ import { GitHistoryPanelSerializer } from "./gitHistoryPanelSerializer";
 import {
   buildPanelContextFromCommandArg,
   resolvePreferredRepo,
-} from "../util/resolveGitHistoryCommandContext";
+} from "./resolveGitHistoryCommandContext";
 import { normalizeRepoPath } from "../util/repoPath";
 import { i18n } from "@/common/global";
 import { TelemetryService } from "@/service/telemetryService";

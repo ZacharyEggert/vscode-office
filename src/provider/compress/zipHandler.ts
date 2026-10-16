@@ -9,8 +9,8 @@ import {
   resolveContainedPath,
   revealExtractResult,
 } from "@/service/compress/archiveUtils";
-import prettyBytes from "@/service/zip/pretty-bytes";
-import { ZipArchive } from "@/service/zip/zipArchive";
+import prettyBytes from "@/service/compress/pretty-bytes";
+import { ZipArchive } from "@/service/compress/zipArchive";
 import { mkdirSync, writeFileSync } from "fs";
 import { basename, resolve } from "path";
 import { i18n } from "@/common/global";

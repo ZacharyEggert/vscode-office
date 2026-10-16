@@ -1,12 +1,10 @@
 import * as path from "path";
 import * as vscode from "vscode";
-import type { GitFileStatus } from "../types/git";
+import type { GitFileStatus, GitResetMode } from "../types/git";
 import { UNCOMMITTED } from "../types/git";
 import type { GitExecutor } from "./gitExecutor";
 
 const EMPTY_TREE_HASH = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
-
-export type GitResetMode = "soft" | "mixed" | "hard";
 
 export interface GitCommandResult {
   error: string | null;

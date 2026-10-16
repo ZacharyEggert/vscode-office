@@ -9,7 +9,7 @@ import {
 import Logger from "../logger";
 import { RestClientSettings } from "../models/configurationSettings";
 import { HttpRequest } from "../models/httpRequest";
-import { createRequestParser } from "../models/requestParser";
+import { createRequestParser } from "../utils/createRequestParser";
 import { HttpClient, RequestProgress } from "../utils/httpClient";
 import { RequestVariableCache } from "../utils/requestVariableCache";
 import { Selector } from "../utils/selector";

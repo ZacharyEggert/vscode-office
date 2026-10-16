@@ -1,4 +1,5 @@
 import type { GitFileChange } from "../types";
+import type { GitActionRequest } from "./gitActionPromptFlow";
 
 const UNCOMMITTED = "*";
 const EMPTY_TREE_HASH = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
@@ -25,7 +26,7 @@ export function buildViewDiffAction(
   commitHash: string,
   hasParents: boolean,
   change: GitFileChange,
-): Record<string, unknown> & { action: string } {
+): GitActionRequest {
   if (commitHash === UNCOMMITTED) {
     return {
       action: "viewDiff",
@@ -53,7 +54,7 @@ export function buildViewFileAtRevisionAction(
   repo: string,
   commitHash: string,
   change: GitFileChange,
-): Record<string, unknown> & { action: string } {
+): GitActionRequest {
   return {
     action: "viewFileAtRevision",
     repo,
@@ -62,10 +63,7 @@ export function buildViewFileAtRevisionAction(
   };
 }
 
-export function buildOpenFileAction(
-  repo: string,
-  change: GitFileChange,
-): Record<string, unknown> & { action: string } {
+export function buildOpenFileAction(repo: string, change: GitFileChange): GitActionRequest {
   return {
     action: "openFile",
     repo,

@@ -6,7 +6,7 @@ import * as vscode from "vscode";
 import { Global } from "./common/global";
 import { FileUtil } from "./common/fileUtil";
 import { setExtensionHostContext } from "./common/extensionHost";
-import { ReactApp } from "./common/reactApp";
+import { ReactApp } from "./service/reactApp";
 import { MarkdownEditorProvider } from "./provider/markdownEditorProvider";
 import { OfficeViewerProvider } from "./provider/officeViewerProvider";
 import { WebUnsupportedViewerProvider } from "./provider/webUnsupportedViewerProvider";
