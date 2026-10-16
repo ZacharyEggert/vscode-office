@@ -9,12 +9,12 @@ tags: [obsidian, test, hub]
 
 ## 快速导航
 
-| 主题    | 链接                                                |
-| ------- | --------------------------------------------------- |
-| 项目    | [[Projects/Vditor]]、[[Projects/Roadmap]]           |
-| 笔记    | [[Notes/Meeting-Notes]]、[[Notes/Daily-2026-06-24]] |
-| 参考    | [[Reference/API]]、[[Reference/Glossary]]           |
-| Callout | [[Callouts]]                                        |
+| 主题 | 链接 |
+| --- | --- |
+| 项目 | [[Projects/Vditor]]、[[Projects/Roadmap]] |
+| 笔记 | [[Notes/Meeting-Notes]]、[[Notes/Daily-2026-06-24]] |
+| 参考 | [[Reference/API]]、[[Reference/Glossary]] |
+| Callout | [[Callouts]] |
 
 ## 双链示例
 

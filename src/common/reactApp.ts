@@ -35,7 +35,9 @@ export class ReactApp {
         sponsorBaseUrl,
         language: vscode.env.language,
         config: vscode.workspace.getConfiguration("vscode-office"),
-      }),
+      })
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;"),
     );
   }
 

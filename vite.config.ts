@@ -21,7 +21,10 @@ export default defineConfig(({ command, mode }) => ({
   staged: {
     "*": "vp check --fix",
   },
-  fmt: {},
+  fmt: {
+    // ponytail: vendored/minified files and markdown fixtures must stay byte-exact
+    ignorePatterns: ["**/*.min.*", "resource/pdf/**", "test/markdown/**"],
+  },
   lint: {
     plugins: ["oxc", "typescript", "unicorn"],
     categories: {

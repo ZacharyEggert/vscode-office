@@ -32,7 +32,6 @@
 ## Callout 内双链与标签
 
 > [!NOTE] 混合内容
->
 > - 页面：[[Projects/Vditor]]、[[Notes/Daily-2026-06-24]]
 > - 嵌入：![[Notes/Meeting-Notes]]
 > - 标签：#mixed #callout/demo
