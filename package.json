@@ -52,7 +52,7 @@
     "package": "vsce package --no-dependencies",
     "publish": "vsce publish --no-dependencies && ovsx publish --no-dependencies",
     "vscode:prepublish": "npm run build",
-    "prepare": "vp config"
+    "prepare": "vp config --no-hooks"
   },
   "dependencies": {
     "7z-wasm": "^1.2.0",

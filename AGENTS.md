@@ -89,4 +89,4 @@ Every host feature registers in **both** `src/extension.ts` (desktop, Node) and 
 
 - Debug: VS Code launch config "Extension" (or "Extension (Web)") runs `vp run dev`; in Development mode `ReactApp` loads the webview from the Vite dev server at `127.0.0.1:5739`, so React edits hot-reload; host edits need a window reload. F12 in a webview opens devtools.
 - No unit tests exist; `test/` holds perf scripts and markdown fixtures only. Verification = `vp check` + `vp run build` (CI only runs the build), then exercise the viewer in the debug host.
-- Pre-commit runs `vp staged` → `vp check --fix`.
+- No pre-commit hook (`vp staged` hung on large staged sets). Run `vp check --fix` manually before committing.
