@@ -4,12 +4,12 @@ This guide is for **maintainers** who build and publish Office Viewer. End users
 
 ## Overview
 
-| Item | Value |
-|------|-------|
-| SDK | [`@vscode/extension-telemetry`](https://www.npmjs.com/package/@vscode/extension-telemetry) |
-| Backend | Azure Application Insights (Workspace-based) |
-| Code | `src/service/telemetryService.ts` |
-| Event inventory | `telemetry.json` (root) |
+| Item            | Value                                                                                      |
+| --------------- | ------------------------------------------------------------------------------------------ |
+| SDK             | [`@vscode/extension-telemetry`](https://www.npmjs.com/package/@vscode/extension-telemetry) |
+| Backend         | Azure Application Insights (Workspace-based)                                               |
+| Code            | `src/service/telemetryService.ts`                                                          |
+| Event inventory | `telemetry.json` (root)                                                                    |
 
 Telemetry is **disabled** until you set a non-empty connection string in `telemetryService.ts`.
 
@@ -54,7 +54,7 @@ Microsoft documents the connection string as **not sensitive**; it is commonly c
 2. Paste your connection string:
 
    ```typescript
-   const TELEMETRY_CONNECTION_STRING = 'InstrumentationKey=...;IngestionEndpoint=...';
+   const TELEMETRY_CONNECTION_STRING = "InstrumentationKey=...;IngestionEndpoint=...";
    ```
 
 3. Rebuild and package:
@@ -119,10 +119,10 @@ customEvents
 
 ## 5. User controls (already implemented)
 
-| Control | Setting |
-|---------|---------|
+| Control        | Setting                                                  |
+| -------------- | -------------------------------------------------------- |
 | VS Code global | `telemetry.telemetryLevel` / `telemetry.enableTelemetry` |
-| Extension only | `vscode-office.enableTelemetry` (default: `true`) |
+| Extension only | `vscode-office.enableTelemetry` (default: `true`)        |
 
 `@vscode/extension-telemetry` checks `env.isTelemetryEnabled` before sending.
 
@@ -138,12 +138,12 @@ If `telemetry.json` is packaged with the extension, Office Viewer events appear 
 
 ## Troubleshooting
 
-| Problem | Check |
-|---------|--------|
-| No events in Logs | Connection string set and non-empty? Rebuilt after change? Wait a few minutes |
-| Still no events | VS Code telemetry off? `vscode-office.enableTelemetry` false? |
-| Events in dev only | Published VSIX built **after** adding the connection string |
-| Query empty filter | Use `ago(24h)` or wider time range in Logs |
+| Problem            | Check                                                                         |
+| ------------------ | ----------------------------------------------------------------------------- |
+| No events in Logs  | Connection string set and non-empty? Rebuilt after change? Wait a few minutes |
+| Still no events    | VS Code telemetry off? `vscode-office.enableTelemetry` false?                 |
+| Events in dev only | Published VSIX built **after** adding the connection string                   |
+| Query empty filter | Use `ago(24h)` or wider time range in Logs                                    |
 
 ## Related files
 
