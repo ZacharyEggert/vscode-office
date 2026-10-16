@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { performance } = require("perf_hooks");
-const ExcelJS = require("exceljs");
+const ExcelJS = require("@cweijan/exceljs");
 const { rows, cols, outputDir } = require("./excel_perf_config");
 
 function ensureOutputDir() {

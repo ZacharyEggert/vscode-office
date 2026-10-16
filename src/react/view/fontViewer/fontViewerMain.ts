@@ -1,4 +1,4 @@
-import opentype from "opentype.js";
+import { parse } from "opentype.js";
 import { arrayBufferFromPayload, type OfficeOpenPayload } from "../../util/loadOfficeContent";
 
 export interface FontInfo {
@@ -37,7 +37,7 @@ const cellWidth = 100,
   cellHeight = 84;
 
 export async function loadFont(source: string | OfficeOpenPayload): Promise<FontInfo> {
-  const font = opentype.parse(await loadFontAsBuffer(source));
+  const font = parse(await loadFontAsBuffer(source));
 
   const cellMarginTop = 20,
     cellMarginBottom = 20,
