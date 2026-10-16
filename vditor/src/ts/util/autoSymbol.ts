@@ -1,4 +1,8 @@
-import { CM_BLOCK_CLASS, isInsideCodeBlockChrome, isInsideCodeMirror } from "../codeBlock/codeMirrorManager";
+import {
+  CM_BLOCK_CLASS,
+  isInsideCodeBlockChrome,
+  isInsideCodeMirror,
+} from "../codeBlock/codeMirrorManager";
 
 // 保持原来的 keyCode 触发逻辑：219 ([/{), 57 ((/9)
 const AUTO_PAIR_KEYCODES = new Set([219, 57]);
@@ -9,45 +13,45 @@ const AUTO_PAIR_KEYCODES = new Set([219, 57]);
  * - [ : keyCode 219 + 非 Shift 且 event.key === '['（去除 {）
  */
 const resolveKeyCodePairClose = (event: KeyboardEvent): string | null => {
-    if (event.isComposing || event.ctrlKey || event.metaKey || event.altKey) {
-        return null;
-    }
-    if (!AUTO_PAIR_KEYCODES.has(event.keyCode)) {
-        return null;
-    }
-    if (event.keyCode === 57 && event.shiftKey && event.key === "(") {
-        return ")";
-    }
-    if (event.keyCode === 219 && !event.shiftKey && event.key === "[") {
-        return "]";
-    }
+  if (event.isComposing || event.ctrlKey || event.metaKey || event.altKey) {
     return null;
+  }
+  if (!AUTO_PAIR_KEYCODES.has(event.keyCode)) {
+    return null;
+  }
+  if (event.keyCode === 57 && event.shiftKey && event.key === "(") {
+    return ")";
+  }
+  if (event.keyCode === 219 && !event.shiftKey && event.key === "[") {
+    return "]";
+  }
+  return null;
 };
 
 const isInsideCodeBlockContext = (target: EventTarget | null) => {
-    if (isInsideCodeMirror(target) || isInsideCodeBlockChrome(target)) {
-        return true;
-    }
-    const node = target instanceof Element ? target : (target as Node | null)?.parentElement;
-    if (!node) {
-        return false;
-    }
-    return !!node.closest(`[data-type='code-block'], .${CM_BLOCK_CLASS}`);
+  if (isInsideCodeMirror(target) || isInsideCodeBlockChrome(target)) {
+    return true;
+  }
+  const node = target instanceof Element ? target : (target as Node | null)?.parentElement;
+  if (!node) {
+    return false;
+  }
+  return !!node.closest(`[data-type='code-block'], .${CM_BLOCK_CLASS}`);
 };
 
 /** 自动补全括号和方括号；不在代码块内生效 */
 export const handleAutoSymbolPair = (event: KeyboardEvent) => {
-    const close = resolveKeyCodePairClose(event);
-    if (!close) {
-        return;
-    }
-    if (isInsideCodeBlockContext(event.target) || isInsideCodeBlockContext(document.activeElement)) {
-        return;
-    }
-    const selection = document.getSelection();
-    if (!selection || selection.toString() !== "") {
-        return;
-    }
-    document.execCommand("insertText", false, close);
-    selection.modify("move", "left", "character");
+  const close = resolveKeyCodePairClose(event);
+  if (!close) {
+    return;
+  }
+  if (isInsideCodeBlockContext(event.target) || isInsideCodeBlockContext(document.activeElement)) {
+    return;
+  }
+  const selection = document.getSelection();
+  if (!selection || selection.toString() !== "") {
+    return;
+  }
+  document.execCommand("insertText", false, close);
+  selection.modify("move", "left", "character");
 };

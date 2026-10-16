@@ -10,25 +10,25 @@ export const PLAIN_TEXT_FAST_PATH_MIN_LENGTH = 12_000;
 const MARKDOWN_TRIGGER_RE = /[`*_~#\-+>\[\]()|!$\\=\s]/;
 
 export const containsMarkdownTriggerChar = (text: string): boolean => {
-    return MARKDOWN_TRIGGER_RE.test(text);
+  return MARKDOWN_TRIGGER_RE.test(text);
 };
 
 export const isPlainTextFastPathEnabled = (vditor: IVditor): boolean => {
-    return (vditor.documentInitialLength ?? 0) >= PLAIN_TEXT_FAST_PATH_MIN_LENGTH;
+  return (vditor.documentInitialLength ?? 0) >= PLAIN_TEXT_FAST_PATH_MIN_LENGTH;
 };
 
 export const canUsePlainTextFastPath = (vditor: IVditor, event: InputEvent): boolean => {
-    if (!isPlainTextFastPathEnabled(vditor)) {
-        return false;
-    }
-    if (event.isComposing) {
-        return false;
-    }
-    if (event.inputType !== "insertText") {
-        return false;
-    }
-    if (!event.data) {
-        return false;
-    }
-    return !containsMarkdownTriggerChar(event.data);
+  if (!isPlainTextFastPathEnabled(vditor)) {
+    return false;
+  }
+  if (event.isComposing) {
+    return false;
+  }
+  if (event.inputType !== "insertText") {
+    return false;
+  }
+  if (!event.data) {
+    return false;
+  }
+  return !containsMarkdownTriggerChar(event.data);
 };

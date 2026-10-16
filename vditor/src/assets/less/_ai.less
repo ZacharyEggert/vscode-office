@@ -1,10 +1,17 @@
 @keyframes vditor-ai-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes vditor-ai-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
 }
 
 .vditor-ai-review {
@@ -90,7 +97,10 @@
     font-family: inherit;
     cursor: pointer;
     flex-shrink: 0;
-    transition: background 0.1s, color 0.1s, border-color 0.1s;
+    transition:
+      background 0.1s,
+      color 0.1s,
+      border-color 0.1s;
 
     &[hidden] {
       display: none !important;
@@ -208,7 +218,10 @@
     font-family: inherit;
     cursor: pointer;
     border: 1px solid transparent;
-    transition: opacity 0.1s, background 0.1s, border-color 0.1s;
+    transition:
+      opacity 0.1s,
+      background 0.1s,
+      border-color 0.1s;
     outline: none;
 
     &:disabled {

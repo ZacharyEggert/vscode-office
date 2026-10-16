@@ -69,7 +69,7 @@
         width: 100%;
       }
 
-      .vditor-link-popover__href{
+      .vditor-link-popover__href {
         margin-inline-end: 6px !important;
       }
 
@@ -148,10 +148,13 @@
       }
 
       .vditor-link-popover__button--copy {
-
         &:hover,
         &:focus-visible {
-          background-color: color-mix(in srgb, var(--cm-copy-color, var(--link-color)) 10%, transparent);
+          background-color: color-mix(
+            in srgb,
+            var(--cm-copy-color, var(--link-color)) 10%,
+            transparent
+          );
         }
 
         .vditor-link-popover__button-icon {
@@ -169,7 +172,11 @@
 
         &:hover,
         &:focus-visible {
-          background-color: color-mix(in srgb, var(--cm-delete-color, var(--error-color)) 10%, transparent);
+          background-color: color-mix(
+            in srgb,
+            var(--cm-delete-color, var(--error-color)) 10%,
+            transparent
+          );
         }
 
         .vditor-link-popover__button-icon {
@@ -192,7 +199,6 @@
         user-select: none;
         pointer-events: none;
       }
-
     }
 
     &--link-ref {
@@ -219,8 +225,16 @@
       --vditor-popover-primary-btn-bg: #007aff;
       --vditor-popover-primary-btn-bg-hover: #0066d6;
       --vditor-popover-primary-btn-fg: #fff;
-      --vditor-popover-secondary-btn-bg: color-mix(in srgb, var(--textarea-text-color) 10%, transparent);
-      --vditor-popover-secondary-btn-bg-hover: color-mix(in srgb, var(--textarea-text-color) 16%, transparent);
+      --vditor-popover-secondary-btn-bg: color-mix(
+        in srgb,
+        var(--textarea-text-color) 10%,
+        transparent
+      );
+      --vditor-popover-secondary-btn-bg-hover: color-mix(
+        in srgb,
+        var(--textarea-text-color) 16%,
+        transparent
+      );
       opacity: 1;
       min-width: 320px;
       max-width: min(520px, calc(100vw - 24px));
@@ -229,7 +243,9 @@
       border: 1px solid color-mix(in srgb, var(--toolbar-icon-color) 22%, transparent);
       border-radius: 8px;
       background: var(--panel-background-color);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.20), 0 1px 2px rgba(0, 0, 0, 0.12);
+      box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.2),
+        0 1px 2px rgba(0, 0, 0, 0.12);
       color: var(--textarea-text-color);
       white-space: normal;
       overflow: hidden;
@@ -276,7 +292,10 @@
         outline: none;
         color: inherit;
         background: var(--vditor-popover-secondary-btn-bg);
-        transition: background 0.12s ease, opacity 0.12s ease, box-shadow 0.12s ease;
+        transition:
+          background 0.12s ease,
+          opacity 0.12s ease,
+          box-shadow 0.12s ease;
 
         &--cancel {
           &:hover {
@@ -294,7 +313,8 @@
           }
 
           &:focus-visible {
-            box-shadow: 0 0 0 3px color-mix(in srgb, var(--vditor-popover-primary-btn-bg) 35%, transparent);
+            box-shadow: 0 0 0 3px
+              color-mix(in srgb, var(--vditor-popover-primary-btn-bg) 35%, transparent);
           }
         }
 

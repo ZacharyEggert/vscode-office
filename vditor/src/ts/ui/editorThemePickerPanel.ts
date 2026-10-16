@@ -1,21 +1,21 @@
 import {
-    EDITOR_THEME_PANEL_CLASS,
-    buildThemePickerPanelHTML,
-    refreshThemePickerPanel,
+  EDITOR_THEME_PANEL_CLASS,
+  buildThemePickerPanelHTML,
+  refreshThemePickerPanel,
 } from "./themePickerPanel";
 
-export {EDITOR_THEME_PANEL_CLASS};
+export { EDITOR_THEME_PANEL_CLASS };
 
 export const buildEditorThemePickerPanelHTML = (
-    groups: Parameters<typeof buildThemePickerPanelHTML>[0],
-    currentTheme: string,
-    formatLabel?: (themeId: string) => string,
+  groups: Parameters<typeof buildThemePickerPanelHTML>[0],
+  currentTheme: string,
+  formatLabel?: (themeId: string) => string,
 ) => {
-    return buildThemePickerPanelHTML(groups, currentTheme, formatLabel, EDITOR_THEME_PANEL_CLASS);
+  return buildThemePickerPanelHTML(groups, currentTheme, formatLabel, EDITOR_THEME_PANEL_CLASS);
 };
 
 export const queryEditorThemePickerPanel = (container: ParentNode) => {
-    return container.querySelector(`.${EDITOR_THEME_PANEL_CLASS}`) as HTMLElement | null;
+  return container.querySelector(`.${EDITOR_THEME_PANEL_CLASS}`) as HTMLElement | null;
 };
 
 export const refreshEditorThemePickerPanel = refreshThemePickerPanel;

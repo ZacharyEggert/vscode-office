@@ -17,14 +17,22 @@
   &.vditor-panel--arrow:before {
     left: var(--settings-panel-arrow-left, calc(50% - 7px));
     right: auto;
-    border-bottom-color: color-mix(in srgb, var(--toolbar-icon-color) 12%, var(--panel-background-color));
+    border-bottom-color: color-mix(
+      in srgb,
+      var(--toolbar-icon-color) 12%,
+      var(--panel-background-color)
+    );
   }
 }
 
 .vditor-settings-panel {
   --settings-accent: var(--list-hover-color, var(--link-color, #4285f4));
   --settings-accent-hover: color-mix(in srgb, var(--settings-accent) 85%, #000);
-  --settings-fill: color-mix(in srgb, var(--toolbar-icon-color) 7%, var(--panel-background-color, #fff));
+  --settings-fill: color-mix(
+    in srgb,
+    var(--toolbar-icon-color) 7%,
+    var(--panel-background-color, #fff)
+  );
   --settings-fill-elevated: var(--panel-background-color, #fff);
   --settings-separator: color-mix(in srgb, var(--toolbar-icon-color) 9%, transparent);
   --settings-label-secondary: color-mix(in srgb, var(--toolbar-icon-color) 52%, transparent);
@@ -36,14 +44,24 @@
   --vditor-popover-primary-btn-bg: #007aff;
   --vditor-popover-primary-btn-bg-hover: #0066d6;
   --vditor-popover-primary-btn-fg: #fff;
-  --vditor-popover-secondary-btn-bg: color-mix(in srgb, var(--textarea-text-color) 10%, transparent);
-  --vditor-popover-secondary-btn-bg-hover: color-mix(in srgb, var(--textarea-text-color) 16%, transparent);
+  --vditor-popover-secondary-btn-bg: color-mix(
+    in srgb,
+    var(--textarea-text-color) 10%,
+    transparent
+  );
+  --vditor-popover-secondary-btn-bg-hover: color-mix(
+    in srgb,
+    var(--textarea-text-color) 16%,
+    transparent
+  );
 
   width: min(300px, calc(100vw - 32px));
   max-height: min(calc(72vh - 12px), calc(100vh - 36px));
   padding: 10px 12px 12px;
   box-sizing: border-box;
-  font-feature-settings: "kern" 1, "liga" 1;
+  font-feature-settings:
+    "kern" 1,
+    "liga" 1;
   overflow-x: hidden;
   overflow-y: auto;
   .vditor-scrollbar(var(--panel-background-color));
@@ -232,7 +250,9 @@
 
   &__ai-prompt-edit,
   &__ai-prompt-del {
-    .codicon { font-size: 14px; }
+    .codicon {
+      font-size: 14px;
+    }
   }
 
   &__ai-prompt-edit {
@@ -485,7 +505,6 @@
     white-space: nowrap;
   }
 
-
   &__ai-prompt-add-row {
     padding: 10px 12px;
     display: flex;
@@ -551,7 +570,9 @@
       background: var(--settings-separator);
     }
 
-    .codicon { font-size: 14px; }
+    .codicon {
+      font-size: 14px;
+    }
 
     &:hover {
       background: color-mix(in srgb, var(--toolbar-icon-color) 14%, transparent);
@@ -589,7 +610,8 @@
     }
 
     &:focus-visible {
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--vditor-popover-primary-btn-bg) 35%, transparent);
+      box-shadow: 0 0 0 3px
+        color-mix(in srgb, var(--vditor-popover-primary-btn-bg) 35%, transparent);
     }
 
     &--cancel {
@@ -729,7 +751,11 @@
     }
 
     &.vditor-settings-panel__dropdown-option--current {
-      background-color: color-mix(in srgb, var(--settings-accent) 8%, var(--panel-background-color, #fff));
+      background-color: color-mix(
+        in srgb,
+        var(--settings-accent) 8%,
+        var(--panel-background-color, #fff)
+      );
       color: var(--settings-accent);
       font-weight: 500;
 
@@ -743,7 +769,11 @@
       }
 
       &:hover {
-        background-color: color-mix(in srgb, var(--settings-accent) 12%, var(--panel-background-color, #fff));
+        background-color: color-mix(
+          in srgb,
+          var(--settings-accent) 12%,
+          var(--panel-background-color, #fff)
+        );
         color: var(--settings-accent);
       }
     }

@@ -64,11 +64,15 @@
       background: var(--textarea-background-color, var(--bg-color, #fff));
       cursor: pointer;
       position: relative;
-      transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
 
       &:hover {
         border-color: var(--list-hover-color, @blurColor);
-        box-shadow: 0 0 0 2px color-mix(in srgb, var(--list-hover-color, @blurColor) 16%, transparent);
+        box-shadow: 0 0 0 2px
+          color-mix(in srgb, var(--list-hover-color, @blurColor) 16%, transparent);
       }
 
       &:checked {

@@ -1,6 +1,11 @@
 .vditor-cm-scrollbar(@track: var(--cm-bg-color)) {
   scrollbar-width: auto;
-  scrollbar-color: color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 30%, transparent) @track;
+  scrollbar-color: color-mix(
+      in srgb,
+      var(--cm-fg-color, var(--toolbar-icon-color)) 30%,
+      transparent
+    )
+    @track;
 
   &::-webkit-scrollbar {
     width: 10px;
@@ -12,13 +17,21 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 30%, transparent);
+    background-color: color-mix(
+      in srgb,
+      var(--cm-fg-color, var(--toolbar-icon-color)) 30%,
+      transparent
+    );
     border-radius: 5px;
     border: 2px solid @track;
   }
 
   &::-webkit-scrollbar-thumb:hover {
-    background-color: color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 44%, transparent);
+    background-color: color-mix(
+      in srgb,
+      var(--cm-fg-color, var(--toolbar-icon-color)) 44%,
+      transparent
+    );
   }
 
   &::-webkit-scrollbar-corner {
@@ -129,11 +142,17 @@
   }
 
   .cm-editor.cm-focused .cm-activeLineGutter .cm-gutterElement {
-    color: var(--cm-line-number-active-fg, var(--cm-active-line-gutter-fg, var(--vscode-editorLineNumber-activeForeground))) !important;
+    color: var(
+      --cm-line-number-active-fg,
+      var(--cm-active-line-gutter-fg, var(--vscode-editorLineNumber-activeForeground))
+    ) !important;
   }
 
   .cm-editor.cm-focused .cm-matchingBracket {
-    background-color: var(--cm-bracket-match-bg, var(--vscode-editorBracketMatch-background)) !important;
+    background-color: var(
+      --cm-bracket-match-bg,
+      var(--vscode-editorBracketMatch-background)
+    ) !important;
     outline: 1px solid var(--cm-bracket-match-border, var(--vscode-editorBracketMatch-border));
     color: inherit !important;
   }
@@ -146,7 +165,10 @@
 
   .cm-foldPlaceholder {
     color: var(--cm-fold-fg) !important;
-    background-color: var(--cm-fold-bg, color-mix(in srgb, var(--cm-fold-fg) 12%, var(--cm-bg-color))) !important;
+    background-color: var(
+      --cm-fold-bg,
+      color-mix(in srgb, var(--cm-fold-fg) 12%, var(--cm-bg-color))
+    ) !important;
     border: 1px solid color-mix(in srgb, var(--cm-fold-fg) 35%, transparent);
     border-radius: 3px;
     padding: 0 4px;
@@ -167,57 +189,102 @@
   }
 
   span.cm-comment {
-    color: var(--cm-syntax-comment, var(--vscode-editorGutter-commentRangeForeground, var(--vscode-descriptionForeground)));
+    color: var(
+      --cm-syntax-comment,
+      var(--vscode-editorGutter-commentRangeForeground, var(--vscode-descriptionForeground))
+    );
     font-style: italic;
   }
 
   span.cm-keyword {
-    color: var(--cm-syntax-keyword, var(--vscode-debugView-valueChangedHighlight, var(--vscode-terminal-ansiBlue, var(--vscode-charts-blue))));
+    color: var(
+      --cm-syntax-keyword,
+      var(
+        --vscode-debugView-valueChangedHighlight,
+        var(--vscode-terminal-ansiBlue, var(--vscode-charts-blue))
+      )
+    );
   }
 
   span.cm-annotation {
-    color: var(--cm-syntax-annotation, var(--vscode-symbolIcon-interfaceForeground, var(--vscode-terminal-ansiCyan, #56b6c2)));
+    color: var(
+      --cm-syntax-annotation,
+      var(--vscode-symbolIcon-interfaceForeground, var(--vscode-terminal-ansiCyan, #56b6c2))
+    );
     font-weight: 600;
   }
 
   span.cm-operator {
-    color: var(--cm-syntax-operator, var(--vscode-symbolIcon-operatorForeground, var(--vscode-editor-foreground)));
+    color: var(
+      --cm-syntax-operator,
+      var(--vscode-symbolIcon-operatorForeground, var(--vscode-editor-foreground))
+    );
   }
 
   span.cm-string {
-    color: var(--cm-syntax-string, var(--vscode-debugTokenExpression-string, var(--vscode-terminal-ansiRed)));
+    color: var(
+      --cm-syntax-string,
+      var(--vscode-debugTokenExpression-string, var(--vscode-terminal-ansiRed))
+    );
   }
 
   span.cm-number {
-    color: var(--cm-syntax-number, var(--vscode-debugTokenExpression-number, var(--vscode-terminal-ansiYellow)));
+    color: var(
+      --cm-syntax-number,
+      var(--vscode-debugTokenExpression-number, var(--vscode-terminal-ansiYellow))
+    );
   }
 
   span.cm-atom {
-    color: var(--cm-syntax-atom, var(--vscode-debugTokenExpression-boolean, var(--vscode-symbolIcon-constantForeground)));
+    color: var(
+      --cm-syntax-atom,
+      var(--vscode-debugTokenExpression-boolean, var(--vscode-symbolIcon-constantForeground))
+    );
   }
 
   span.cm-property {
-    color: var(--cm-syntax-property, var(--vscode-symbolIcon-fieldForeground, var(--vscode-debugTokenExpression-name)));
+    color: var(
+      --cm-syntax-property,
+      var(--vscode-symbolIcon-fieldForeground, var(--vscode-debugTokenExpression-name))
+    );
   }
 
   span.cm-attribute {
-    color: var(--cm-syntax-attribute, var(--vscode-gitDecoration-modifiedResourceForeground, var(--vscode-symbolIcon-propertyForeground)));
+    color: var(
+      --cm-syntax-attribute,
+      var(
+        --vscode-gitDecoration-modifiedResourceForeground,
+        var(--vscode-symbolIcon-propertyForeground)
+      )
+    );
   }
 
   span.cm-variable {
-    color: var(--cm-syntax-variable, var(--vscode-debugTokenExpression-name, var(--vscode-symbolIcon-variableForeground)));
+    color: var(
+      --cm-syntax-variable,
+      var(--vscode-debugTokenExpression-name, var(--vscode-symbolIcon-variableForeground))
+    );
   }
 
   span.cm-def {
-    color: var(--cm-syntax-def, var(--vscode-textPreformat-foreground, var(--vscode-symbolIcon-functionForeground)));
+    color: var(
+      --cm-syntax-def,
+      var(--vscode-textPreformat-foreground, var(--vscode-symbolIcon-functionForeground))
+    );
   }
 
   span.cm-bracket {
-    color: var(--cm-syntax-bracket, var(--vscode-symbolIcon-operatorForeground, var(--vscode-editor-foreground)));
+    color: var(
+      --cm-syntax-bracket,
+      var(--vscode-symbolIcon-operatorForeground, var(--vscode-editor-foreground))
+    );
   }
 
   span.cm-tag {
-    color: var(--cm-syntax-tag, var(--vscode-symbolIcon-classForeground, var(--vscode-debugConsole-errorForeground)));
+    color: var(
+      --cm-syntax-tag,
+      var(--vscode-symbolIcon-classForeground, var(--vscode-debugConsole-errorForeground))
+    );
   }
 
   span.cm-link {
@@ -226,7 +293,10 @@
   }
 
   span.cm-error {
-    color: var(--cm-syntax-error, var(--vscode-debugTokenExpression-error, var(--vscode-errorForeground)));
+    color: var(
+      --cm-syntax-error,
+      var(--vscode-debugTokenExpression-error, var(--vscode-errorForeground))
+    );
     background: var(--vscode-inputValidation-errorBackground, transparent);
   }
 
@@ -237,7 +307,9 @@
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transition: opacity 0.15s ease, visibility 0.15s ease;
+    transition:
+      opacity 0.15s ease,
+      visibility 0.15s ease;
   }
 
   &:hover .vditor-cm-chrome__delete,
@@ -271,8 +343,12 @@
   }
 }
 
-:is(.vditor-wysiwyg__block, .vditor-ir__node, [data-type="code-block"]):has(.vditor-cm-chrome__lang--open),
-:is(.vditor-wysiwyg__block, .vditor-ir__node, [data-type="code-block"]):has(.vditor-cm-chrome__theme--open) {
+:is(.vditor-wysiwyg__block, .vditor-ir__node, [data-type="code-block"]):has(
+  .vditor-cm-chrome__lang--open
+),
+:is(.vditor-wysiwyg__block, .vditor-ir__node, [data-type="code-block"]):has(
+  .vditor-cm-chrome__theme--open
+) {
   position: relative;
   z-index: 200;
 }
@@ -315,17 +391,36 @@
   padding: 0 10px;
   border: none;
   border-radius: var(--vditor-popover-radius, 6px);
-  background: var(--cm-lang-trigger-bg, var(--second-bg-color, color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 18%, var(--bg-color, var(--panel-background-color)))));
+  background: var(
+    --cm-lang-trigger-bg,
+    var(
+      --second-bg-color,
+      color-mix(
+        in srgb,
+        var(--cm-fg-color, var(--toolbar-icon-color)) 18%,
+        var(--bg-color, var(--panel-background-color))
+      )
+    )
+  );
   color: var(--cm-fg-color, var(--toolbar-icon-color));
   font-size: 12px;
   font-weight: 500;
   line-height: 1;
   cursor: pointer;
   pointer-events: auto;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 
   &:hover {
-    background: color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 10%, var(--cm-lang-trigger-bg, var(--second-bg-color, var(--dropdown-hover-background, var(--toolbar-background-color)))));
+    background: color-mix(
+      in srgb,
+      var(--cm-fg-color, var(--toolbar-icon-color)) 10%,
+      var(
+        --cm-lang-trigger-bg,
+        var(--second-bg-color, var(--dropdown-hover-background, var(--toolbar-background-color)))
+      )
+    );
   }
 }
 
@@ -351,19 +446,45 @@
   padding: 0 10px;
   border: none;
   border-radius: var(--vditor-popover-radius, 6px);
-  background: var(--cm-lang-trigger-bg, var(--second-bg-color, color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 18%, var(--bg-color, var(--panel-background-color)))));
+  background: var(
+    --cm-lang-trigger-bg,
+    var(
+      --second-bg-color,
+      color-mix(
+        in srgb,
+        var(--cm-fg-color, var(--toolbar-icon-color)) 18%,
+        var(--bg-color, var(--panel-background-color))
+      )
+    )
+  );
   color: var(--cm-fg-color, var(--toolbar-icon-color));
   line-height: 1;
   cursor: pointer;
   pointer-events: auto;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 
   &:hover {
-    background: color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 10%, var(--cm-lang-trigger-bg, var(--second-bg-color, var(--dropdown-hover-background, var(--toolbar-background-color)))));
+    background: color-mix(
+      in srgb,
+      var(--cm-fg-color, var(--toolbar-icon-color)) 10%,
+      var(
+        --cm-lang-trigger-bg,
+        var(--second-bg-color, var(--dropdown-hover-background, var(--toolbar-background-color)))
+      )
+    );
   }
 
   &--done {
-    background: color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 12%, var(--cm-lang-trigger-bg, var(--second-bg-color, var(--dropdown-hover-background, var(--toolbar-background-color)))));
+    background: color-mix(
+      in srgb,
+      var(--cm-fg-color, var(--toolbar-icon-color)) 12%,
+      var(
+        --cm-lang-trigger-bg,
+        var(--second-bg-color, var(--dropdown-hover-background, var(--toolbar-background-color)))
+      )
+    );
   }
 }
 
@@ -396,15 +517,34 @@
   padding: 0 10px;
   border: none;
   border-radius: var(--vditor-popover-radius, 6px);
-  background: var(--cm-lang-trigger-bg, var(--second-bg-color, color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 18%, var(--bg-color, var(--panel-background-color)))));
+  background: var(
+    --cm-lang-trigger-bg,
+    var(
+      --second-bg-color,
+      color-mix(
+        in srgb,
+        var(--cm-fg-color, var(--toolbar-icon-color)) 18%,
+        var(--bg-color, var(--panel-background-color))
+      )
+    )
+  );
   color: var(--cm-fg-color, var(--toolbar-icon-color));
   line-height: 1;
   cursor: pointer;
   pointer-events: auto;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 
   &:hover {
-    background: color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 10%, var(--cm-lang-trigger-bg, var(--second-bg-color, var(--dropdown-hover-background, var(--toolbar-background-color)))));
+    background: color-mix(
+      in srgb,
+      var(--cm-fg-color, var(--toolbar-icon-color)) 10%,
+      var(
+        --cm-lang-trigger-bg,
+        var(--second-bg-color, var(--dropdown-hover-background, var(--toolbar-background-color)))
+      )
+    );
     color: var(--cm-copy-color, var(--link-color));
   }
 }
@@ -442,7 +582,8 @@
   overflow-y: auto;
   overflow-x: hidden;
   padding: 4px;
-  border: 1px solid color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 14%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 14%, transparent);
   border-radius: 10px;
   background: var(--cm-bg-color, var(--panel-background-color));
   color: var(--cm-fg-color, var(--toolbar-icon-color));
@@ -466,7 +607,8 @@
     & + & {
       margin-top: 2px;
       padding-top: 2px;
-      border-top: 1px solid color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 8%, transparent);
+      border-top: 1px solid
+        color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 8%, transparent);
     }
   }
 
@@ -502,7 +644,11 @@
     transition: background-color 0.1s ease;
 
     &:hover {
-      background-color: color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 8%, transparent);
+      background-color: color-mix(
+        in srgb,
+        var(--cm-fg-color, var(--toolbar-icon-color)) 8%,
+        transparent
+      );
     }
   }
 
@@ -527,16 +673,35 @@
   padding: 15px 12px;
   border: none;
   border-radius: var(--vditor-popover-radius, 6px);
-  background: var(--cm-lang-trigger-bg, var(--second-bg-color, color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 18%, var(--bg-color, var(--panel-background-color)))));
+  background: var(
+    --cm-lang-trigger-bg,
+    var(
+      --second-bg-color,
+      color-mix(
+        in srgb,
+        var(--cm-fg-color, var(--toolbar-icon-color)) 18%,
+        var(--bg-color, var(--panel-background-color))
+      )
+    )
+  );
   color: var(--cm-fg-color, var(--toolbar-icon-color));
   font-size: 12px;
   font-weight: 500;
   line-height: 1;
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 
   &:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 10%, var(--cm-lang-trigger-bg, var(--second-bg-color, var(--dropdown-hover-background, var(--toolbar-background-color)))));
+    background: color-mix(
+      in srgb,
+      var(--cm-fg-color, var(--toolbar-icon-color)) 10%,
+      var(
+        --cm-lang-trigger-bg,
+        var(--second-bg-color, var(--dropdown-hover-background, var(--toolbar-background-color)))
+      )
+    );
     color: var(--cm-copy-color, var(--link-color));
   }
 
@@ -558,7 +723,8 @@
   z-index: 20;
   width: min(280px, calc(100vw - 32px));
   padding: 10px;
-  border: 1px solid color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 14%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 14%, transparent);
   border-radius: 10px;
   background: var(--cm-bg-color, var(--panel-background-color));
   box-shadow: 0 4px 16px color-mix(in srgb, var(--cm-fg-color, #000) 12%, transparent);
@@ -580,20 +746,32 @@
   height: 34px;
   margin-bottom: 8px;
   padding: 0 12px;
-  border: 2px solid color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 14%, transparent);
+  border: 2px solid
+    color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 14%, transparent);
   border-radius: var(--vditor-popover-radius, 6px);
-  background: color-mix(in srgb, var(--cm-bg-color, var(--panel-background-color)) 96%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--cm-bg-color, var(--panel-background-color)) 96%,
+    transparent
+  );
   color: var(--cm-fg-color, var(--toolbar-icon-color));
   font-size: 13px;
   line-height: 1.4;
   outline: none;
   box-shadow: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 
   &:focus,
   .vditor-cm-chrome__lang--focused & {
     border-color: var(--cm-lang-search-focus-color, var(--cm-copy-color, var(--link-color)));
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--cm-lang-search-focus-color, var(--cm-copy-color, var(--link-color))) 28%, transparent);
+    box-shadow: 0 0 0 2px
+      color-mix(
+        in srgb,
+        var(--cm-lang-search-focus-color, var(--cm-copy-color, var(--link-color))) 28%,
+        transparent
+      );
   }
 
   &::placeholder {
@@ -704,7 +882,8 @@
   max-height: min(280px, calc(100vh - 140px));
   border-radius: 6px;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 14%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 14%, transparent);
   background: var(--cm-bg-color, var(--textarea-background-color, var(--panel-background-color)));
 
   .cm-editor {
@@ -715,7 +894,10 @@
 
   .cm-editor,
   .cm-scroller {
-    background: var(--cm-bg-color, var(--textarea-background-color, var(--panel-background-color))) !important;
+    background: var(
+      --cm-bg-color,
+      var(--textarea-background-color, var(--panel-background-color))
+    ) !important;
   }
 
   .cm-scroller {
@@ -772,7 +954,11 @@
     display: block !important;
     margin: 0 !important;
     border-radius: 6px 6px 0 0;
-    border-bottom: 1px solid var(--border-color, color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 14%, transparent));
+    border-bottom: 1px solid
+      var(
+        --border-color,
+        color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 14%, transparent)
+      );
 
     .vditor-cm-chrome {
       border-radius: 6px 6px 0 0;
@@ -846,7 +1032,9 @@
   font-family: var(--code-font-family) !important;
   font-size: var(--editor-font-size, var(--vscode-editor-font-size, 13px));
   font-weight: var(--vscode-editor-font-weight, normal);
-  font-feature-settings: "liga" 0, "calt" 0;
+  font-feature-settings:
+    "liga" 0,
+    "calt" 0;
   font-variant-ligatures: none;
 }
 

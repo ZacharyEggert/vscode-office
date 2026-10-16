@@ -1,7 +1,15 @@
 import { setEditMode } from "../toolbar/EditMode";
 import { bindToolbarOutsideDismiss } from "../toolbar/setToolbar";
-import { bindCacheFocusPersistence, markCacheContentRestored, persistScrollFocusAnchor } from "../util/cacheFocus";
-import { bindDocumentScrollPersistence, purgeLegacyDocumentStateKeys, setScrollFocusAnchorHandler } from "../util/documentState";
+import {
+  bindCacheFocusPersistence,
+  markCacheContentRestored,
+  persistScrollFocusAnchor,
+} from "../util/cacheFocus";
+import {
+  bindDocumentScrollPersistence,
+  purgeLegacyDocumentStateKeys,
+  setScrollFocusAnchorHandler,
+} from "../util/documentState";
 import { bindHistoryInputBufferClick } from "../util/historyInputBuffer";
 import { accessLocalStorage } from "../util/compatibility";
 import { macOptionSymbolEvent } from "../util/editorCommonEvent";
@@ -20,7 +28,7 @@ export const initUI = (vditor: IVditor) => {
   vditor.element.classList.add("vditor");
   // 支持 RTL
   if (vditor.options.rtl) {
-    vditor.element.setAttribute("dir", "rtl")
+    vditor.element.setAttribute("dir", "rtl");
   }
   setTheme(vditor);
   applyEditorSettings(vditor.element);

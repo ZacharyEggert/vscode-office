@@ -52,7 +52,11 @@
       padding: 0;
       border: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
       border-radius: 10px;
-      background: color-mix(in srgb, var(--textarea-background-color, var(--bg-color)) 90%, transparent);
+      background: color-mix(
+        in srgb,
+        var(--textarea-background-color, var(--bg-color)) 90%,
+        transparent
+      );
       color: var(--front-color, var(--toolbar-icon-color));
       box-shadow:
         0 2px 8px color-mix(in srgb, #000 8%, transparent),
@@ -79,8 +83,16 @@
 
       &--active {
         color: var(--list-hover-color, var(--toolbar-icon-hover-color));
-        border-color: color-mix(in srgb, var(--list-hover-color, var(--toolbar-icon-hover-color)) 40%, var(--border-color));
-        background: color-mix(in srgb, var(--list-hover-color, var(--toolbar-icon-hover-color)) 10%, var(--textarea-background-color, var(--bg-color)));
+        border-color: color-mix(
+          in srgb,
+          var(--list-hover-color, var(--toolbar-icon-hover-color)) 40%,
+          var(--border-color)
+        );
+        background: color-mix(
+          in srgb,
+          var(--list-hover-color, var(--toolbar-icon-hover-color)) 10%,
+          var(--textarea-background-color, var(--bg-color))
+        );
       }
     }
 
@@ -99,7 +111,10 @@
 
     .vditor-outline {
       position: fixed;
-      top: calc(var(--mobile-outline-trigger-top) + var(--mobile-outline-trigger-size) + var(--mobile-outline-gap));
+      top: calc(
+        var(--mobile-outline-trigger-top) + var(--mobile-outline-trigger-size) +
+          var(--mobile-outline-gap)
+      );
       left: var(--mobile-outline-trigger-left);
       bottom: max(8px, env(safe-area-inset-bottom, 0px));
       width: min(68vw, 228px) !important;
@@ -112,7 +127,9 @@
       overflow: hidden;
       transform: translateY(-6px) scale(0.98);
       opacity: 0;
-      transition: transform 0.18s ease, opacity 0.18s ease;
+      transition:
+        transform 0.18s ease,
+        opacity 0.18s ease;
       pointer-events: none;
 
       &--right {

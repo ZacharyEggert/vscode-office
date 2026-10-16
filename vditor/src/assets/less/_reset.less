@@ -81,7 +81,7 @@
       margin-bottom: 16px;
     }
 
-    li+li {
+    li + li {
       margin-top: 0;
     }
 
@@ -107,10 +107,12 @@
       &[data-loading] {
         min-width: 60px;
         min-height: 60px;
-        background: linear-gradient(90deg,
-            var(--second-bg-color, #f0f0f0) 25%,
-            var(--border-color, #e0e0e0) 50%,
-            var(--second-bg-color, #f0f0f0) 75%);
+        background: linear-gradient(
+          90deg,
+          var(--second-bg-color, #f0f0f0) 25%,
+          var(--border-color, #e0e0e0) 50%,
+          var(--second-bg-color, #f0f0f0) 75%
+        );
         background-size: 200% 100%;
         animation: vditor-img-shimmer 1.4s ease infinite;
         border-radius: 4px;
@@ -181,16 +183,16 @@
       border-left: 5px solid var(--blockquote-border);
       margin: 0 0 16px 0;
 
-      &> :first-child {
+      & > :first-child {
         margin-top: 0;
       }
 
-      &> :last-child {
+      & > :last-child {
         margin-bottom: 0;
       }
     }
 
-    ins>iframe {
+    ins > iframe {
       border: 0;
     }
 
@@ -268,7 +270,7 @@
     pre {
       margin: 1em 0;
 
-      &>code {
+      & > code {
         margin: 0;
         font-size: 85%;
         padding: 0.5em;
@@ -278,7 +280,10 @@
         white-space: pre;
         font-family: var(--code-font-family);
         background-size: 20px 20px;
-        background-image: var(--pre-code-bg-image, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8AgMAAABHkjHhAAAACVBMVEWAgIBaWlo+Pj7rTFvWAAAAA3RSTlMHCAw+VhR4AAAA+klEQVQoz4WSMW7EQAhFPxKWNh2FCx+HkaZI6RRb5DYbyVfIJXLKDCFoMbaTKSw/8ZnPAPjaH2xgZcUNUDADD7D9LtDBCLZ45fbkvo/30K8yeI64pPwl6znd/3n/Oe93P3ho9qeh72btTFzqkz0rsJle8Zr81OLEwZ1dv/713uWqvu2pl+k0fy7MWtj9r/tN5q/02z89qa/L4Dc2LvM93kezPfXlME/O86EbY/V9GB9ePX8G1/6W+/9h1dq/HGfTfzT3j/xNo7522Bfnqe5jO/fvhVthlfk434v3iO9zG/UOphyPeinPl1J8Gtaa7xPTa/Dk+RIs4deMvwGvcGsmsCvJ0AAAAABJRU5ErkJggg==));
+        background-image: var(
+          --pre-code-bg-image,
+          url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8AgMAAABHkjHhAAAACVBMVEWAgIBaWlo+Pj7rTFvWAAAAA3RSTlMHCAw+VhR4AAAA+klEQVQoz4WSMW7EQAhFPxKWNh2FCx+HkaZI6RRb5DYbyVfIJXLKDCFoMbaTKSw/8ZnPAPjaH2xgZcUNUDADD7D9LtDBCLZ45fbkvo/30K8yeI64pPwl6znd/3n/Oe93P3ho9qeh72btTFzqkz0rsJle8Zr81OLEwZ1dv/713uWqvu2pl+k0fy7MWtj9r/tN5q/02z89qa/L4Dc2LvM93kezPfXlME/O86EbY/V9GB9ePX8G1/6W+/9h1dq/HGfTfzT3j/xNo7522Bfnqe5jO/fvhVthlfk434v3iO9zG/UOphyPeinPl1J8Gtaa7xPTa/Dk+RIs4deMvwGvcGsmsCvJ0AAAAABJRU5ErkJggg==)
+        );
         word-break: initial;
         word-wrap: normal;
       }
@@ -306,14 +311,19 @@
 
     // Inline math source code is an internal sync channel, should never show.
     // Editing uses CodeMirror mounted on the sibling .vditor-math-inline__cm-host.
-    [data-type="math-inline"]>code[data-type="math-inline"] {
+    [data-type="math-inline"] > code[data-type="math-inline"] {
       display: none !important;
     }
 
     kbd {
       display: inline-block;
       padding: 3px 5px;
-      font: 11px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+      font:
+        11px Consolas,
+        "Liberation Mono",
+        Menlo,
+        Courier,
+        monospace;
       line-height: 10px;
       color: var(--front-color, var(--textarea-text-color, #24292e));
       vertical-align: middle;
@@ -398,7 +408,7 @@
       user-select: none;
       counter-reset: linenumber;
 
-      &>span {
+      & > span {
         pointer-events: none;
         display: block;
 
@@ -536,7 +546,7 @@
       padding-left: 1em;
     }
 
-    &>ul {
+    & > ul {
       padding-left: 0;
     }
 
@@ -544,7 +554,7 @@
       cursor: pointer;
     }
 
-    li>span>svg {
+    li > span > svg {
       width: 0;
       height: 0;
     }
@@ -609,7 +619,7 @@
       padding: 10px 8px 14px;
       .vditor-scrollbar(var(--outline-bg-color, var(--panel-background-color)));
 
-      &>ul {
+      & > ul {
         padding-left: 0;
         min-width: 100%;
         width: max-content;
@@ -627,23 +637,23 @@
       padding-left: 1em;
     }
 
-    li+li {
+    li + li {
       margin-top: 1px;
     }
 
-    &__content>ul>li>span>span {
+    &__content > ul > li > span > span {
       font-size: var(--ui-font-size, 14px);
     }
 
-    li li>span>span {
+    li li > span > span {
       font-size: calc(var(--ui-font-size, 14px) - 0.5px);
     }
 
-    li li li>span>span {
+    li li li > span > span {
       font-size: calc(var(--ui-font-size, 14px) - 1px);
     }
 
-    li>span {
+    li > span {
       display: flex;
       align-items: center;
       margin: 0 2px;
@@ -651,24 +661,26 @@
       border-radius: var(--vditor-popover-radius, 6px);
       cursor: pointer;
       color: var(--front-color, var(--textarea-text-color));
-      transition: background-color 0.15s ease, color 0.15s ease;
+      transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
 
-      &>svg,
-      &>.codicon {
+      & > svg,
+      & > .codicon {
         flex-shrink: 0;
         height: 12px;
         width: 12px;
         margin-right: 6px;
       }
 
-      &>.vditor-outline__placeholder {
+      & > .vditor-outline__placeholder {
         flex-shrink: 0;
         width: 12px;
         margin-right: 6px;
       }
 
-      &>svg:not(.vditor-outline__action),
-      &>.vditor-outline__placeholder {
+      & > svg:not(.vditor-outline__action),
+      & > .vditor-outline__placeholder {
         visibility: hidden;
       }
 
@@ -676,7 +688,7 @@
         background-color: var(--outline-hover-bg);
         color: var(--front-color, var(--textarea-text-color));
 
-        &>span {
+        & > span {
           color: inherit;
         }
       }
@@ -685,7 +697,7 @@
         background-color: var(--outline-active-bg);
         color: var(--outline-active-color, var(--front-color, var(--textarea-text-color)));
 
-        &>span {
+        & > span {
           color: inherit;
         }
 
@@ -695,7 +707,7 @@
         }
       }
 
-      &>span {
+      & > span {
         white-space: nowrap;
         line-height: 1.45;
       }
@@ -710,7 +722,9 @@
     }
 
     &__action {
-      transition: transform 0.15s ease, opacity 0.15s ease;
+      transition:
+        transform 0.15s ease,
+        opacity 0.15s ease;
       flex-shrink: 0;
       opacity: 0.55;
       font-size: 12px;
@@ -721,7 +735,7 @@
       }
     }
 
-    li>span:hover .vditor-outline__action {
+    li > span:hover .vditor-outline__action {
       opacity: 0.95;
     }
   }

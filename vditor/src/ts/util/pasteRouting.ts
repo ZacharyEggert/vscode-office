@@ -11,25 +11,25 @@ const inlineHTMLTagInPlain = /<\/[a-zA-Z][\w:-]*>|<[a-zA-Z][\w:-]*(?:\s[^>]*)?\/
  * 4. 其余：保留 HTML，走 Word / 网页富文本路径
  */
 export const routePasteClipboard = (
-    textHTML: string,
-    textPlain: string,
-    vscodeEditorData: string,
+  textHTML: string,
+  textPlain: string,
+  vscodeEditorData: string,
 ): { textHTML: string; textPlain: string } => {
-    if (!textPlain.trim() || !textHTML.trim()) {
-        return { textHTML, textPlain };
-    }
-
-    if (vscodeEditorData) {
-        return { textHTML: "", textPlain };
-    }
-
-    if (inlineHTMLTagInPlain.test(textPlain) || isMarkdownLikePlain(textPlain)) {
-        return { textHTML: "", textPlain };
-    }
-
-    if (isIdeCodeHtml(textHTML)) {
-        return { textHTML, textPlain };
-    }
-
+  if (!textPlain.trim() || !textHTML.trim()) {
     return { textHTML, textPlain };
+  }
+
+  if (vscodeEditorData) {
+    return { textHTML: "", textPlain };
+  }
+
+  if (inlineHTMLTagInPlain.test(textPlain) || isMarkdownLikePlain(textPlain)) {
+    return { textHTML: "", textPlain };
+  }
+
+  if (isIdeCodeHtml(textHTML)) {
+    return { textHTML, textPlain };
+  }
+
+  return { textHTML, textPlain };
 };

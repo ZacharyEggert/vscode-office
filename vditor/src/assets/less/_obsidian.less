@@ -522,7 +522,11 @@
   .vditor-properties {
     border: 1px solid color-mix(in srgb, var(--border-color, #d0d7de) 85%, transparent);
     border-radius: 8px;
-    background: color-mix(in srgb, var(--panel-background-color, #fff) 94%, var(--second-bg-color, #f6f8fa));
+    background: color-mix(
+      in srgb,
+      var(--panel-background-color, #fff) 94%,
+      var(--second-bg-color, #f6f8fa)
+    );
     overflow: hidden;
     user-select: none;
   }
@@ -555,7 +559,11 @@
     box-shadow: 0 1px 2px color-mix(in srgb, var(--border-color, #d0d7de) 35%, transparent);
 
     &:hover {
-      background: color-mix(in srgb, var(--toolbar-icon-color) 8%, var(--panel-background-color, #fff));
+      background: color-mix(
+        in srgb,
+        var(--toolbar-icon-color) 8%,
+        var(--panel-background-color, #fff)
+      );
       border-color: color-mix(in srgb, var(--toolbar-icon-color) 28%, transparent);
       color: var(--toolbar-icon-color);
     }
@@ -607,13 +615,27 @@
     line-height: 1;
     opacity: 0.72;
 
-    &[data-icon="tag"]::before { content: "#"; }
-    &[data-icon="alias"]::before { content: "⛓"; }
-    &[data-icon="date"]::before { content: "📅"; }
-    &[data-icon="toggle"]::before { content: "◉"; }
-    &[data-icon="number"]::before { content: "#"; }
-    &[data-icon="list"]::before { content: "≡"; }
-    &[data-icon="text"]::before { content: "T"; }
+    &[data-icon="tag"]::before {
+      content: "#";
+    }
+    &[data-icon="alias"]::before {
+      content: "⛓";
+    }
+    &[data-icon="date"]::before {
+      content: "📅";
+    }
+    &[data-icon="toggle"]::before {
+      content: "◉";
+    }
+    &[data-icon="number"]::before {
+      content: "#";
+    }
+    &[data-icon="list"]::before {
+      content: "≡";
+    }
+    &[data-icon="text"]::before {
+      content: "T";
+    }
   }
 
   .vditor-properties__key-label {

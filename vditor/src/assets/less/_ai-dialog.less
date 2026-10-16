@@ -18,8 +18,16 @@
   --vditor-popover-primary-btn-bg: #007aff;
   --vditor-popover-primary-btn-bg-hover: #0066d6;
   --vditor-popover-primary-btn-fg: #fff;
-  --vditor-popover-secondary-btn-bg: color-mix(in srgb, var(--textarea-text-color) 10%, transparent);
-  --vditor-popover-secondary-btn-bg-hover: color-mix(in srgb, var(--textarea-text-color) 16%, transparent);
+  --vditor-popover-secondary-btn-bg: color-mix(
+    in srgb,
+    var(--textarea-text-color) 10%,
+    transparent
+  );
+  --vditor-popover-secondary-btn-bg-hover: color-mix(
+    in srgb,
+    var(--textarea-text-color) 16%,
+    transparent
+  );
 
   width: 100%;
   max-width: 440px;
@@ -53,7 +61,9 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    transition: background 0.1s, color 0.1s;
+    transition:
+      background 0.1s,
+      color 0.1s;
 
     &:hover {
       background: color-mix(in srgb, var(--toolbar-icon-color, #999) 15%, transparent);
@@ -79,7 +89,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.1s, color 0.1s, border-color 0.1s;
+    transition:
+      background 0.1s,
+      color 0.1s,
+      border-color 0.1s;
 
     &:hover {
       border-color: var(--link-color, #4a90d9);
@@ -123,7 +136,9 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    transition: background 0.1s, color 0.1s;
+    transition:
+      background 0.1s,
+      color 0.1s;
 
     &:hover {
       background: color-mix(in srgb, var(--toolbar-icon-color) 15%, transparent);
@@ -155,7 +170,10 @@
     font-size: 12px;
     font-family: inherit;
     cursor: pointer;
-    transition: border-color 0.12s, color 0.12s, background 0.12s;
+    transition:
+      border-color 0.12s,
+      color 0.12s,
+      background 0.12s;
 
     &:hover {
       border-color: var(--link-color, #4a78c8);
@@ -355,7 +373,6 @@
     text-align: left;
   }
 
-
   &__engine-tabs {
     display: flex;
     gap: 6px;
@@ -375,7 +392,10 @@
     font-size: 12px;
     font-family: inherit;
     cursor: pointer;
-    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    transition:
+      border-color 0.15s,
+      color 0.15s,
+      background 0.15s;
 
     &:hover {
       border-color: var(--link-color, #4a78c8);
@@ -440,7 +460,10 @@
     font-family: inherit;
     cursor: pointer;
     border: none;
-    transition: background 0.12s ease, opacity 0.12s ease, box-shadow 0.12s ease;
+    transition:
+      background 0.12s ease,
+      opacity 0.12s ease,
+      box-shadow 0.12s ease;
 
     &--cancel {
       background: var(--vditor-popover-secondary-btn-bg);
@@ -461,7 +484,8 @@
       }
 
       &:focus-visible {
-        box-shadow: 0 0 0 3px color-mix(in srgb, var(--vditor-popover-primary-btn-bg) 35%, transparent);
+        box-shadow: 0 0 0 3px
+          color-mix(in srgb, var(--vditor-popover-primary-btn-bg) 35%, transparent);
       }
     }
   }
@@ -511,22 +535,30 @@
     font-family: inherit;
     cursor: pointer;
     border: 1px solid transparent;
-    transition: opacity 0.1s, background 0.1s;
+    transition:
+      opacity 0.1s,
+      background 0.1s;
     outline: none;
 
     &--cancel {
       background: transparent;
       border-color: var(--border-color);
       color: var(--textarea-text-color);
-      &:hover { background: color-mix(in srgb, var(--toolbar-icon-color) 10%, transparent); }
+      &:hover {
+        background: color-mix(in srgb, var(--toolbar-icon-color) 10%, transparent);
+      }
     }
 
     &--ok {
       background: var(--error-color, #cf222e);
       color: #fff;
       border-color: var(--error-color, #cf222e);
-      &:hover { opacity: 0.88; }
-      &:focus { box-shadow: 0 0 0 2px color-mix(in srgb, var(--error-color, #cf222e) 35%, transparent); }
+      &:hover {
+        opacity: 0.88;
+      }
+      &:focus {
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--error-color, #cf222e) 35%, transparent);
+      }
     }
   }
 }

@@ -34,7 +34,11 @@
     border: 7px solid transparent;
     top: -14px;
     left: 12px;
-    border-bottom-color: color-mix(in srgb, var(--toolbar-icon-color) 12%, var(--panel-background-color));
+    border-bottom-color: color-mix(
+      in srgb,
+      var(--toolbar-icon-color) 12%,
+      var(--panel-background-color)
+    );
   }
 
   &.vditor-panel--left.vditor-panel--arrow:before {
@@ -59,7 +63,9 @@
     text-overflow: ellipsis;
     overflow: hidden;
     font-size: var(--ui-font-size, 13px);
-    transition: background-color 0.18s var(--vditor-popover-ease), color 0.18s var(--vditor-popover-ease);
+    transition:
+      background-color 0.18s var(--vditor-popover-ease),
+      color 0.18s var(--vditor-popover-ease);
 
     &:focus {
       outline: none;
@@ -68,7 +74,11 @@
 
   &--current,
   & > button.vditor-hint--current {
-    background-color: color-mix(in srgb, var(--link-color, var(--list-hover-color, var(--toolbar-icon-hover-color))) 8%, var(--panel-background-color));
+    background-color: color-mix(
+      in srgb,
+      var(--link-color, var(--list-hover-color, var(--toolbar-icon-hover-color))) 8%,
+      var(--panel-background-color)
+    );
     color: var(--link-color, var(--list-hover-color, var(--toolbar-icon-hover-color)));
     font-weight: 500;
   }
@@ -80,7 +90,11 @@
 
   & > button.vditor-hint--current:hover,
   &--current:hover {
-    background-color: color-mix(in srgb, var(--link-color, var(--list-hover-color, var(--toolbar-icon-hover-color))) 12%, var(--panel-background-color));
+    background-color: color-mix(
+      in srgb,
+      var(--link-color, var(--list-hover-color, var(--toolbar-icon-hover-color))) 12%,
+      var(--panel-background-color)
+    );
     color: var(--link-color, var(--list-hover-color, var(--toolbar-icon-hover-color)));
   }
 
@@ -108,7 +122,11 @@
   .vditor-scrollbar(var(--panel-background-color));
 
   &.vditor-panel--arrow:before {
-    border-bottom-color: color-mix(in srgb, var(--toolbar-icon-color) 12%, var(--panel-background-color));
+    border-bottom-color: color-mix(
+      in srgb,
+      var(--toolbar-icon-color) 12%,
+      var(--panel-background-color)
+    );
   }
 }
 
@@ -160,7 +178,11 @@
   }
 
   button.vditor-theme-option--current {
-    background-color: color-mix(in srgb, var(--link-color, var(--list-hover-color, var(--toolbar-icon-hover-color))) 8%, var(--panel-background-color));
+    background-color: color-mix(
+      in srgb,
+      var(--link-color, var(--list-hover-color, var(--toolbar-icon-hover-color))) 8%,
+      var(--panel-background-color)
+    );
     color: var(--link-color, var(--list-hover-color, var(--toolbar-icon-hover-color)));
     font-weight: 500;
 
@@ -170,11 +192,19 @@
       font-size: 14px;
       float: right;
       line-height: inherit;
-      color: color-mix(in srgb, var(--link-color, var(--list-hover-color, var(--toolbar-icon-hover-color))) 72%, transparent);
+      color: color-mix(
+        in srgb,
+        var(--link-color, var(--list-hover-color, var(--toolbar-icon-hover-color))) 72%,
+        transparent
+      );
     }
 
     &:hover {
-      background-color: color-mix(in srgb, var(--link-color, var(--list-hover-color, var(--toolbar-icon-hover-color))) 12%, var(--panel-background-color));
+      background-color: color-mix(
+        in srgb,
+        var(--link-color, var(--list-hover-color, var(--toolbar-icon-hover-color))) 12%,
+        var(--panel-background-color)
+      );
     }
   }
 }
@@ -192,7 +222,11 @@
   .vditor-scrollbar(var(--panel-background-color));
 
   &.vditor-panel--arrow:before {
-    border-bottom-color: color-mix(in srgb, var(--toolbar-icon-color) 12%, var(--panel-background-color));
+    border-bottom-color: color-mix(
+      in srgb,
+      var(--toolbar-icon-color) 12%,
+      var(--panel-background-color)
+    );
   }
 }
 
@@ -260,7 +294,11 @@
   }
 
   &__option.vditor-edit-mode-option--current {
-    background-color: color-mix(in srgb, var(--link-color, var(--list-hover-color, var(--toolbar-icon-hover-color))) 8%, var(--panel-background-color));
+    background-color: color-mix(
+      in srgb,
+      var(--link-color, var(--list-hover-color, var(--toolbar-icon-hover-color))) 8%,
+      var(--panel-background-color)
+    );
 
     .vditor-edit-mode-panel__label {
       color: var(--link-color, var(--list-hover-color, var(--toolbar-icon-hover-color)));
@@ -268,11 +306,19 @@
     }
 
     .vditor-edit-mode-panel__desc {
-      color: color-mix(in srgb, var(--link-color, var(--list-hover-color, var(--toolbar-icon-hover-color))) 65%, transparent);
+      color: color-mix(
+        in srgb,
+        var(--link-color, var(--list-hover-color, var(--toolbar-icon-hover-color))) 65%,
+        transparent
+      );
     }
 
     &:hover {
-      background-color: color-mix(in srgb, var(--link-color, var(--list-hover-color, var(--toolbar-icon-hover-color))) 12%, var(--panel-background-color));
+      background-color: color-mix(
+        in srgb,
+        var(--link-color, var(--list-hover-color, var(--toolbar-icon-hover-color))) 12%,
+        var(--panel-background-color)
+      );
     }
   }
 }

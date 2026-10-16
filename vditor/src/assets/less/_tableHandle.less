@@ -15,7 +15,11 @@
     padding: 0;
     border: 0;
     border-radius: 4px;
-    background: color-mix(in srgb, var(--error-color, @errorColor) 10%, var(--panel-background-color));
+    background: color-mix(
+      in srgb,
+      var(--error-color, @errorColor) 10%,
+      var(--panel-background-color)
+    );
     color: color-mix(in srgb, var(--error-color, @errorColor) 75%, var(--toolbar-icon-color));
     cursor: pointer;
     pointer-events: auto;
@@ -27,7 +31,11 @@
 
     &:hover,
     &:focus-visible {
-      background: color-mix(in srgb, var(--error-color, @errorColor) 18%, var(--panel-background-color));
+      background: color-mix(
+        in srgb,
+        var(--error-color, @errorColor) 18%,
+        var(--panel-background-color)
+      );
       color: var(--error-color, @errorColor);
     }
 
@@ -81,7 +89,11 @@
       display: none;
       width: 8px;
       height: 14px;
-      background: radial-gradient(circle at center, var(--toolbar-icon-color) 1.25px, transparent 1.25px);
+      background: radial-gradient(
+        circle at center,
+        var(--toolbar-icon-color) 1.25px,
+        transparent 1.25px
+      );
       background-size: 4px 4px;
       opacity: 0.88;
 
@@ -179,7 +191,11 @@
     }
 
     button.vditor-table-handle__menu-item--current {
-      background-color: color-mix(in srgb, var(--link-color, var(--list-hover-color, @blurColor)) 8%, var(--panel-background-color));
+      background-color: color-mix(
+        in srgb,
+        var(--link-color, var(--list-hover-color, @blurColor)) 8%,
+        var(--panel-background-color)
+      );
       color: var(--link-color, var(--list-hover-color, @blurColor));
       font-weight: 500;
 
@@ -189,7 +205,11 @@
 
       &:not(:disabled):hover,
       &:not(:disabled):focus-visible {
-        background-color: color-mix(in srgb, var(--link-color, var(--list-hover-color, @blurColor)) 12%, var(--panel-background-color));
+        background-color: color-mix(
+          in srgb,
+          var(--link-color, var(--list-hover-color, @blurColor)) 12%,
+          var(--panel-background-color)
+        );
         color: var(--link-color, var(--list-hover-color, @blurColor));
       }
     }
