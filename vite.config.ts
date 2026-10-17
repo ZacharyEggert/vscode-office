@@ -171,6 +171,8 @@ export default defineConfig(({ command }) => ({
     },
     host: "127.0.0.1",
     port: 5739,
+    // absolute asset URLs in dev CSS (fonts resolve against vscode-webview:// otherwise)
+    origin: "http://127.0.0.1:5739",
     fs: {
       allow: [".."],
     },
